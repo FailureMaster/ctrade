@@ -355,7 +355,17 @@
             
             let XPDUSD = document.getElementById('name-XPDUSD');
             if (XPDUSD) {
-                XPDUSD.innerText = 'Palladium';
+                XPDUSD.innerText = 'PALLADIUM';
+            }
+
+            let SOYBNUSD = document.getElementById('name-SOYBNUSD');
+            if (SOYBNUSD) {
+                SOYBNUSD.innerText = 'SOYABEAN';
+            }
+
+            let RYCEY = document.getElementById('name-RYCEY');
+            if (RYCEY) {
+                RYCEY.innerText = 'ROLLS R.';
             }
            
 
