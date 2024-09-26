@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Fee;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class TradeController extends Controller
 {
@@ -124,11 +125,15 @@ class TradeController extends Controller
         
         $currency = Currency::where('id', 4)->first();
 
-
         $lots = LotManager::all();
         $fee_status = Fee::first()->status;
+
+        $estimatedBalance   = Wallet::where([
+            'user_id' => $userId,
+            'currency_id' => Defaults::DEF_WALLET_CURRENCY_ID
+        ])->join('currencies', 'wallets.currency_id', 'currencies.id')->spot()->sum(DB::raw('currencies.rate * wallets.balance'));
        
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status'));
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance'));
     }
 
     public function fetchUserBalance()

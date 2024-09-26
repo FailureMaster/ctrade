@@ -72,13 +72,13 @@
     <x-take-profit-modal/>
     <x-frozen-account-modal/>
     
-    <!-- <div class="offcanvas offcanvas-end p-5" tabindex="-1" id="deposit-canvas" aria-labelledby="offcanvasLabel">
+    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="deposit-canvas" aria-labelledby="offcanvasLabel">
         <div class="offcanvas-header">
             <h4 class="mb-0 fs-18 offcanvas-title text-white">
                 @lang('Deposit Preview')
             </h4>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
-                <i class="fa fa-times-circle"></i>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
             </button>
         </div>
         <div class="offcanvas-body">
@@ -87,16 +87,19 @@
                 @csrf
                 <input type="hidden" name="currency" value="{{ $currency->symbol }}">
                 <input type="hidden" name="wallet_type" value="spot">
+                <div class="form-group position-relative" id="currency_list_wrapper">
+                    <x-currency-list :action="route('user.currency.all')" valueType="2" logCurrency="true" />
+                </div>
                 <div class="form-group">
                     <label class="form-label text-white">@lang('Amount')</label>
                     <div class="input-group">
-                        <input type="number" step="any" class="form--control form-control" name="amount" required style="border: 1px solid #7c666675">
-                        <span class="input-group-text text-white deposit-currency-symbol">{{ __($currency->symbol) }}</span>
+                        <input type="number" step="any" class="form--control form-control text-white" name="amount" required style="border: 1px solid #7c666675">
+                        <!-- <span class="input-group-text text-white deposit-currency-symbol">{{ __($currency->symbol) }}</span> -->
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label text-white">@lang('Gateway')</label>
-                    <select class="form-control form--control form-select" name="gateway" required style="border: 1px solid #7c666675">
+                    <select class="form-control form--control form-select text-white" name="gateway" required style="border: 1px solid #7c666675">
                         <option selected disabled>@lang('Select Payment Gateway')</option>
                         @foreach ($gateways as $gateway)
                             <option value="{{ $gateway->method_code }}" data-gateway='@json($gateway)'>
@@ -142,55 +145,16 @@
                 </h6>
             </div>
         </div>
-    </div> -->
-    <div class="offcanvas offcanvas-end p-5" tabindex="-1" id="deposit-canvas" aria-labelledby="offcanvasLabel">
-    <div class="dashboard-right">
-                <div class="right-sidebar">
-                    <div class="right-sidebar__header mb-3 skeleton">
-                        <div class="d-flex flex-between flex-wrap">
-                            <div>
-                                <h4 class="mb-0 fs-18">@lang('Balance Overview')</h4>
-                                <p class="mt-0 fs-12">@lang('Available wallet balance including the converted total balance')</p>
-                            </div>
-                            <span class="toggle-dashboard-right dashboard--popup-close"><i
-                                    class="las la-times"></i></span>
-                        </div>
-                    </div>
-                    <div class="text-center mb-3 skeleton">
-                        <h3 class="right-sidebar__number mb-0 pb-0" id="balanceOverview">
-                           
-                        </h3>
-                        <span class="fs-14 mt-0">@lang('Estimated Total Balance')</span>
-                    </div>
-                </div>
-                <div class="right-sidebar mt-3">
-                    <div class="right-sidebar__header mb-3 skeleton ">
-                        <h4 class="mb-0 fs-18">@lang('Deposit Money')</h4>
-                        <p class="mt-0 fs-12">@lang('Make crypto & fiat deposits in a few steps')</p>
-                    </div>
-                    <div class="right-sidebar__deposit">
-                        <form class="skeleton deposit-form">
-                            <div class="form-group position-relative" id="currency_list_wrapper">
-                                <div class="input-group">
-                                    <input type="number" step="any" name="amount"
-                                        class="form--control form-control" placeholder="@lang('Amount')">
-                                    <div class="input-group-text skeleton">
-                                       
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="deposit__button btn btn--base w-100" type="submit">
-                                <span class="icon-deposit"></span> @lang('Deposit')
-                            </button>
-                        </form>
-                    </div>
-                </div>
-              
-            </div>
     </div>
 
     
 @endsection
+@push('script-lib')
+    <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
+@endpush
+@push('style-lib')
+    <link rel="stylesheet" href="{{ asset('assets/global/css/select2.min.css') }}">
+@endpush
 
 @push('script-lib')
     <script src="{{ asset('assets/global/js/pusher.min.js') }}"></script>
@@ -220,7 +184,7 @@
 
 @push('script')
     <script>
-        "use strict";
+        "use strict";      
         $('.new--deposit').on('click', function(e) {
             @auth
                 let currency         = $(this).data('currency');

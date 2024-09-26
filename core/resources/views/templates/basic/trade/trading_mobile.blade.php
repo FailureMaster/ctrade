@@ -106,7 +106,7 @@
                     @if(Auth::check())
                         <li class="menu-item">
                             <!-- <a href="{{ route('user.home') }}?d=1" class="text-white "> -->
-                            <a class="text-white new--deposit">
+                            <a class="text-white new--deposit" data-currency="{{  @$pair->market->currency->symbol }}">
                                 <i class="fas fa-money-bill-wave"></i>
                                 <span>Deposit</span>
                             </a>
