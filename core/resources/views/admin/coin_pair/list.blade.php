@@ -15,8 +15,8 @@
                         <table class="table table--light style--two highlighted-table" id="coinPairList">
                             <thead>
                                 <tr>
-                                    <th>@lang('Name')</th>
-                                    <th>@lang('Symbol')</th>
+                                    <!-- <th>@lang('Name')</th> -->
+                                    <th class="text-center">@lang('Symbol')</th>
                                     <th>@lang('Leverege')</th>
                                     <th>@lang('Lots')</th>
                                     <th>@lang('Level')</th>
@@ -35,11 +35,11 @@
                                     }
                                 @endphp
                                     <tr>
-                                        <td>
+                                        <!-- <td>
                                             <x-currency :currency="@$pair->coin" />
-                                        </td>
+                                        </td> -->
                                         
-                                        <td>{{ @$pair->symbol }}</td>
+                                        <td class="text-center">{{ @$pair->symbol }}</td>
                                         <td>{{ showAmount($pair->percent_charge_for_sell) }}</td>
                                         <td>{{ showAmount($pair->percent_charge_for_buy) }}  </td>
                                          <td>{{ showAmount($pair->level_percent) }}  </td>
@@ -215,10 +215,10 @@
 @endpush
 @push('breadcrumb-plugins')
 <x-search-form placeholder="Name,Symbol...." />
-<!--@if(can_access('add-symbol'))-->
-<!--    <a href="{{ route('admin.coin.pair.create') }}" class="btn btn-outline--primary addBtn h-45">-->
-<!--        <i class="las la-plus"></i>@lang('New Symbol')-->
-<!--    </a>-->
-<!--@endif-->
+<!-- @if(can_access('add-symbol'))
+    <a href="{{ route('admin.coin.pair.create') }}" class="btn btn-outline--primary addBtn h-45">
+        <i class="las la-plus"></i>@lang('New Symbol')
+   </a>
+@endif -->
 
 @endpush
