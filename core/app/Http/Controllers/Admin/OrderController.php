@@ -21,8 +21,10 @@ class OrderController extends Controller
     {
         $pageTitle = "Open Order";
         $perPage    = $request->get('per_page', 25);
-        $orders     = $this->orderData($request, 'open');
-        // dd($orders->count());
+        $query     = $this->orderData($request, 'open');
+        
+        $orders = $query->paginate($perPage);
+
         return view('admin.order.list', compact('pageTitle', 'orders', 'perPage'));
     }
 
@@ -30,30 +32,41 @@ class OrderController extends Controller
     {
         $perPage    = $request->get('per_page', 25);
         $pageTitle = "Close Order";
-        $orders    = $this->orderData($request, 'canceled');
+        $query    = $this->orderData($request, 'canceled');
+
+        $orders = $query->paginate($perPage);
         return view('admin.order.list', compact('pageTitle', 'orders', 'perPage'));
     }
 
     public function history(Request $request)
     {
-        $perPage    = $request->get('per_page', 25);
+        $perPage = $request->get('per_page', 25);
         $pageTitle = "Order History";
-        $orders    = $this->orderData($request);
         
-        return view('admin.order.list', compact('pageTitle', 'orders', 'perPage'));
+        // Get the base order query
+        $query = $this->orderData($request);
+        
+        // Add an additional filter for 'status' to be 0
+        $query->where('status', 0);
+        
+        // Paginate the results
+        
+        $orders = $query->paginate($perPage);
+
+    return view('admin.order.list', compact('pageTitle', 'orders', 'perPage'));
     }
 
     protected function orderData(Request $request, $scope = null)
     {
         $filter = $request->get('filter');
-
+    
         if ($request->get('customfilter')) {
             $filter = 'custom';
         }
     
         $startDate = null;
         $endDate = null;
-
+    
         switch ($filter) {
             case 'today':
                 $startDate = Carbon::today();
@@ -85,21 +98,21 @@ class OrderController extends Controller
                 $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
                 break;
         }
-
+    
         $query = Order::filter(['order_side', 'user_id', 'status'])
             ->searchable(['id', 'pair:symbol', 'pair.coin:symbol', 'pair.market.currency:symbol'])
             ->with('pair', 'pair.coin', 'pair.market.currency', 'user')
             ->orderBy('id', 'desc');
-
+    
         if ($scope) {
             $query->$scope();
         }
-
+    
         if ($request->filled('id')) {
             $query->where('id', $request->get('id'));
         }
-        
-       if ($request->filled('name')) {
+    
+        if ($request->filled('name')) {
             $names = explode(' ', $request->get('name'));
             $query->whereHas('user', function ($query) use ($names) {
                 foreach ($names as $name) {
@@ -110,41 +123,39 @@ class OrderController extends Controller
                 }
             });
         }
-
+    
         if ($request->filled('volume')) {
             $query->where('no_of_lot', $request->get('volume'));
         }
-
+    
         if ($request->filled('order_type')) {
             $query->where('order_side', $request->get('order_type'));
         }
-
+    
         if ($request->filled('symbol')) {
             $query->whereHas('pair', function ($query) use ($request) {
                 $query->where('symbol', $request->get('symbol'));
             });
         }
-
+    
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
-
+    
         $query->whereHas('user');
-        return $query->paginate(getPaginate());
+    
+        // Return the query object, not paginated results
+        return $query;
     }
-
-    public function tradeHistory()
+    
+    public function tradeHistory(Request $request)
     {
+            
         $pageTitle = "Trade History";
-        $trades    = Trade::filter(['trade_side', 'trader_id'])
-            ->whereHas('order', function ($query) {
-                $query->where('status', Status::ORDER_CANCELED);
-            })
-            ->searchable(['order.pair:symbol', 'order.pair.coin:symbol', 'order.pair.market.currency:symbol'])
-            ->with('order.pair', 'order.pair.coin', 'order.pair.market.currency')
-            ->orderBy('id', 'desc')
-            ->paginate(getPaginate());
-        return view('admin.order.trade_history', compact('pageTitle', 'trades'));
+        $perPage = $request->get('per_page', 25);
+        
+        $orders = Order::where('user_id', $request->trader_id)->canceled()->paginate($perPage);
+        return view('admin.order.list', compact('pageTitle', 'orders', 'perPage'));
     }
 
     public function edit(Order $order): View

@@ -55,10 +55,11 @@
             <div class="card b-radius--10 ">
                 <div class="card-body p-0">
                     <div class="p-3">
-                        @if ($orders->hasPages())
+                        @if ($orders->hasPages() || $orders->total() >5 )
                             <small>
-                                @if ($orders)
+                                @if ($orders->firstItem())
                                     <strong>{{ $orders->firstItem() }} - {{ $orders->lastItem() }} of {{ $orders->total() }}</strong>
+                                    
                                 @endif
                             </small>
                         @endif

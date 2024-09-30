@@ -3,29 +3,31 @@
 <div class="row">
     <div class="col-12">
         <div class="row gy-4">
+
             <div class="col-xxl-3 col-sm-6">
                 <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
                     <div class="widget-two__icon b-radius--5 bg--primary">
                         <i class="las la-money-bill-wave-alt"></i>
                     </div>
                     <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($widget['total_trade']) }}</h3>
-                        <p class="text-white">@lang('Total Order')</p>
+                        <h3 class="text-white">{{ getAmount($widget['open_order']) }}</h3>
+                        <p class="text-white">@lang('Open Orders')</p>
                     </div>
-                    <a href="{{ route('admin.order.history') }}?user_id={{ $user->id }}"
+                    <a href="{{ route('admin.order.open') }}?user_id={{ $user->id }}"
                         class="widget-two__btn">@lang('View All')</a>
                 </div>
             </div>
+
             <div class="col-xxl-3 col-sm-6">
                 <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
                     <div class="widget-two__icon b-radius--5 bg--primary">
                         <i class="las la-wallet"></i>
                     </div>
                     <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($widget['total_trade']) }}</h3>
-                        <p class="text-white">@lang('Total Trdae')</p>
+                        <h3 class="text-white">{{ getAmount($widget['canceled_order']) }}</h3>
+                        <p class="text-white">@lang('Closed Orders')</p>
                     </div>
-                    <a href="{{ route('admin.trade.history') }}?trader_id={{ $user->id }}"
+                    <a href="{{ route('admin.order.close') }}?user_id={{ $user->id }}"
                         class="widget-two__btn">@lang('View All')</a>
                 </div>
             </div>
@@ -138,7 +140,17 @@
                     </div>
                 </div>
             </div>
-            <div class="col"></div>
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white admin-user_margin_level">0</h3>
+                        <p class="text-white">@lang('Margin Level')</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="d-flex flex-wrap gap-3 mt-4">
@@ -647,6 +659,7 @@
         let free_margin = 0;
         let total_amount = 0;
         let total_used_margin = 0;
+        let margin_level = 0;
     
         $('.bal-btn').click(function () {
             var act = $(this).data('act');
@@ -705,6 +718,8 @@
                 success: function(resp) {
                     
                     let html = '';
+                    let initial_equity = Number(resp.wallet.balance) + Number(resp.wallet.bonus) + Number(resp.wallet.credit);
+
                     equity = 0;
                     pl = 0;
                     total_open_order_profit = 0;
@@ -717,11 +732,25 @@
                         });
                         
                         pl = total_open_order_profit;
-                        equity = parseFloat({{ @$marketCurrencyWallet->balance }}) || 0 + pl;
+                        equity = initial_equity + pl;
+
+                        if (equity < 0) {
+                            equity = 0;
+                        }
                         
                     } else {
                         pl = 0;
-                        equity = parseFloat({{ @$marketCurrencyWallet->balance }}) || 0;
+                        equity = initial_equity;
+
+                        if (equity < 0) {
+                            equity = 0;
+                        }
+                    }
+
+                    if (resp.totalRequiredMargin === 0) {
+                        margin_level = 0;
+                    } else {
+                        margin_level = (equity / resp.totalRequiredMargin) * 100;
                     }
 
                     let bonus = parseFloat({{ @$marketCurrencyWallet->bonus }}) || 0;
@@ -732,6 +761,7 @@
                     
                     $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
                     $('.admin-pl-val').html(`${formatWithPrecision1(pl)} USD`);
+                    $('.admin-user_margin_level').html(`${formatWithPrecision1(margin_level)} %`);
                     
                 },
                 error: function(xhr, status, error) {

@@ -325,12 +325,10 @@ class ManageUsersController extends Controller
 
     public function detail($id)
     {
-
         $user_data = Session::get('users_data');
         $user_data2 = $user_data->all();
 
         $index = 0;
-
 
         foreach ($user_data->where('id', $id) as $key => $value) {
             $index = $key;
@@ -349,11 +347,14 @@ class ManageUsersController extends Controller
         $widget['total_deposit'] = Deposit::where('user_id', $user->id)->where('status', Status::PAYMENT_SUCCESS)->count();
         $widget['total_transaction'] = Transaction::where('user_id', $user->id)->count();
 
+        $order = Order::where('user_id', $user->id);
+        $widget['open_order']      = (clone $order)->open()->count();
+        $widget['canceled_order']  = (clone $order)->canceled()->count();
+
         $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
         $currencies = Currency::active()->get();
 
         $marketCurrencyWallet = Wallet::where('user_id', $user->id)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID /* $pair->market->currency->id */)->spot()->first();
-
         $requiredMarginTotal = Order::where('user_id', $user->id)->open()->sum('required_margin');
 
         return view('admin.users.detail', compact('pageTitle', 'user', 'previousUser', 'nextUser', 'widget', 'countries', 'currencies', 'marketCurrencyWallet', 'requiredMarginTotal'));
