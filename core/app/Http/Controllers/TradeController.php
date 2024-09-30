@@ -20,6 +20,7 @@ use App\Models\Fee;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class TradeController extends Controller
 {
@@ -151,7 +152,10 @@ class TradeController extends Controller
     
     public function getCurrentPrice($type, $symbol)
     {
-        $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketData = json_decode($marketDataJson);
+
+        $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
         return response()->json([ 
@@ -238,7 +242,10 @@ class TradeController extends Controller
 
         $orders = $query->orderBy('id', 'desc')->get();
         
-        $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketData = json_decode($marketDataJson);
+
+        $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
         $wallet = Wallet::where('currency_id', 4)
@@ -262,7 +269,10 @@ class TradeController extends Controller
             ->where('user_id', auth()->id())
             ->first();
         
-        $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketData = json_decode($marketDataJson);
+
+        $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
         return response()->json([

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
@@ -179,7 +180,10 @@ class OrderController extends Controller
     }
 
     public function fetchMarketData() {
-        $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketData = json_decode($marketDataJson);
+
+        $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
         return response()->json($marketData);
