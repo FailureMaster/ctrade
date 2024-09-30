@@ -48,9 +48,9 @@ class Order extends Model
         return new Attribute(function () {
             $html = '';
             if ($this->order_side == Status::BUY_SIDE_ORDER) {
-                $html = '<span class="text--success">' . trans('Buy') . '</span>';
+                $html = '<span class="text-success">' . trans('Buy') . '</span>';
             } else {
-                $html = '<span class="text--danger">' . trans('Sell') . '</span>';
+                $html = '<span class="text-danger">' . trans('Sell') . '</span>';
             }
             return $html;
         });
