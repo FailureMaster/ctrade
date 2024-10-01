@@ -52,12 +52,12 @@
                                     <span class="menu-title">@lang('Open Orders')</span>
                                 </a>
                             </li>
-                            <li class="sidebar-menu-item {{menuActive(['admin.order.history'])}}">
+                            <!-- <li class="sidebar-menu-item {{menuActive(['admin.order.history'])}}">
                                 <a href="{{route('admin.order.history', ['filter' => 'this_month'])}}" class="nav-link">
                                     <i class="menu-icon las la-dot-circle"></i>
                                     <span class="menu-title">@lang('Total Orders')</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="sidebar-menu-item {{menuActive(['admin.order.close'])}}">
                                 <a href="{{route('admin.order.close', ['filter' => 'this_month'])}}" class="nav-link">
                                     <i class="menu-icon las la-dot-circle"></i>

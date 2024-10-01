@@ -22,7 +22,7 @@ class ReportController extends Controller
             'user'
         ])
         ->whereHas('user')
-        ->whereNull('hid_at')
+        // ->whereNull('hid_at')
         ->when($request->get('lead_code'), function ($query) use ($request) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('lead_code', $request->lead_code);
@@ -39,14 +39,14 @@ class ReportController extends Controller
                 }
             });
         })
-        ->searchable(['trx', 'user:username'])
+        ->searchable(['trx', 'user:username', 'user:email'])
         ->filter([
             'user:email',
             'user:mobile',
             'trx_type',
             'trx',
             'remark',
-            'wallet.currency:symbol'
+            'wallet.currency:symbol',
         ])
         ->dateFilter()
         ->orderBy('id', 'desc')

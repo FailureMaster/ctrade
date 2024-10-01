@@ -40,7 +40,7 @@
                         <h3 class="text-white">{{ getAmount($widget['total_deposit']) }}</h3>
                         <p class="text-white">@lang('Total Deposit')</p>
                     </div>
-                    <a href="{{ route('admin.deposit.list') }}?search={{ $user->username }}"
+                    <a href="{{ route('admin.deposit.list') }}?user_email={{ $user->email }}"
                         class="widget-two__btn">@lang('View All')</a>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                         <h3 class="text-white">{{ getAmount($widget['total_transaction']) }}</h3>
                         <p class="text-white">@lang('Transactions')</p>
                     </div>
-                    <a href="{{ route('admin.report.transaction') }}?search={{ $user->username }}"
+                    <a href="{{ route('admin.report.transaction') }}?search={{ $user->email }}"
                         class="widget-two__btn">@lang('View All')</a>
                 </div>
             </div>

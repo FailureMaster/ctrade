@@ -344,7 +344,8 @@ class ManageUsersController extends Controller
         $widget = [];
         $widget['total_trade'] = Trade::where('trader_id', $user->id)->count();
         $widget['total_order'] = Trade::where('order_id', $user->id)->count();
-        $widget['total_deposit'] = Deposit::where('user_id', $user->id)->where('status', Status::PAYMENT_SUCCESS)->count();
+        // $widget['total_deposit'] = Deposit::where('user_id', $user->id)->where('status', Status::PAYMENT_SUCCESS)->count();
+        $widget['total_deposit'] = Deposit::where('user_id', $user->id)->count();
         $widget['total_transaction'] = Transaction::where('user_id', $user->id)->count();
 
         $order = Order::where('user_id', $user->id);
