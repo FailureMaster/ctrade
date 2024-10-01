@@ -231,6 +231,7 @@
         $(document).on('click','.takeProfitModalBtn', function () {
             var modal   = $('#takeProfitModal');
             let data    = $(this).data();
+            console.log('lawrence', data);
             
             // Clear previous interval if exists
             clearInterval(intervalId);
@@ -241,7 +242,7 @@
             
             modal.find('.symbol-modal').text(`${data.symbol}`);
             modal.find('.open-price-modal').text(`${data.open}`);
-            modal.find('.current-price-modal').text(`${data.curr}`);
+            // modal.find('.current-price-modal').text(`${data.curr}`);
             modal.find('.volume-modal').text(`${data.volume}`);
     
             modal.find('.tpprice').val(`${data.curr}`);
@@ -292,44 +293,44 @@
 @endpush
 
 @push('style')
-<style>
-    #takeProfitModal .modal-title,
-    #takeProfitModal .close {
-        color: hsl(var(--white));
-    }
+    <style>
+        #takeProfitModal .modal-title,
+        #takeProfitModal .close {
+            color: hsl(var(--white));
+        }
 
-    #takeProfitModal .table-sltp thead tr th {
-        background-color: var(--pane-bg) !important;
-        padding: 10px 3px;
-    }
+        #takeProfitModal .table-sltp thead tr th {
+            background-color: var(--pane-bg) !important;
+            padding: 10px 3px;
+        }
 
-    .takeProfitModal-form input,
-    .takeProfitModal-form .input-group-text {
-        background-color: transparent;
-        color: hsl(var(--white));
-        border-color: hsl(var(--white) / 0.2);
-    }
+        .takeProfitModal-form input,
+        .takeProfitModal-form .input-group-text {
+            background-color: transparent;
+            color: hsl(var(--white));
+            border-color: hsl(var(--white) / 0.2);
+        }
 
-    .takeProfitModal-form .label {
-        color: hsl(var(--white));
-    }
+        .takeProfitModal-form .label {
+            color: hsl(var(--white));
+        }
 
-    .takeProfitModal-form .value-container {
-        display: flex;
-        align-items: center;
-        height: 2.8em;
-        padding: 0 .7em;
-        color: hsl(var(--white));
-        background-color: var(--pane-bg-secondary);
-        border-color: hsl(var(--white) / 0.2);
-        border-radius: .25rem;
-    }
+        .takeProfitModal-form .value-container {
+            display: flex;
+            align-items: center;
+            height: 2.8em;
+            padding: 0 .7em;
+            color: hsl(var(--white));
+            background-color: var(--pane-bg-secondary);
+            border-color: hsl(var(--white) / 0.2);
+            border-radius: .25rem;
+        }
 
-    #incrementtppips,
-    #decrementtppips,
-    #incrementtpprice,
-    #decrementtpprice {
-        cursor: pointer;
-    }
-</style>
+        #incrementtppips,
+        #decrementtppips,
+        #incrementtpprice,
+        #decrementtpprice {
+            cursor: pointer;
+        }
+    </style>
 @endpush

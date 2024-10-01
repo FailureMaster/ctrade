@@ -23,7 +23,7 @@
                             <tr>
                               <td class="symbol-modal text-center" style="color: hsl(var(--white));"></td>
                               <td class="open-price-modal text-center" style="color: hsl(var(--white));"></td>
-                              <td class="current-price-modal text-center" style="color: hsl(var(--white));"></td>
+                              <td class="stop-loss-current-price-modal text-center" style="color: hsl(var(--white));"></td>
                               <td class="volume-modal text-center" style="color: hsl(var(--white));"></td>
                             </tr>
                         </tbody>
@@ -166,7 +166,7 @@
                 submitBtn.prop('disabled', true); 
                 submitBtn.append(' <i class="fa fa-spinner fa-spin"></i>');
                 
-                let current_price = parseFloat($('.current-price-modal').text());
+                let current_price = parseFloat($('.stop-loss-current-price-modal').text());
                 let price = parseFloat($('.slprice').val());
                 
                 let stop_loss_close_at_high = current_price > price ? 0 : 1;
@@ -222,7 +222,7 @@
                 : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
     
             if (isSLUpdateModalContent) {
-                $('.current-price-modal').text(`${parseFloat(current_price)}`);
+                $('#stopLossModal .stop-loss-current-price-modal').text(`${parseFloat(current_price)}`);
                 $('.slprice').val(`${parseFloat(current_price)}`);
                 $('.plvalue').text(`${parseInt($('.slpipsequivalent').text()) + Math.abs(total_price)}`);
             }
@@ -241,7 +241,7 @@
             
             modal.find('.symbol-modal').text(`${data.symbol}`);
             modal.find('.open-price-modal').text(`${data.open}`);
-            modal.find('.current-price-modal').text(`${data.curr}`);
+            // modal.find('.stop-loss-current-price-modal').text(`${data.curr}`);
             modal.find('.volume-modal').text(`${data.volume}`);
     
             modal.find('.slprice').val(`${data.curr}`);

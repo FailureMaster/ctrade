@@ -26,7 +26,7 @@
                             <tr>
                               <td class="symbol-modal text-center"></td>
                               <td class="open-price-modal text-center"></td>
-                              <td class="current-price-modal text-center"></td>
+                              <td class="close-current-price-modal text-center"></td>
                               <td class="volume-modal text-center"></td>
                             </tr>
                         </tbody>
@@ -63,8 +63,21 @@
         function updateModalContent(order, jsonData) {
             var modal = $('#confirmationModal');
     
-            let current_price = jsonData[order.pair.symbol];
+            let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
+            
+            current_price = parseFloat(current_price);
     
+            if (order.pair.symbol === 'GOLD') {
+                if (parseInt(order.order_side) === 2) {
+                    current_price = (current_price * 0.0003) + current_price;
+                }
+                current_price = current_price.toFixed(2);
+            } else {
+                if (parseInt(order.order_side) === 2) {
+                    current_price = (current_price * 0.0003) + current_price;
+                }
+                current_price = formatWithPrecision(current_price); 
+            }
             let lotValue = order.pair.percent_charge_for_buy;
     
             let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
@@ -81,6 +94,7 @@
             } else if (profitValue > 0) {
                 profitModal.removeClass('text-danger').addClass('text-success'); // Add green class for positive profit
             }
+            $('#confirmationModal .close-current-price-modal').text(`${current_price}`);
         }
     
         $(document).on('click','.confirmationBtn', function () {
@@ -95,7 +109,7 @@
             modal.find('.modal-title').text(`${data.title}`);
             modal.find('.symbol-modal').text(`${data.symbol}`);
             modal.find('.open-price-modal').text(`${data.open}`);
-            modal.find('.current-price-modal').text(`${data.curr}`);
+            modal.find('.close-current-price-modal').text(`${data.curr}`);
             modal.find('.volume-modal').text(`${data.volume}`);
     
             let profitModal = modal.find('.profit-modal');
@@ -152,7 +166,7 @@
             modal.find('.modal-title').text('');
             modal.find('.symbol-modal').text('');
             modal.find('.open-price-modal').text('');
-            modal.find('.current-price-modal').text('');
+            modal.find('.close-current-price-modal').text('');
             modal.find('.volume-modal').text('');
             modal.find('.profit-modal').text('');
     
