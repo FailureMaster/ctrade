@@ -2,12 +2,10 @@
 @section('panel')
 
 
-
-
 @if(can_access('manage-users'))
 <div class="row mb-none-30 mb-3 align-items-center gy-4">
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'this_month']) }}" icon="las la-users f-size--56" icon_style="false"
+        <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'all_time']) }}" icon="las la-users f-size--56" icon_style="false"
             title="Total Lead" value="{{$widget['total_users']}}" color="primary" />
     </div><!-- dashboard-w1 end -->
     <div class="col-xxl-3 col-sm-6">
@@ -15,12 +13,12 @@
             title="Active Users" icon_style="false" value="{{$widget['verified_users']}}" color="success" />
     </div>
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'this_month'])}}" icon="lar la-envelope f-size--56"
+        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'all_time'])}}" icon="lar la-envelope f-size--56"
             icon_style="false" title="Email Unverified Users" value="{{$widget['email_unverified_users']}}"
             color="danger" />
     </div>
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'this_month'])}}"
+        <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'all_time'])}}"
             icon="las la-comment-slash f-size--56" title="Mobile Unverified Users"
             value="{{$widget['mobile_unverified_users']}}" color="red" />
     </div>
@@ -32,33 +30,37 @@
   
     @if(can_access('manage-currency'))
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.order.history', ['filter' => 'this_month'])}}" icon="las la-list-alt" icon_style="false"
-                    title="Total Orders" value="{{$widget['order_count']['total']}}" color="primary" />
+        <x-widget style="2" link="{{route('admin.deposit.list', ['filter' => 'all_time'])}}" icon="las la-list-alt" icon_style="false"
+            title="Total Deposits" value="${{ showAmount($widget['deposit']['total_deposits']) ?? 0 }}" color="primary" />
     </div><!-- dashboard-w1 end -->
     @endif
     @if(can_access('manage-currency'))
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.order.open', ['filter' => 'this_month'])}}" icon="fa  fa-spinner" icon_style="false"
-                    title="Open Orders" value="{{$widget['order_count']['open']}}" color="info" />
+        <x-widget style="2" link="{{route('admin.order.open', ['filter' => 'all_time'])}}" icon="fa  fa-spinner" icon_style="false"
+            title="Open Orders" value="{{$widget['order_count']['open']}}" color="info" />
     </div>
     <!-- dashboard-w1 end -->
     @endif
     @if(can_access('manage-currency'))
     <div class="col-xxl-3 col-sm-6">
-       <x-widget style="2" link="{{route('admin.order.history')}}?status={{Status::ORDER_CANCELED}}"
-                    icon="las la-times-circle" icon_style="false" title="Close Orders"
-                    value="{{$widget['order_count']['canceled']}}" color="danger" />
+       <x-widget style="2" link="{{route('admin.order.close', ['filter' => 'all_time'])}}?status={{Status::ORDER_CANCELED}}"
+                icon="las la-times-circle" icon_style="false" title="Close Orders"
+                value="{{$widget['order_count']['canceled']}}" color="danger" />
     </div>
     <!-- dashboard-w1 end -->
     @endif
+
+    <div class="col-xxl-3 col-sm-6">
+       <x-widget style="2" link="{{ route('admin.notifications') }}"
+                icon="las la-bell" icon_style="false" title="Notifications"
+                value="{{$notification_count}}" color="warning" />
+
+    </div>
+</div>
 @endif
 
-
-
-<div></div>
-
 @if(can_access('deposits|withdraw'))
-<div class="row mb-none-30 mb-3">
+<div class="row mb-none-30 align-items-center my-4">
     @if(can_access('deposits'))
         <div class="col-lg-6">
             <div class="card h-100">
@@ -139,6 +141,7 @@
     @endif
 </div>
 @endif
+
 @if(can_access('manage-order'))
 <div class="row mb-none-30 mb-3 gy-4">
     <div class="col-lg-12">
@@ -186,8 +189,8 @@
     </div>
 </div>
 @endif
-@if(can_access('report'))
 
+@if(can_access('report'))
 <div class="row mb-none-30 mt-5">
     <div class="col-xl-4 col-lg-6 mb-30">
         <div class="card d-flex flex-column align-items-center justify-content-center pt-4">

@@ -70,6 +70,7 @@ class AdminController extends Controller
 
         $deposit                             = Deposit::with('currency')->where('status', '!=', Status::PAYMENT_INITIATE)->where('status', '!=', Status::PAYMENT_REJECT)->groupBy('currency_id');
         $widget['deposit']['list']           = (clone $deposit)->selectRaw('*,SUM(amount) as total_amount')->orderBy('total_amount', 'DESC')->take(6)->get();
+        $widget['deposit']['total_deposits'] = Deposit::sum('amount');
         $widget['deposit']['currency_count'] = (clone $deposit)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('count');
         $widget['deposit']['currency_symbol']  = (clone $deposit)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('currency.symbol');
 
@@ -116,6 +117,8 @@ class AdminController extends Controller
         ->orderBy('transactions.created_at', 'desc')
         ->limit(25)
         ->get();
+
+        $notification_count = AdminNotification::where('is_read', Status::NO)->count();
         
          // user Browsing, Country, Operating Log
          $userLoginData = UserLogin::where('created_at', '>=', Carbon::now()->subDay(30))->get(['browser', 'os', 'country']);
@@ -130,7 +133,7 @@ class AdminController extends Controller
              return collect($item)->count();
          })->sort()->reverse()->take(5);
 
-        return view('admin.dashboard', compact('pageTitle', 'widget','chart', 'deposits', 'withdrawals'));
+        return view('admin.dashboard', compact('pageTitle', 'widget','chart', 'deposits', 'withdrawals', 'notification_count'));
     }
 
 

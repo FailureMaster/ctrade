@@ -31,7 +31,7 @@
                         </div>
                         <div class="dropdown-menu__body">
                             @foreach($adminNotifications as $notification)
-                                <a href="{{ route('admin.notification.read',$notification->id) }}"
+                                <a href="{{ route('admin.notification.read', $notification->id) }}"
                                     class="dropdown-menu__item">
                                     <div class="navbar-notifi">
                                         <div class="navbar-notifi__right">

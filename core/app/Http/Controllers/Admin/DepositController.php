@@ -200,7 +200,7 @@ class DepositController extends Controller
     {
         $deposit = Deposit::where('id', $id)->where('status', Status::PAYMENT_PENDING)->firstOrFail();
 
-PaymentController::userDataUpdate($deposit, true);
+        PaymentController::userDataUpdate($deposit, true);
 
         $notify[] = ['success', 'Deposit request approved successfully'];
 
