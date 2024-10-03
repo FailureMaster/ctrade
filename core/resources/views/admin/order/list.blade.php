@@ -71,6 +71,7 @@
                             @endphp
                             <thead>
                                 <tr>
+                                    <th class="text-center">@lang('ID')</th>
                                     <th>@lang('Order ID')</th>
                                     <th>@lang('Name')</th>
                                     <th>@lang('Date')</th>
@@ -93,6 +94,9 @@
                             <tbody>
                                 @forelse($orders as $order)
                                     <tr data-order-id="{{ $order->id }}">
+                                        <td>
+                                            <a href="{{ route('admin.users.detail', $order->user_id) }}">{{ optional($order->user)->lead_code }}</a>
+                                        </td>
                                         <td>
                                             <div>
                                                 <input type="hidden" class="rate" value="{{ $order->rate }}">
@@ -263,7 +267,28 @@
                             let symbol = $(this).find('.symbol').val();
 
                             if (jsonData[type] && jsonData[type][symbol]) {
-                                let current_price = parseFloat(jsonData[type][symbol]);
+                                let current_price = jsonData[type][symbol].replace(/,/g, '');
+                                current_price = parseFloat(current_price);
+                                console.log('current price:', current_price);
+                                console.log(jsonData[type][symbol]);
+                                console.log('marketdata', jsonData[type]);
+                                if (symbol === 'GOLD') {
+                                    if (parseInt(order_side) === 2) {
+                                        current_price = (current_price * 0.0003) + current_price;
+                                    }
+                                    current_price = current_price.toFixed(2);
+                                } else {
+                                    if (parseInt(order_side) === 2) {
+                                        current_price = (current_price * 0.0003) + current_price;
+                                    }
+                                    current_price = formatWithPrecision(current_price); 
+                                }
+                                
+                                console.log('type', type);
+                                // console.log('symbol', symbol);
+                                
+                                
+                                // let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
 
                                 let lot_equivalent = lot_value * no_of_lot;
                                 let total_price = order_side == 2
@@ -284,7 +309,7 @@
 
                 fetchMarketData();
 
-                setInterval(fetchMarketData, 1500);
+                setInterval(fetchMarketData, 3000);
             });
 
             $(`select[name=order_side]`).on('change', function(e) {
