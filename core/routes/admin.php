@@ -45,15 +45,18 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
 
     Route::controller('OrderController')->group(function () {
         Route::name('order.')->prefix('order')->group(function () {
+
             Route::get('open', 'open')->name('open');
             Route::get('close', 'close')->name('close');
             Route::get('history', 'history')->name('history');
+            Route::get('manage-level', 'manageLevel')->name('manageLevel');
             
             Route::get('/{order}/edit', 'edit')->name('edit');
             Route::post('/{order}/update', 'update')->name('update');
             Route::post('/{order}/delete', 'destroy')->name('delete');
             
             Route::get('/fetch-market-data', 'fetchMarketData')->name('fetch.market.data');
+
         });
         Route::get('trade/history', 'tradeHistory')->name('trade.history');
     });

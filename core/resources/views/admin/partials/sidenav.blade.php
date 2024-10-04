@@ -64,6 +64,13 @@
                                     <span class="menu-title">@lang('Closed Orders')</span>
                                 </a>
                             </li>
+
+                            <li class="sidebar-menu-item {{menuActive(['admin.order.manageLevel'])}}">
+                                <a href="{{route('admin.order.manageLevel', ['filter' => 'all_time'])}}" class="nav-link">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">@lang('Margin Level')</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>

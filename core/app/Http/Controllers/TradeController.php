@@ -17,6 +17,7 @@ use App\Models\FavoriteSymbol;
 use App\Models\GatewayCurrency;
 use App\Http\Controllers\Controller;
 use App\Models\Fee;
+use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -268,13 +269,11 @@ class TradeController extends Controller
     public function marginlevel(Request $request, $symbol, $status)
     {
         // $exploded_id = explode(',', $request->user_ids);
-        $exploded_id = json_decode( $request->user_ids);
+        $exploded_id = json_decode($request->user_ids);
         
         $validator = Validator::make($request->all(), [
             'status' => 'nullable|in:all,open,canceled,completed'
         ]);
-
-
 
         if ($validator->fails()) {
             return response()->json([
@@ -282,37 +281,33 @@ class TradeController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-
-        $query = Order::with('pair', 'user', 'user.wallets')->whereIn('user_id', $exploded_id);
-
-
-        if ($status == Status::ORDER_OPEN) {
-            $query->where('status', Status::ORDER_OPEN);
-            $query->orderBy('created_at', 'desc');
-        } else {
-            $query->where('status', Status::ORDER_CANCELED);
-            $query->orderBy('updated_at', 'desc');
-        }
-
-        $orders = $query->orderBy('id', 'desc')->get();
         
-        // $marketDataJson = File::get(base_path('resources/data/data.json'));
-        // $marketData = json_decode($marketDataJson);
+        $users = User::with([
+            'orders.pair', 
+            'custom_wallets', 
+            'orders'=> function($query)use($status){
+                if ($status == Status::ORDER_OPEN) {
+                    $query->where('status', Status::ORDER_OPEN);
+                    $query->orderBy('created_at', 'desc');
+                } else {
+                    $query->where('status', Status::ORDER_CANCELED);
+                    $query->orderBy('updated_at', 'desc');
+                }
+            }
+        ])->whereIn('id', $exploded_id)->get();
 
         $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
-        $wallet = Wallet::where('currency_id', 4)
-            ->where('wallet_type', 1)
-            ->where('user_id', auth()->id())
-            ->first();
+        $users= $users->map(function($u){
+            $u->totalRequiredMargin = $u->openOrders()->sum('required_margin');
+            return $u;
+        });
 
         return response()->json([
+            'users' => $users,
             'success' => true,
-            'orders' => $orders,
             'marketData' => $marketData,
-            'totalRequiredMargin' => $this->requiredMarginTotal(),
-            'wallet' => $wallet,
         ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 

@@ -74,6 +74,18 @@ class User extends Authenticatable
         return $this->hasMany(Wallet::class);
     }
 
+    public function custom_wallets()
+    {
+        return $this->hasOne(Wallet::class)->where('currency_id', 4)
+        ->where('wallet_type', 1);
+    }
+
+    public function openOrders()
+    {
+        return $this->hasMany(Order::class)->where('status', Status::ORDER_OPEN);
+        
+    }
+
     public function loginLogs()
     {
         return $this->hasMany(UserLogin::class);
@@ -180,5 +192,10 @@ class User extends Authenticatable
     public function scopeMobileVerified($query)
     {
         return $query->where('sv', Status::VERIFIED);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_id');
     }
 }
