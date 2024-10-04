@@ -224,8 +224,11 @@ class TradeController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-
-        $query = Order::with('pair')->where('user_id', auth()->id());
+        
+        $userId = ($request->input('user_data')) ? $request->input('user_data') : auth()->id();
+        
+        $query = Order::with('pair')->where('user_id', $userId);
+        
 
         // if ($request->status && $request->status != 'all') {
         //     $scope = $request->status;
@@ -242,6 +245,59 @@ class TradeController extends Controller
 
         $orders = $query->orderBy('id', 'desc')->get();
         
+        // $marketDataJson = File::get(base_path('resources/data/data.json'));
+        // $marketData = json_decode($marketDataJson);
+
+        $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
+        $marketData = json_decode($marketDataJson);
+
+        $wallet = Wallet::where('currency_id', 4)
+            ->where('wallet_type', 1)
+            ->where('user_id', $userId)
+            ->first();
+
+       
+        return response()->json([
+            'success' => true,
+            'orders' => $orders,
+            'marketData' => $marketData,
+            'totalRequiredMargin' => $this->requiredMarginTotal(),
+            'wallet' => $wallet,
+        ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+
+    public function marginlevel(Request $request, $symbol, $status)
+    {
+        // $exploded_id = explode(',', $request->user_ids);
+        $exploded_id = json_decode( $request->user_ids);
+        
+        $validator = Validator::make($request->all(), [
+            'status' => 'nullable|in:all,open,canceled,completed'
+        ]);
+
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->all()
+            ]);
+        }
+
+        $query = Order::with('pair', 'user', 'user.wallets')->whereIn('user_id', $exploded_id);
+
+
+        if ($status == Status::ORDER_OPEN) {
+            $query->where('status', Status::ORDER_OPEN);
+            $query->orderBy('created_at', 'desc');
+        } else {
+            $query->where('status', Status::ORDER_CANCELED);
+            $query->orderBy('updated_at', 'desc');
+        }
+
+        $orders = $query->orderBy('id', 'desc')->get();
+        
+        dd($orders);
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
 

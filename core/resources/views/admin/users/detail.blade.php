@@ -649,138 +649,164 @@
 </style>
 @endpush
 @push('script')
-<script>
-    (function ($) {
-        "use strict";
+    <script>
+        (function ($) {
+            "use strict";
 
-        let equity = 0;
-        let pl = 0;
-        let total_open_order_profit = 0;
-        let free_margin = 0;
-        let total_amount = 0;
-        let total_used_margin = 0;
-        let margin_level = 0;
-    
-        $('.bal-btn').click(function () {
-            var act = $(this).data('act');
-            $('#addSubModal').find('input[name=act]').val(act);
-            if (act == 'add') {
-                $('.type').text('Add');
-            } else {
-                $('.type').text('Subtract');
-            }
-        });
-
-        let mobileElement = $('.mobile-code');
-
-        $('select[name=country]').change(function () {
-            mobileElement.text(`+${$('select[name=country] :selected').data('mobile_code')}`);
-        });
-
-        $('select[name=country]').val('{{@$user->country_code}}');
-
-        let dialCode = $('select[name=country] :selected').data('mobile_code');
-        let mobileNumber = `{{ $user->mobile }}`;
-
-        mobileNumber = mobileNumber.replace(dialCode, '');
-        $('input[name=mobile]').val(mobileNumber);
-        mobileElement.text(`+${dialCode}`);
-
-        $('select[name=wallet]').on('change', function (e) {
-            let symbol = $(this).find('option:selected').data('symbol');
-            $(`.wallet-cur-symbol`).text(symbol);
-        });
-
-        $('.select2').select2({
-            dropdownParent: $(`.position-relative`)
-        });
-
-        function generateOrderRow(order, jsonData) {
-            let current_price = jsonData[order.pair.symbol]
-            let lotValue = order.pair.percent_charge_for_buy;
-            
-            let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
-            let total_price = parseInt(order.order_side) === 2
-                ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent))
-                : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
-            total_open_order_profit = parseFloat(total_open_order_profit) + parseFloat(total_price);
-            total_amount = parseFloat(total_amount) + parseFloat(formatWithPrecision1(order.amount));
-        }
-
-        function fetchOrderHistory() {
-            let actionUrl = "{{ route('trade.order.list', ['pairSym' => @$pair->symbol ?? 'default_symbol', 'status' => 0 ]) }}";
-            $.ajax({
-                url: actionUrl,
-                type: "GET",
-                dataType: 'json',
-                cache: false,
-                data: {},
-                success: function(resp) {
-                    
-                    let html = '';
-                    let initial_equity = Number(resp.wallet.balance) + Number(resp.wallet.bonus) + Number(resp.wallet.credit);
-
-                    equity = 0;
-                    pl = 0;
-                    total_open_order_profit = 0;
-                    total_amount = 0;
-                    let jsonMarketData = resp.marketData;
-                    
-                    if (resp.orders && resp.orders.length > 0) {
-                        resp.orders.forEach(order => {
-                            html += generateOrderRow(order, jsonMarketData[order.pair.type]);
-                        });
-                        
-                        pl = total_open_order_profit;
-                        equity = initial_equity + pl;
-
-                        if (equity < 0) {
-                            equity = 0;
-                        }
-                        
-                    } else {
-                        pl = 0;
-                        equity = initial_equity;
-
-                        if (equity < 0) {
-                            equity = 0;
-                        }
-                    }
-
-                    if (resp.totalRequiredMargin === 0) {
-                        margin_level = 0;
-                    } else {
-                        margin_level = (equity / resp.totalRequiredMargin) * 100;
-                    }
-
-                    let bonus = parseFloat({{ @$marketCurrencyWallet->bonus }}) || 0;
-                    let credit = parseFloat({{ @$marketCurrencyWallet->credit }}) || 0;
-            
-                    free_margin = equity - Math.abs(pl) - resp.totalRequiredMargin;
-                    document.querySelector(".admin-free-margin-val").innerText = `${formatWithPrecision1(free_margin + bonus + credit)} USD`;
-                    
-                    $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
-                    $('.admin-pl-val').html(`${formatWithPrecision1(pl)} USD`);
-                    $('.admin-user_margin_level').html(`${formatWithPrecision1(margin_level)} %`);
-                    
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error fetching order history: ", error);
+            let equity = 0;
+            let pl = 0;
+            let total_open_order_profit = 0;
+            let free_margin = 0;
+            let total_amount = 0;
+            let total_used_margin = 0;
+            let margin_level = 0;
+        
+            $('.bal-btn').click(function () {
+                var act = $(this).data('act');
+                $('#addSubModal').find('input[name=act]').val(act);
+                if (act == 'add') {
+                    $('.type').text('Add');
+                } else {
+                    $('.type').text('Subtract');
                 }
             });
-        }
 
-        function formatWithPrecision(value, precision = 5) {
-            return Number(value).toFixed(precision);
-        }
-        function formatWithPrecision1(value, precision = 2) {
-            return Number(value).toFixed(precision);
-        }
+            let mobileElement = $('.mobile-code');
 
-        setInterval(function func() { 
-            fetchOrderHistory()
-            return func; 
-        }(), 1500); 
-    })(jQuery);
-</script>
+            $('select[name=country]').change(function () {
+                mobileElement.text(`+${$('select[name=country] :selected').data('mobile_code')}`);
+            });
+
+            $('select[name=country]').val('{{@$user->country_code}}');
+
+            let dialCode = $('select[name=country] :selected').data('mobile_code');
+            let mobileNumber = `{{ $user->mobile }}`;
+
+            mobileNumber = mobileNumber.replace(dialCode, '');
+            $('input[name=mobile]').val(mobileNumber);
+            mobileElement.text(`+${dialCode}`);
+
+            $('select[name=wallet]').on('change', function (e) {
+                let symbol = $(this).find('option:selected').data('symbol');
+                $(`.wallet-cur-symbol`).text(symbol);
+            });
+
+            $('.select2').select2({
+                dropdownParent: $(`.position-relative`)
+            });
+
+            function generateOrderRow(order, jsonData) {
+                // let current_price = jsonData[order.pair.symbol]
+                let current_price = jsonData[order.pair.symbol].replace(/,/g, '')
+            
+                current_price = parseFloat(current_price);
+                if (order.pair.symbol === 'GOLD') {
+                    if (parseInt(order.order_side) === 2) {
+                        current_price = (current_price * 0.0003) + current_price;
+                    }
+                    current_price = current_price.toFixed(2);
+                } else {
+                    if (parseInt(order.order_side) === 2) {
+                        current_price = (current_price * 0.0003) + current_price;
+                    }
+                    current_price = formatWithPrecision(current_price); 
+                }
+                let lotValue = order.pair.percent_charge_for_buy;
+
+                
+                let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+                let total_price = parseInt(order.order_side) === 2
+                    ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent))
+                    : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
+                total_open_order_profit = parseFloat(total_open_order_profit) + parseFloat(total_price);
+                total_amount = parseFloat(total_amount) + parseFloat(formatWithPrecision1(order.amount));
+            }
+
+            function fetchOrderHistory() {
+                // Get the current URL
+                let currentUrl = window.location.href;
+
+                // Extract the user ID from the current URL
+                let userId = currentUrl.match(/\/detail\/(\d+)/)[1]; // This extracts '1' from the current URL
+
+
+                let actionUrl = "{{ route('trade.order.list', ['pairSym' => @$pair->symbol ?? 'default_symbol', 'status' => 0 ]) }}";
+                $.ajax({
+                    url: actionUrl,
+                    type: "GET",
+                    dataType: 'json',
+                    cache: false,
+                    data: {user_data: userId },
+                    success: function(resp) {
+                        console.log('ito resposne', resp);
+                        
+                        let html = '';
+                        let initial_equity = Number(resp.wallet.balance) + Number(resp.wallet.bonus) + Number(resp.wallet.credit);
+                        
+                        equity = 0;
+                        pl = 0;
+                        total_open_order_profit = 0;
+                        total_amount = 0;
+                        let jsonMarketData = resp.marketData;
+                        
+                        if (resp.orders && resp.orders.length > 0) {
+                            
+                            
+                            resp.orders.forEach(order => {
+                                html += generateOrderRow(order, jsonMarketData[order.pair.type]);
+                            });
+                            
+                            pl = total_open_order_profit;
+                            equity = initial_equity + pl;
+
+                            if (equity < 0) {
+                                equity = 0;
+                            }
+                            
+                        } else {
+                            pl = 0;
+                            equity = initial_equity;
+
+                            if (equity < 0) {
+                                equity = 0;
+                            }
+                        }
+
+                        if (resp.totalRequiredMargin === 0) {
+                            margin_level = 0;
+                        } else {
+                            margin_level = (equity / resp.totalRequiredMargin) * 100;
+                        }
+
+                        let bonus = parseFloat({{ @$marketCurrencyWallet->bonus }}) || 0;
+                        let credit = parseFloat({{ @$marketCurrencyWallet->credit }}) || 0;
+                
+                        // free_margin = equity - Math.abs(pl) - resp.totalRequiredMargin;
+                        free_margin = equity - resp.totalRequiredMargin;
+                        document.querySelector(".admin-free-margin-val").innerText = `${formatWithPrecision1(free_margin)} USD`;
+                        
+                        $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
+                        $('.admin-pl-val').html(`${formatWithPrecision1(pl)} USD`);
+                        $('.admin-user_margin_level').html(`${formatWithPrecision1(margin_level)} %`);
+                        
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching order history: ", error);
+                    }
+                });
+            }
+
+            function formatWithPrecision(value, precision = 5) {
+                return Number(value).toFixed(precision);
+            }
+            function formatWithPrecision1(value, precision = 2) {
+                return Number(value).toFixed(precision);
+            }
+
+            setInterval(function func() { 
+                fetchOrderHistory()
+                return func; 
+            }(), 3000); 
+        })(jQuery);
+    </script>
 @endpush
