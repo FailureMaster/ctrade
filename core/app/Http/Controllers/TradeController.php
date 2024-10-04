@@ -228,7 +228,7 @@ class TradeController extends Controller
         $userId = ($request->input('user_data')) ? $request->input('user_data') : auth()->id();
         
         $query = Order::with('pair')->where('user_id', $userId);
-        
+      
 
         // if ($request->status && $request->status != 'all') {
         //     $scope = $request->status;
@@ -255,13 +255,12 @@ class TradeController extends Controller
             ->where('wallet_type', 1)
             ->where('user_id', $userId)
             ->first();
-
        
         return response()->json([
             'success' => true,
             'orders' => $orders,
             'marketData' => $marketData,
-            'totalRequiredMargin' => $this->requiredMarginTotal(),
+            'totalRequiredMargin' => $this->requiredMarginTotal($userId),
             'wallet' => $wallet,
         ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
@@ -297,7 +296,6 @@ class TradeController extends Controller
 
         $orders = $query->orderBy('id', 'desc')->get();
         
-        dd($orders);
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
 
@@ -417,8 +415,9 @@ class TradeController extends Controller
         ]);
     }
     
-    public function requiredMarginTotal()
+    public function requiredMarginTotal($id=null)
     {
-        return Order::where('user_id', auth()->id())->open()->sum('required_margin');
+        $uid = (!$id) ? auth()->id() : $id;
+        return Order::where('user_id', $uid)->open()->sum('required_margin');
     }
 }
