@@ -94,12 +94,13 @@ class CoinPairController extends Controller
         }
 
         $request->validate([
-            'market' => "required|integer",
-            'coin' => "nullable|integer",
-            'percent_charge_for_buy' => 'required|numeric|gte:0|lt:100',
-            'percent_charge_for_sell' => 'required|numeric|gte:0',
-            'listed_market_name' => 'required',
-            'symbol' => 'required|string',
+            'market'                    => "required|integer",
+            'coin'                      => "nullable|integer",
+            'percent_charge_for_buy'    => 'required|numeric|gte:0|lt:100',
+            'percent_charge_for_sell'   => 'required|numeric|gte:0',
+            'listed_market_name'        => 'required',
+            'symbol'                    => 'required|string',
+            'spread'                    => 'required|numeric|min:0|max:1|regex:/^\d+(\.\d{1,4})?$/'
         ]);
 
         $market = Market::where('id', $request->market)
@@ -109,32 +110,36 @@ class CoinPairController extends Controller
             ->active()
             ->first();
 
-        if (!$market)
+        if (!$market){
             return returnBack("Selected market is invalid.");
-
-        if (strtoupper($market->currency->symbol) == strtoupper($request->symbol))
-            return returnBack("Market currency & coin can't be the same.", "error", true);
-
-        $symbol = strtoupper($request->symbol) . '_' . $market->currency->symbol;
-        $alreadyExists = CoinPair::where('id', '!=', $id)->where('symbol', $symbol)->exists();
-
-        if ($alreadyExists)
-            return returnBack("Can't make one more coin pair with the same currency & market", "error", true);
-
-        if ($id) {
-            $message = "CoinPair updated successfully";
-            $coinPair = CoinPair::findOrFail($id);
-        } else {
-            $message = "CoinPair saved successfully";
-            $coinPair = new CoinPair();
-            $coinPair->market_id = $request->market;
         }
 
-        $coinPair->custom_symbol = $request->custom_symbol ? Status::YES : Status::NO;
-        $coinPair->symbol = $symbol;
-        $coinPair->percent_charge_for_sell = $request->percent_charge_for_sell;
-        $coinPair->percent_charge_for_buy = $request->percent_charge_for_buy;
-        $coinPair->listed_market_name = strtoupper($request->listed_market_name);
+        if (strtoupper($market->currency->symbol) == strtoupper($request->symbol)){
+            return returnBack("Market currency & coin can't be the same.", "error", true);
+        }
+
+        $symbol         = strtoupper($request->symbol) . '_' . $market->currency->symbol;
+        $alreadyExists  = CoinPair::where('id', '!=', $id)->where('symbol', $symbol)->exists();
+
+        if ($alreadyExists){
+            return returnBack("Can't make one more coin pair with the same currency & market", "error", true);
+        }
+
+        if ($id) {
+            $message                = "CoinPair updated successfully";
+            $coinPair               = CoinPair::findOrFail($id);
+        } else {
+            $message                = "CoinPair saved successfully";
+            $coinPair               = new CoinPair();
+            $coinPair->market_id    = $request->market;
+        }
+
+        $coinPair->custom_symbol            = $request->custom_symbol ? Status::YES : Status::NO;
+        $coinPair->symbol                   = $symbol;
+        $coinPair->percent_charge_for_sell  = $request->percent_charge_for_sell;
+        $coinPair->percent_charge_for_buy   = $request->percent_charge_for_buy;
+        $coinPair->listed_market_name       = strtoupper($request->listed_market_name);
+        $coinPair->spread                   = $request->spread;
 
         if ($request->is_default) {
             CoinPair::where('id', '!=', $id)->where('is_default', Status::YES)->update(['is_default' => Status::NO]);
@@ -151,7 +156,7 @@ class CoinPairController extends Controller
         $marketData = MarketData::where('pair_id', $coinPair->id)->where('currency_id', 0)->first();
 
         if (!$marketData) {
-            $marketData = new MarketData();
+            $marketData          = new MarketData();
             $marketData->pair_id = $coinPair->id;
         }
         $marketData->symbol = $coinPair->symbol;
@@ -163,18 +168,20 @@ class CoinPairController extends Controller
     public function update($request, $id)
     {
         $request->validate([
-            'percent_charge_for_sell' => 'required|numeric|gte:0',
-            'percent_charge_for_buy' => 'required|numeric|gte:0',
-            'level_percent' => 'required|numeric|gte:0',
-            'listed_market_name' => 'required',
+            'percent_charge_for_sell'   => 'required|numeric|gte:0',
+            'percent_charge_for_buy'    => 'required|numeric|gte:0',
+            'level_percent'             => 'required|numeric|gte:0',
+            'listed_market_name'        => 'required',
+            'spread'                    => 'required|numeric|min:0|max:1|regex:/^\d+(\.\d{1,4})?$/'
         ]);
 
         $coinPair = CoinPair::findOrFail($id);
 
-        $coinPair->percent_charge_for_sell = $request->percent_charge_for_sell;
-        $coinPair->percent_charge_for_buy = $request->percent_charge_for_buy;
-        $coinPair->level_percent = $request->level_percent;
-        $coinPair->listed_market_name = strtoupper($request->listed_market_name);
+        $coinPair->percent_charge_for_sell  = $request->percent_charge_for_sell;
+        $coinPair->percent_charge_for_buy   = $request->percent_charge_for_buy;
+        $coinPair->level_percent            = $request->level_percent;
+        $coinPair->listed_market_name       = strtoupper($request->listed_market_name);
+        $coinPair->spread                   = $request->spread;
 
         $coinPair->save();
 

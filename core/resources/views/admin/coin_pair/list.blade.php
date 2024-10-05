@@ -20,7 +20,7 @@
                                     <th>@lang('Leverege')</th>
                                     <th>@lang('Lots')</th>
                                     <th>@lang('Level')</th>
-                                    <th>@lang('Status')</th>
+                                    <th>@lang('Spread')</th>
                                     <th id="thAction">@lang('Action')</th>
                                 </tr>
                             </thead>
@@ -43,7 +43,7 @@
                                         <td>{{ showAmount($pair->percent_charge_for_sell) }}</td>
                                         <td>{{ showAmount($pair->percent_charge_for_buy) }}  </td>
                                          <td>{{ showAmount($pair->level_percent) }}  </td>
-                                        <td>@php  echo $pair->statusBadge @endphp</td>
+                                        <td>{{$pair->spread}}</td>
                                         <td>
                                             <div class="button--group">
                                                 <a href="{{ route('admin.coin.pair.edit', $pair->id) }}"

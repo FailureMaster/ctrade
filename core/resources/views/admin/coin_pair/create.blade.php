@@ -67,6 +67,16 @@
                                     
                                 </div>
                             </div>
+                            <div class="form-group col-sm-6">
+                                <label>@lang('Spread')</label>
+                               
+                                <div class="input-group">
+                                    <input type="number" step="any" class="form-control" name="spread"
+                                        value="{{old('spread', @$coinPair->spread)}}"
+                                        required>
+                                    
+                                </div>
+                            </div>
                             <div class="form-group col-sm-6 d-none">
                                 <label>@lang('Listed Market Name')</label>
                                 
