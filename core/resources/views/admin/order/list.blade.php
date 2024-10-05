@@ -295,7 +295,7 @@
                                     ? formatWithPrecision(((rate - current_price) * lot_equivalent))
                                     : formatWithPrecision(((current_price - rate) * lot_equivalent));
 
-                                $(this).find('.order_profit').text(formatWithPrecision(total_price));
+                                $(this).find('.order_profit').text(formatWithPrecision1(total_price));
                             } else {
                                 console.error(`Current price not found for type: ${type}, symbol: ${symbol}`);
                             }
@@ -304,6 +304,9 @@
                 }
 
                 function formatWithPrecision(value, precision = 5) {
+                    return Number(value).toFixed(precision);
+                }
+                function formatWithPrecision1(value, precision = 2) {
                     return Number(value).toFixed(precision);
                 }
 
