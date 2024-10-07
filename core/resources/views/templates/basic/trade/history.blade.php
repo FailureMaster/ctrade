@@ -65,14 +65,14 @@
     
      <div class="summary-container">
             <h2>History</h2>
-    <table>
+    <table style="display: inline-table;">
         <thead>
             <tr>
                 <th></th> <!-- Empty for chevron icon -->
                 <th>ID</th>
                 <th>Symbol</th>
                 <th>Type</th>
-                <th>Volume</th>
+                {{-- <th>Volume</th> --}}
                 <th>Profit</th>
             </tr>
         </thead>
@@ -137,26 +137,33 @@ $(document).ready(function() {
         
         
         if (window.innerWidth < 579) {
+
+            let is_collapsed = 0;
+
+            if (openRowsHistory.includes(`collapse${order.id}`)) {
+                is_collapsed = 1;
+            }
+
             return `
                
                     
-                    <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}">
+                    <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
                     <td><span class="chevron"  ></span></td>
                     <td>#${order.id}</td>
                     <td>${order.pair.symbol.replace('_', '/')}</td>
                     <td class="buy">${order.order_side_badge}</td>
-                    <td class="text-center">${removeTrailingZeros(order.no_of_lot)}</td>
                     <td class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</td>
                 </tr>
                     
-                <tr id="collapse${order.id}" class="collapse" aria-labelledby="heading${order.id}">
+                <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}">
                     <td colspan="6">
-                        <strong>Date:</strong> ${order.formatted_date}<br>
-                        <strong>Open Price:</strong> ${formatWithPrecision(order.rate)}<br>
-                        <strong>Closed Price:</strong> <span>${removeTrailingZeros(formatWithPrecision(order.closed_price)) || 0}</span><br>
-                        <strong>Stop Loss:</strong> ${order.stop_loss ? formatWithPrecision(order.stop_loss) : '-'}<br>
-                        <strong>Take Profit:</strong> ${order.take_profit ? formatWithPrecision(order.take_profit) : '-'}<br>
-                        <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br>
+                        <strong>Date:</strong> ${order.formatted_date}<br><br>
+                        <strong>Open Price:</strong> ${formatWithPrecision(order.rate)}<br><br>
+                        <strong>Closed Price:</strong> <span>${removeTrailingZeros(formatWithPrecision(order.closed_price)) || 0}</span><br><br>
+                        <strong>Stop Loss:</strong> ${order.stop_loss ? formatWithPrecision(order.stop_loss) : '-'}<br><br>
+                        <strong>Take Profit:</strong> ${order.take_profit ? formatWithPrecision(order.take_profit) : '-'}<br><br>
+                        <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
+                        <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br><br>
                         <strong>Status:</strong> ${order.status_badge}<br>
                     </td>
                 </tr>
@@ -196,6 +203,8 @@ $(document).ready(function() {
             @endif
         `;
     }
+
+    let openRowsHistory = [];
     
     function fetchHistory() {
         let actionUrl = "{{ route('trade.order.list', ['pairSym' => @$pair->symbol ?? 'default_symbol', 'status' => 'history' ]) }}";
@@ -228,8 +237,16 @@ $(document).ready(function() {
     
     fetchHistory();
     setInterval(function() {
+
+        openRowsHistory = [];
+
+        // Collect IDs of open rows, To retain open state of accordion
+        document.querySelectorAll('.collapse.show').forEach(row => {
+            openRowsHistory.push(row.id);
+        })
+
         fetchHistory();
-    }, 1000);
+    }, 3000);
     setInterval(function func() { 
         return func; 
     }(), 10000); 

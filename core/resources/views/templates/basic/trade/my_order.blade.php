@@ -71,7 +71,7 @@
         </div>
     </div>
 </div>
-<div class="trading-table__mobile" style="margin-top: 0px">
+<div class="trading-table__mobile" style="margin-top: 0px;margin-bottom:80px;">
     <!--<div class="card order-list-body">-->
     <!--  {{-- Data will be added here dynamically --}}-->
     <!--</div>-->
@@ -79,16 +79,16 @@
             <h2>Orders</h2>
             
     
-        <table id="tablesOrder">
+        <table id="tablesOrder" style="display: inline-table;">
             <thead>
-                <tr>
+                <!-- <tr> -->
                     <th></th> <!-- Empty for chevron icon -->
                     <th>ID</th>
                     <th>Symbol</th>
                     <th>Type</th>
-                    <th>Volume</th>
+                    <!-- <th>Volume</th> -->
                     <th>Profit</th>
-                </tr>
+                <!-- </tr> -->
             </thead>
             <tbody class="order-list-body">
                 <!-- Order Row 1 -->
@@ -150,8 +150,8 @@ $(document).ready(function() {
             method: 'GET',
             success: function(response) {
                 $('#balance_span').html(`${formatWithPrecision1(response.balance)}`);
-                $('#bonus-span').html(`${formatWithPrecision1(response.bonus)}`);
-                $('#credit-span').html(`${formatWithPrecision1(response.credit)}`);
+                $('#bonus-span').html(`${formatWithPrecision1(response.bonus)} $`);
+                $('#credit-span').html(`${formatWithPrecision1(response.credit)} $`);
                 balance = parseFloat(response.balance) || 0
             },
             error: function(xhr, status, error) {
@@ -160,18 +160,21 @@ $(document).ready(function() {
     }
     
     function generateOrderRow(order, jsonData) {
-        let current_price = jsonData[order.pair.symbol].replace(/,/g, '')
-        
-        current_price = parseFloat(current_price);
+        // sell price is current price from API
+        // buy price is when you add the spread.
+         
+        let current_price   = jsonData[order.pair.symbol].replace(/,/g, '')
+        let spread          = order.pair.spread;
 
+        current_price = parseFloat(current_price);
         if (order.pair.symbol === 'GOLD') {
             if (parseInt(order.order_side) === 2) {
-                current_price = (current_price * 0.0003) + current_price;
+                current_price = (current_price * spread) + current_price;
             }
             current_price = current_price.toFixed(2);
         } else {
             if (parseInt(order.order_side) === 2) {
-                current_price = (current_price * 0.0003) + current_price;
+                current_price = (current_price * spread) + current_price;
             }
             current_price = formatWithPrecision(current_price); 
         }
@@ -218,6 +221,7 @@ $(document).ready(function() {
                 >@lang('Close')</button>
             ` : '';
             
+        
         let slButtonLabel = order.stop_loss ? formatWithPrecision(order.stop_loss) : "{{ __('SL') }}";
         let tpButtonLabel = order.take_profit ? formatWithPrecision(order.take_profit) : "{{ __('TP') }}";
 
@@ -263,8 +267,6 @@ $(document).ready(function() {
         
         let profitClass = total_price <= 0 ? 'text-danger' : 'text-success';
         
-       
-        
         let orderSideBadge = (order.order_side == 2) ? 'S' : 'B';  // Check if sell (2) or buy (1)
         let badgeClass = (order.order_side == 2) ? 'text-danger' : 'text-success'; // Red for sell, green for buy
 
@@ -279,32 +281,26 @@ $(document).ready(function() {
 
             return `
                     <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
-                        <td><span class="chevron"  ></span></td>
+                        <td><span class="chevron"></span></td>
                         <td>#${order.id}</td>
                         <td>${order.pair.symbol.replace('_', '/')}</td>
                         <td class="buy">${order.order_side_badge}</td>
-                        <td class="text-center">${removeTrailingZeros(order.no_of_lot)}</td>
+                        
                         <td class="${ total_price < 0 ? 'negative' : 'text-success'}" id="orderTest_${order.id}">${total_price}</td>
                     </tr>
-                    
-            
                     
                     <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
                         <td colspan="6">
                             <strong>Date:</strong> ${order.formatted_date}<br><br>
                             <strong>Open price:</strong>  ${formatWithPrecision(order.rate)} <br><br>
                             <strong>Current price:</strong> ${current_price}<br><br>
+                            <strong>Current price:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
                             <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
                         </td>
                     </tr>
-                
-                
             `;
         }
-
-
-
-            
+   
         return `
             @if (App::getLocale() != 'ar')
                 <tr data-order-id="${order.id}">
@@ -315,10 +311,10 @@ $(document).ready(function() {
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
                     <td class="text-center p-2">${formatWithPrecision(order.rate)}</td>
                     <td class="text-center p-2"><span id="currentprice${i++}">${current_price}</span></td>
-                    <td class="text-center p-2">${formatWithPrecision(order.required_margin)}</td>
+                    <td class="text-center p-2">${formatWithPrecision1(order.required_margin)}</td>
                     <td class="text-center p-2">${buttonStopLoss}</td>
                     <td class="text-center p-2">${buttonTakeProfit}</td>
-                    <td class="text-center p-2"> <span class="${profitClass}">${total_price}</span></td>
+                    <td class="text-center p-2"> <span class="${profitClass}">${formatWithPrecision1(total_price)}</span></td>
                     <td class="text-center p-2">${order.status_badge}</td>
                     <td class="text-center p-2">${button}</td>
                 </tr>
@@ -326,7 +322,7 @@ $(document).ready(function() {
                 <tr data-order-id="${order.id}">
                     <td class="text-center p-2">${button}</td>
                     <td class="text-center p-2">${order.status_badge}</td>
-                    <td class="text-center p-2"> <span class="${profitClass}">${total_price}</span></td>
+                    <td class="text-center p-2"> <span class="${profitClass}">${formatWithPrecision1(total_price)}</span></td>
                     <td class="text-center p-2">${buttonTakeProfit}</td>
                     <td class="text-center p-2">${buttonStopLoss}</td>
                     <td class="text-center p-2">${formatWithPrecision(order.required_margin)}</td>
@@ -348,7 +344,6 @@ $(document).ready(function() {
 
     function fetchOrderHistory() {
 
-        console.log('closing status: ' + isClosingAllOrders);
 
         if (isClosingAllOrders) return;
 
@@ -360,10 +355,9 @@ $(document).ready(function() {
             cache: false,
             data: {},
             success: function(resp) {
-                console.log(resp);
                 let html = '';
                 let initial_equity = Number(resp.wallet.balance) + Number(resp.wallet.bonus) + Number(resp.wallet.credit)
-
+                
                 equity = 0;
                 pl = 0;
                 total_open_order_profit = 0;
@@ -371,6 +365,7 @@ $(document).ready(function() {
                 total_used_margin = 0;
 
                 let jsonMarketData = resp.marketData;
+
                 
                 if (resp.orders && resp.orders.length > 0) {
                     resp.orders.forEach(order => {
@@ -379,7 +374,6 @@ $(document).ready(function() {
 
                     pl = total_open_order_profit;
                     equity = initial_equity + pl;
-                    
                     if (equity < 0) {
                         equity = 0;
                     }
@@ -431,8 +425,8 @@ $(document).ready(function() {
     fetchOrderHistory();
 
     function isDesktopOrLaptop() {
-    return window.innerWidth > 768; // or any other width you consider appropriate
-}
+        return window.innerWidth > 768; // or any other width you consider appropriate
+    }
 
 
     setInterval(function() {
@@ -445,7 +439,6 @@ $(document).ready(function() {
         });
 
         updateBalance();
-
         fetchOrderHistory();
 
     }, 3000);
@@ -473,7 +466,6 @@ $(document).ready(function() {
     }
     
     function closeAllOrders(response) {
-        console.log('closing...')
         const token = "{{ csrf_token() }}";
     
         let jsonMarketData = response.marketData;
@@ -536,7 +528,7 @@ $(document).ready(function() {
             current_price = parseFloat(current_price);
     
             if (parseInt(order.order_side) == 2) {
-                current_price = (current_price * 0.0003) + current_price;
+                current_price = (current_price * order.pair.spread) + current_price;
             }
             
             let lotValue = order.pair.percent_charge_for_buy;
@@ -577,7 +569,6 @@ $(document).ready(function() {
                         profit: parseFloat(total_price)
                     },
                     success: function(resp) {
-                        console.log('Order closed successfully', resp);
                     },
                     error: function(xhr, status, error) {
                         console.error("Error closing order: ", error);
@@ -751,16 +742,30 @@ tr th:last-child {
         font-size: 10px !important;
     }
 
-    #tablesOrder th, #tablesOrder td {
+    /* #tablesOrder th, #tablesOrder td {
         font-size: 10px;
-    }
+    } */
 }
 
-@media (max-width: 360px) {
+/* @media (max-width: 360px) {
     #tablesOrder th, #tablesOrder td {
         font-size: 9px;
     }
+} */
+
+#tableOrder{
+    width: 100%;
+    display: inline-table !important;
 }
 
+#tableOrder td {
+    width: 100%
+}
+
+@media (max-width: 575px) {
+    #tableOrder{
+        display: inline-table !important;
+    }
+}
 </style>
 @endpush
