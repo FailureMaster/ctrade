@@ -105,6 +105,7 @@
                                                 <input type="hidden" class="symbol" value="{{ $order->pair->symbol }}">
                                                 <input type="hidden" class="no_of_lot" value="{{ $order->no_of_lot }}">
                                                 <input type="hidden" class="order_side" value="{{ $order->order_side }}">
+                                                <input type="hidden" class="pair_spread" value="{{ $order->pair->spread }}">
                                                 {{ $order->id }}
                                             </div>
                                         </td>
@@ -241,12 +242,12 @@
 
             $(document).ready(function() {
                 let jsonData = {};
+                //This function gets the commodity, crypto, forex, stocks objects
                 function fetchMarketData() {
                     $.ajax({
                         url: `{{ route('admin.order.fetch.market.data') }}`,
                         method: 'GET',
                         success: function(response) {
-                            console.log(response);
                             jsonData = response;
                             updateOrderProfit();
                         },
@@ -258,38 +259,33 @@
                 function updateOrderProfit() {
                     $.each($('tr[data-order-id]'), function() {
                         $('tr[data-order-id]').each(function() {
-                            let id = $(this).data('order-id');
-                            let rate = $(this).find('.rate').val();
-                            let lot_value = $(this).find('.lot_value').val();
-                            let no_of_lot = $(this).find('.no_of_lot').val();
-                            let order_side = $(this).find('.order_side').val();
-                            let type = $(this).find('.type').val();
-                            let symbol = $(this).find('.symbol').val();
-
+                            let id              = $(this).data('order-id');
+                            let rate            = $(this).find('.rate').val();
+                            let lot_value       = $(this).find('.lot_value').val();
+                            let no_of_lot       = $(this).find('.no_of_lot').val();
+                            let order_side      = $(this).find('.order_side').val();
+                            let type            = $(this).find('.type').val();
+                            let symbol          = $(this).find('.symbol').val();
+                            let spread          = $(this).find('.pair_spread').val();
+                            
                             if (jsonData[type] && jsonData[type][symbol]) {
-                                let current_price = jsonData[type][symbol].replace(/,/g, '');
-                                current_price = parseFloat(current_price);
-                                console.log('current price:', current_price);
-                                console.log(jsonData[type][symbol]);
-                                console.log('marketdata', jsonData[type]);
+                                let current_price   = jsonData[type][symbol].replace(/,/g, '');
+                                current_price       = parseFloat(current_price);
+
                                 if (symbol === 'GOLD') {
                                     if (parseInt(order_side) === 2) {
-                                        current_price = (current_price * 0.0003) + current_price;
+                                        
+                                        
+                                        current_price = (current_price * spread) + current_price;
                                     }
                                     current_price = current_price.toFixed(2);
                                 } else {
                                     if (parseInt(order_side) === 2) {
-                                        current_price = (current_price * 0.0003) + current_price;
+                                        current_price = (current_price * spread) + current_price;
                                     }
                                     current_price = formatWithPrecision(current_price); 
                                 }
                                 
-                                console.log('type', type);
-                                // console.log('symbol', symbol);
-                                
-                                
-                                // let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
-
                                 let lot_equivalent = lot_value * no_of_lot;
                                 let total_price = order_side == 2
                                     ? formatWithPrecision(((rate - current_price) * lot_equivalent))

@@ -130,7 +130,6 @@ $(document).ready(function() {
         
            let profitClass = order.profit <= 0 ? 'text-danger' : 'text-success';
         
-        console.log('check this mike history',order);
         
         let orderSideBadge = (order.order_side == 2) ? 'S' : 'B';  // Check if sell (2) or buy (1)
         let badgeClass = (order.order_side == 2) ? 'text-danger' : 'text-success'; // Red for sell, green for buy
@@ -165,7 +164,6 @@ $(document).ready(function() {
 
             `;
         }
-            
         return `
             @if (App::getLocale() != 'ar')
                 <tr data-order-id="${order.id}">
@@ -229,8 +227,10 @@ $(document).ready(function() {
     }
     
     fetchHistory();
+    setInterval(function() {
+        fetchHistory();
+    }, 1000);
     setInterval(function func() { 
-        
         return func; 
     }(), 10000); 
 });

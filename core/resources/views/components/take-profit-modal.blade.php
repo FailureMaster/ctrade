@@ -168,9 +168,13 @@
                 submitBtn.append(' <i class="fa fa-spinner fa-spin"></i>');
                 
                 let current_price = parseFloat($('.current-price-modal').text());
-                let price = parseFloat($('.tpprice').val());
-                
+                let price = parseFloat($('.tpprice').first().val());
+
+                console.log("Prices Take Profit", price, current_price);
+
                 let take_profit_close_at_high = current_price > price ? 0 : 1;
+
+                console.log(take_profit_close_at_high);
 
                 $.ajax({
                     type:"POST",
@@ -182,9 +186,10 @@
                         _token: "{{ csrf_token() }}"
                     },
                     success:function(data){
-                        notify('success','Take Profit Value Saved!');
+                        notify('success', 'Take Profit Value Saved!');
                         submitBtn.prop('disabled', false);
                         submitBtn.html('Submit Changes');
+                      
                         $('#takeProfitModal').modal('hide');
                     }
                 });
@@ -203,12 +208,12 @@
             
             if (order.pair.symbol === 'GOLD') {
                 if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * 0.0003) + current_price;
+                    current_price = (current_price * order.pair.spread) + current_price;
                 }
                 current_price = current_price.toFixed(2);
             } else {
                 if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * 0.0003) + current_price;
+                    current_price = (current_price * order.pair.spread) + current_price;
                 }
                 current_price = formatWithPrecision(current_price); 
             }
@@ -231,7 +236,6 @@
         $(document).on('click','.takeProfitModalBtn', function () {
             var modal   = $('#takeProfitModal');
             let data    = $(this).data();
-            console.log('lawrence', data);
             
             // Clear previous interval if exists
             clearInterval(intervalId);

@@ -69,12 +69,12 @@
     
             if (order.pair.symbol === 'GOLD') {
                 if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * 0.0003) + current_price;
+                    current_price = (current_price * order.pair.spread) + current_price;
                 }
                 current_price = current_price.toFixed(2);
             } else {
                 if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * 0.0003) + current_price;
+                    current_price = (current_price * order.pair.spread) + current_price;
                 }
                 current_price = formatWithPrecision(current_price); 
             }

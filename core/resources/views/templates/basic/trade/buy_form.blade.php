@@ -614,7 +614,7 @@
         updateLotValues(document.querySelector(".lot-size-select"));
 
         function calculateBuyValue(buyPrice) {
-            return (buyPrice * 0.0003) + buyPrice;
+            return (buyPrice * `{{@$pair->spread}}`) + buyPrice;
         }
         
         function calculateSellValue(sellPrice) {
