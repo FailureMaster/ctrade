@@ -629,20 +629,22 @@
             
             var buyValue = calculateBuyValue(curr_price);
             var sellValue = calculateSellValue(curr_price);
+            
             document.title = `${curr_price} {{@$pair->symbol}}`;
             
-            let buySpan = document.getElementById("buySpan");
             let sellSpan = document.getElementById("sellSpan");
+            let buySpan = document.getElementById("buySpan");
             
-            let buyRate = document.querySelector(".buy-rate");
             let sellRate = document.querySelector(".sell-rate");
+            let buyRate = document.querySelector(".buy-rate");
 
+            let buyDecimal = countDecimalPlaces(sellValue);
             if (coin_symbol === 'GOLD') {
-                buySpan.innerText = removeTrailingZeros(buyValue.toFixed(2));
-                sellSpan.innerText = removeTrailingZeros(sellValue.toFixed(2));
+                sellSpan.innerText  = removeTrailingZeros(sellValue.toFixed(2));
+                buySpan.innerText   = removeTrailingZeros(buyValue.toFixed(buyDecimal));
             } else {
-                buySpan.innerText = removeTrailingZeros((coin_name === 'Crypto' ? buyValue.toFixed(5) : buyValue.toFixed(5)));
-                sellSpan.innerText = removeTrailingZeros((coin_name === 'Crypto' ? sellValue.toFixed(5) : sellValue.toFixed(5)));
+                buySpan.innerText   = removeTrailingZeros((coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue.toFixed(buyDecimal)));
+                sellSpan.innerText  = removeTrailingZeros((coin_name === 'Crypto' ? sellValue.toFixed(5) : sellValue.toFixed(5)));
             }
 
             buyRate.value = buyValue;
@@ -655,6 +657,24 @@
                 buySpan.style.fontWeight = 'normal';
                 sellSpan.style.fontWeight = 'normal';
             }, 100);
+        }
+
+        function countDecimalPlaces(num) {
+            // Convert the number to a string
+            const numStr = num.toString();
+
+            // Check if there is a decimal point
+            const decimalIndex = numStr.indexOf('.');
+
+            // If there's no decimal point, return 0
+            if (decimalIndex === -1) {
+                return 0;
+            }
+
+            // Calculate the number of decimal places
+            const decimalPlaces = numStr.length - decimalIndex - 1;
+
+            return decimalPlaces;
         }
 
         function fetchSymbolCurrentPrice() {
