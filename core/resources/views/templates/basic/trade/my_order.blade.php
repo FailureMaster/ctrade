@@ -118,6 +118,24 @@ function formatWithPrecision1(value, precision = 2) {
 $(document).ready(function() {
     "use strict";
 
+    function countDecimalPlaces(num) {
+        // Convert the number to a string
+        const numStr = num.toString();
+
+        // Check if there is a decimal point
+        const decimalIndex = numStr.indexOf('.');
+
+        // If there's no decimal point, return 0
+        if (decimalIndex === -1) {
+            return 0;
+        }
+
+        // Calculate the number of decimal places
+        const decimalPlaces = numStr.length - decimalIndex - 1;
+
+        return decimalPlaces;
+    }
+
     // Handle caret toggle based on accordion collapse event
     $(document).on('shown.bs.collapse', '.collapse', function () {
         const caretIcon = $(this).prev().find('.caret-icon');
@@ -165,35 +183,39 @@ $(document).ready(function() {
          
         let current_price   = jsonData[order.pair.symbol].replace(/,/g, '')
         let spread          = order.pair.spread;
+        let sellSpan        = $("#sellSpan").text();
 
         current_price = parseFloat(current_price);
+
+        let decimalCount = countDecimalPlaces(current_price);
+        
         if (order.pair.symbol === 'GOLD') {
             if (parseInt(order.order_side) === 2) {
                 current_price = (current_price * spread) + current_price;
             }
-            current_price = current_price.toFixed(2);
+            current_price = current_price.toFixed(decimalCount);
         } else {
             if (parseInt(order.order_side) === 2) {
                 current_price = (current_price * spread) + current_price;
             }
-            current_price = formatWithPrecision(current_price); 
+            current_price = current_price.toFixed(decimalCount); 
         }
         
-        let lotValue = order.pair.percent_charge_for_buy;
+        let lotValue        = order.pair.percent_charge_for_buy;
 
-        let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+        let lotEquivalent   = parseFloat(lotValue) * parseFloat(order.no_of_lot);
 
         let total_price = parseInt(order.order_side) === 2
             ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent))
             : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
 
         total_open_order_profit = parseFloat(total_open_order_profit) + parseFloat(total_price);
-        total_amount = parseFloat(total_amount) + parseFloat(formatWithPrecision1(order.amount));
+        total_amount            = parseFloat(total_amount) + parseFloat(formatWithPrecision1(order.amount));
         
-        let ll_size = parseFloat(document.querySelector('.ll-size-span').innerText);
-        total_used_margin = parseFloat(total_used_margin) + (ll_size / parseFloat(order.pair.percent_charge_for_sell));
+        let ll_size             = parseFloat(document.querySelector('.ll-size-span').innerText);
+        total_used_margin       = parseFloat(total_used_margin) + (ll_size / parseFloat(order.pair.percent_charge_for_sell));
         
-        let actionUrl = `{{ route('user.order.close', [ 'id' => ':id', 'order_side' => ':order_side', 'amount' => ':amount', 'closed_price' => ':closed_price', 'profit' => ':profit' ]) }}`;
+        let actionUrl           = `{{ route('user.order.close', [ 'id' => ':id', 'order_side' => ':order_side', 'amount' => ':amount', 'closed_price' => ':closed_price', 'profit' => ':profit' ]) }}`;
     
         actionUrl = actionUrl
             .replace(':id', order.id)
@@ -309,7 +331,7 @@ $(document).ready(function() {
                     <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
                     <td class="text-center p-2">${order.order_side_badge}</td>
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
-                    <td class="text-center p-2">${formatWithPrecision(order.rate)}</td>
+                    <td class="text-center p-2">${parseFloat(order.rate).toFixed(decimalCount)}</td>
                     <td class="text-center p-2"><span id="currentprice${i++}">${current_price}</span></td>
                     <td class="text-center p-2">${formatWithPrecision1(order.required_margin)}</td>
                     <td class="text-center p-2">${buttonStopLoss}</td>
@@ -531,9 +553,9 @@ $(document).ready(function() {
                 current_price = (current_price * order.pair.spread) + current_price;
             }
             
-            let lotValue = order.pair.percent_charge_for_buy;
-            let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
-            let total_price = parseInt(order.order_side) == 2
+            let lotValue        = order.pair.percent_charge_for_buy;
+            let lotEquivalent   = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+            let total_price     = parseInt(order.order_side) == 2
                 ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent))
                 : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
                 
@@ -652,20 +674,6 @@ th, td {
     color: white;
 }
 
-/*th {*/
-/*    background-color: #2f2f2f;*/
-/*    font-weight: bold;*/
-/*}*/
-
-/* Updated alternating row colors */
-/*tbody tr:nth-child(odd) {*/
-/*    background-color: #3f3f3f;*/
-/*}*/
-
-/*tbody tr:nth-child(even) {*/
-/*    background-color: #5f5f5f;*/
-/*}*/
-
 .buy {
     color: #2a9d8f;
     font-weight: bold;
@@ -741,17 +749,7 @@ tr th:last-child {
         padding: 8px !important;
         font-size: 10px !important;
     }
-
-    /* #tablesOrder th, #tablesOrder td {
-        font-size: 10px;
-    } */
 }
-
-/* @media (max-width: 360px) {
-    #tablesOrder th, #tablesOrder td {
-        font-size: 9px;
-    }
-} */
 
 #tableOrder{
     width: 100%;
