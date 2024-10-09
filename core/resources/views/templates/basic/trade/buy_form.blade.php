@@ -718,9 +718,46 @@
             return func; 
         }(), 1000); 
 
+        function customUpdateTrend( type ){
+            //Update trend 
+            const bear      = document.querySelector('.bear');
+            const bull      = document.querySelector('.bull');
+            const bearPct   = document.querySelector('.bear-pct');
+            const bullPct   = document.querySelector('.bull-pct');
+            
+            let val1 = Math.floor(Math.random() * 101);
+            let val2 = 100 - val1;
+
+            if( type === "buy" )
+            {
+                if( val1 > val2 ) {
+                    bullPercentage = val1;
+                    bearPercentage = val2;
+                }
+                else{
+                    bullPercentage = val2;
+                    bearPercentage = val1;
+                }
+            }else{
+                if( val1 < val2 ) {
+                    bullPercentage = val1;
+                    bearPercentage = val2;
+                }else{
+                    bullPercentage = val2;
+                    bearPercentage = val1;
+                }
+            }
+
+            bear.style.width    = bearPercentage + '%';
+            bull.style.width    = bullPercentage + '%';
+            bearPct.textContent = bearPercentage + '%';
+            bullPct.textContent = bullPercentage + '%';
+        }
+
         $(document).on('click', '.btn-sell-button, .btn-buy-button', function(){
             const type = $(this).data('type');
 
+            // Check here the highest percentage
             if( type === "buy" ){
                 $('.btn-modal-buy').removeClass('d-none');
                 $('.btn-modal-sell').addClass('d-none');
@@ -729,6 +766,8 @@
                 $('.btn-modal-sell').removeClass('d-none');
                 $('.btn-modal-buy').addClass('d-none');
             }
+
+            customUpdateTrend( type );
 
             $('#modalBuySell').modal('show');
         });
