@@ -120,13 +120,10 @@ $credentials = $general->socialite_credentials;
     </div>
 </section>
 @endsection
-@push('script')
+@push('style')
 <style>
 input:-webkit-autofill {
-    background-color: transparent !important;
-    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-    box-shadow: 0 0 0 1000px transparent inset !important;
-    color: inherit !important;
+    -webkit-text-fill-color: hsl(var(--black)) !important;
 }
 </style>
 @endpush
