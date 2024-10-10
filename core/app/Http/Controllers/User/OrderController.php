@@ -632,6 +632,7 @@ class OrderController extends Controller
             function () use ($request) {
                 $order = Order::find($request->get('id'));
                 $order->stop_loss = $request->get('price');
+                $order->stop_loss_close_at_high = $request->get('stop_loss_close_at_high');
                 $order->save();
             }
         );
@@ -645,6 +646,7 @@ class OrderController extends Controller
             function () use ($request) {
                 $order = Order::find($request->get('id'));
                 $order->take_profit = $request->get('price');
+                $order->take_profit_close_at_high = $request->get('take_profit_close_at_high');
                 $order->save();
             }
         );

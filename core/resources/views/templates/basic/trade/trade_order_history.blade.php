@@ -51,9 +51,15 @@
     </div>
     <div class="tab-content" id="pills-tabContenttwenty">
         <div class="tab-pane fade show active">
-            <div class="order-book-pan tab-pan-content" style="display: none"><x-flexible-view :view="$activeTemplate . 'trade.order_book'" :meta="['pair' => $pair, 'screen' => 'small']" /></div>
-            <div class="my_order tab-pan-content px-4 pb-4 active"><x-flexible-view :view="$activeTemplate . 'trade.my_order'" :meta="['markets' => $markets, 'screen' => 'small','pair' => $pair, 'order_count' => $order_count, 'marketCurrencyWallet' => $marketCurrencyWallet, 'requiredMarginTotal' => $requiredMarginTotal]" /></div>
-            <div class="history tab-pan-content px-4 pb-4" style="display: none"><x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair, 'screen' => 'small']" /></div>
+            <div class="order-book-pan tab-pan-content" style="display: none">
+                <x-flexible-view :view="$activeTemplate . 'trade.order_book'" :meta="['pair' => $pair, 'screen' => 'small']" />
+            </div>
+            <div class="my_order tab-pan-content px-4 pb-4 active">
+                <x-flexible-view :view="$activeTemplate . 'trade.my_order'" :meta="['markets' => $markets, 'screen' => 'small','pair' => $pair, 'order_count' => $order_count, 'marketCurrencyWallet' => $marketCurrencyWallet, 'requiredMarginTotal' => $requiredMarginTotal]" />
+            </div>
+            <div class="history tab-pan-content px-4 pb-4" style="display: none">
+                <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair, 'screen' => 'small']" />
+            </div>
         </div>
     </div>
 </div>
