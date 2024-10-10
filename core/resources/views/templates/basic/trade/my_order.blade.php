@@ -118,24 +118,6 @@ function formatWithPrecision1(value, precision = 2) {
 $(document).ready(function() {
     "use strict";
 
-    function countDecimalPlaces(num) {
-        // Convert the number to a string
-        const numStr = num.toString();
-
-        // Check if there is a decimal point
-        const decimalIndex = numStr.indexOf('.');
-
-        // If there's no decimal point, return 0
-        if (decimalIndex === -1) {
-            return 0;
-        }
-
-        // Calculate the number of decimal places
-        const decimalPlaces = numStr.length - decimalIndex - 1;
-
-        return decimalPlaces;
-    }
-
     // Handle caret toggle based on accordion collapse event
     $(document).on('shown.bs.collapse', '.collapse', function () {
         const caretIcon = $(this).prev().find('.caret-icon');
@@ -183,7 +165,6 @@ $(document).ready(function() {
          
         let current_price   = jsonData[order.pair.symbol].replace(/,/g, '')
         let spread          = order.pair.spread;
-        let sellSpan        = $("#sellSpan").text();
 
         current_price = parseFloat(current_price);
 
@@ -235,7 +216,7 @@ $(document).ready(function() {
                     data-action="${actionUrl}"
                     data-title="@lang('Close Order') #${order.id}"
                     data-symbol="${order.pair.symbol.replace('_', '/')}"
-                    data-open="${formatWithPrecision(order.rate)}"
+                    data-open="${parseFloat(order.rate).toFixed(decimalCount)}"
                     data-curr="${current_price}"
                     data-volume="${removeTrailingZeros(order.no_of_lot)}"
                     data-profit="${removeTrailingZeros(total_price)}"
@@ -244,8 +225,8 @@ $(document).ready(function() {
             ` : '';
             
         
-        let slButtonLabel = order.stop_loss ? formatWithPrecision(order.stop_loss) : "{{ __('SL') }}";
-        let tpButtonLabel = order.take_profit ? formatWithPrecision(order.take_profit) : "{{ __('TP') }}";
+        let slButtonLabel = order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) : "{{ __('SL') }}";
+        let tpButtonLabel = order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : "{{ __('TP') }}";
 
         let buttonStopLoss = `
             <button 
@@ -256,7 +237,7 @@ $(document).ready(function() {
                 data-action="${actionUrl}"
                 data-title="@lang('Stop Loss') #${order.id}"
                 data-symbol="${order.pair.symbol.replace('_', '/')}"
-                data-open="${formatWithPrecision(order.rate)}"
+                data-open="${parseFloat(order.rate).toFixed(decimalCount)}"
                 data-curr="${current_price}"
                 data-volume="${removeTrailingZeros(order.no_of_lot)}"
                 data-profit="${removeTrailingZeros(total_price)}"
@@ -275,7 +256,7 @@ $(document).ready(function() {
                 data-action="${actionUrl}"
                 data-title="@lang('Take Profit') #${order.id}"
                 data-symbol="${order.pair.symbol.replace('_', '/')}"
-                data-open="${formatWithPrecision(order.rate)}"
+                data-open="${parseFloat(order.rate).toFixed(decimalCount)}"
                 data-curr="${current_price}"
                 data-volume="${removeTrailingZeros(order.no_of_lot)}"
                 data-profit="${removeTrailingZeros(total_price)}"
@@ -349,14 +330,14 @@ $(document).ready(function() {
                     <td class="text-center p-2">${buttonStopLoss}</td>
                     <td class="text-center p-2">${formatWithPrecision(order.required_margin)}</td>
                     <td class="text-center p-2"><span id="currentprice${i++}">${current_price}</span></td>
-                    <td class="text-center p-2">${formatWithPrecision(order.rate)}</td>
+                    <td class="text-center p-2">${parseFloat(order.rate).toFixed(decimalCount)}</td>
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
                     <td class="text-center p-2">${order.order_side_badge}</td>
                     <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
                     <td class="text-center p-2">${order.formatted_date}</td>
                     <td class="text-center p-2">#${order.id}</td>
                 </tr>
-            @endif
+            @endif 
         `;
     }
     
@@ -534,7 +515,6 @@ $(document).ready(function() {
         Promise.all(ajaxRequests).then(() => {
             setTimeout(() => {
                 isClosingAllOrders = false;
-                console.log('All orders have been closed.');
             }, response.orders.length * 1000 + 2000); // Adjusted delay as needed
         });
     }

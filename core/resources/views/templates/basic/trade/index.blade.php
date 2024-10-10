@@ -288,6 +288,23 @@
         };
 
         $('header').find(`.container`).addClass(`custom--container`);
+        function countDecimalPlaces(num) {
+            // Convert the number to a string
+            const numStr = num.toString();
+
+            // Check if there is a decimal point
+            const decimalIndex = numStr.indexOf('.');
+
+            // If there's no decimal point, return 0
+            if (decimalIndex === -1) {
+                return 0;
+            }
+
+            // Calculate the number of decimal places
+            const decimalPlaces = numStr.length - decimalIndex - 1;
+
+            return decimalPlaces;
+        }
     </script>
 @endpush
 
