@@ -58,11 +58,6 @@
     </div>
 </div>
 <div class="trading-table__mobile">
-    <!--<h3 class="px-4 mt-3 text-white">History</h3>-->
-    <!--<div class="card history-body" style="background-color: #0D1E23;">-->
-    <!--  {{-- Data will be added here dynamically --}}-->
-    <!--</div>-->
-    
      <div class="summary-container">
             <h2>History</h2>
     <table style="display: inline-table;">
@@ -120,20 +115,24 @@ $(document).ready(function() {
     var i = 1;
     
     function generateHistoryRow(order, jsonData) {
-        let current_price = jsonData[order.pair.symbol]
+        let current_price           = order.rate.replace(/,/g, '');
         
-        let lotValue = order.pair.percent_charge_for_buy;
+        let lotValue                = order.pair.percent_charge_for_buy;
         
-        let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
-        let leverage = parseFloat(order.pair.percent_charge_for_sell);
-        let total_price = formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent ) * leverage);
+        let lotEquivalent           = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+        let leverage                = parseFloat(order.pair.percent_charge_for_sell);
+        let total_price             = formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent ) * leverage);
         
-           let profitClass = order.profit <= 0 ? 'text-danger' : 'text-success';
+        let profitClass             = order.profit <= 0 ? 'text-danger' : 'text-success';
         
         
-        let orderSideBadge = (order.order_side == 2) ? 'S' : 'B';  // Check if sell (2) or buy (1)
-        let badgeClass = (order.order_side == 2) ? 'text-danger' : 'text-success'; // Red for sell, green for buy
+        let orderSideBadge          = (order.order_side == 2) ? 'S' : 'B';  // Check if sell (2) or buy (1)
+        let badgeClass              = (order.order_side == 2) ? 'text-danger' : 'text-success'; // Red for sell, green for buy
         
+        current_price = parseFloat(current_price);
+
+
+        let decimalCount = countDecimalPlaces(current_price);
         
         
         if (window.innerWidth < 579) {
@@ -179,21 +178,21 @@ $(document).ready(function() {
                     <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
                     <td class="text-center p-2">${order.order_side_badge}</td>
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
-                    <td class="text-center p-2">${formatWithPrecision(order.rate)}</td>
-                    <td class="text-center p-2">${removeTrailingZeros(formatWithPrecision(order.closed_price)) || 0}</span></td>
-                    <td class="text-center p-2">${order.stop_loss ? formatWithPrecision(order.stop_loss) : '-'}</td>
-                    <td class="text-center p-2">${order.take_profit ? formatWithPrecision(order.take_profit) : '-'}</td>
-                    <td class="text-center p-2"><span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span></td>
+                    <td class="text-center p-2">${parseFloat(order.rate).toFixed(decimalCount)}</td>
+                    <td class="text-center p-2">${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span></td>
+                    <td class="text-center p-2">${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}</td>
+                    <td class="text-center p-2">${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}</td>
+                    <td class="text-center p-2"><span class="${profitClass}">${removeTrailingZeros(formatWithPrecision1(order.profit)) || 0}</span></td>
                     <td class="text-center p-2">${order.status_badge}</td>
                 </tr>
             @else
                 <tr data-order-id="${order.id}">
                     <td class="text-center p-2">${order.status_badge}</td>
-                    <td class="text-center p-2"><span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span></td>
-                    <td class="text-center p-2">${order.take_profit ? formatWithPrecision(order.take_profit) : '-'}</td>
-                    <td class="text-center p-2">${order.stop_loss ? formatWithPrecision(order.stop_loss) : '-'}</td>
-                    <td class="text-center p-2">${removeTrailingZeros(formatWithPrecision(order.closed_price)) || 0}</span></td>
-                    <td class="text-center p-2">${formatWithPrecision(order.rate)}</td>
+                    <td class="text-center p-2"><span class="${profitClass}">${removeTrailingZeros(formatWithPrecision1(order.profit)) || 0}</span></td>
+                    <td class="text-center p-2">${order.take_profit ? removeTrailingZeros(parseFloat(order.take_profit).toFixed(decimalCount)) : '-'}</td>
+                    <td class="text-center p-2">${order.stop_loss ? removeTrailingZeros(parseFloat(order.stop_loss).toFixed(decimalCount)) : '-'}</td>
+                    <td class="text-center p-2">${removeTrailingZeros(parseFloat(order.closed_price).toFixed(decimalCount)) || 0}</span></td>
+                    <td class="text-center p-2">${removeTrailingZeros(parseFloat(order.rate).toFixed(decimalCount))}</td>
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
                     <td class="text-center p-2">${order.order_side_badge}</td>
                     <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
