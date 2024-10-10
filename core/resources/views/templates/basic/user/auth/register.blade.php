@@ -255,7 +255,7 @@ $credentials = $general->socialite_credentials;
 
 @push('style')
 <style>
-input:-webkit-autofill {
+input:-webkit-autofill, select:-webkit-autofill {
     -webkit-text-fill-color: hsl(var(--black)) !important;
 }
 </style>
