@@ -83,6 +83,23 @@
     (function ($) {
         "use strict";
     
+        function countDecimalPlaces(num) {
+            // Convert the number to a string
+            const numStr = num.toString();
+
+            // Check if there is a decimal point
+            const decimalIndex = numStr.indexOf('.');
+
+            // If there's no decimal point, return 0
+            if (decimalIndex === -1) {
+                return 0;
+            }
+
+            // Calculate the number of decimal places
+            const decimalPlaces = numStr.length - decimalIndex - 1;
+
+            return decimalPlaces;
+        }
         var intervalIdSL; // Define intervalIdSL globally
     
         let isSLUpdateModalContent = true;
@@ -140,9 +157,9 @@
             }
     
             function handlePriceInput() {
-                isSLUpdateModalContent = false;
-                let value = $('.slprice').val();
-                value = value.replace(/[^0-9.]/g, '');
+                isSLUpdateModalContent  = false;
+                let value               = $('.slprice').val();
+                value                   = value.replace(/[^0-9.]/g, '');
                 if (isNaN(parseFloat(value)) || parseFloat(value) < 0) value = 0;
                 $('.slprice').val(value);
     
@@ -150,24 +167,24 @@
             }
     
             function recalculatePLValue() {
-                let order = $('.sl-order-side-hidden-i').val();
-                let lot_equivalent = $('.sl-lot-equivalent-hidden-i').val();
-                let open_price = parseFloat($('.open-price-modal').text());
-                let value = parseFloat($('.slprice').val());
+                let order           = $('.sl-order-side-hidden-i').val();
+                let lot_equivalent  = $('.sl-lot-equivalent-hidden-i').val();
+                let open_price      = parseFloat($('.open-price-modal').text());
+                let value           = parseFloat($('.slprice').val());
     
-                let plValue = Math.abs(calculatePLValue(order, lot_equivalent, open_price, value)) + parseInt($('.slpipsequivalent').text())
+                let plValue         = Math.abs(calculatePLValue(order, lot_equivalent, open_price, value)) + parseInt($('.slpipsequivalent').text())
     
                 $('.plvalue').text(`${plValue}`);
             }
     
             $('.saveStopLoss').on('click', function() {
-                var submitBtn = $(this);
+                var submitBtn       = $(this);
 
                 submitBtn.prop('disabled', true); 
                 submitBtn.append(' <i class="fa fa-spinner fa-spin"></i>');
                 
-                let current_price = parseFloat($('.stop-loss-current-price-modal').text());
-                let price = parseFloat($('.slprice').val());
+                let current_price   = parseFloat($('.stop-loss-current-price-modal').text());
+                let price           = parseFloat($('.slprice').val());
                 
                 let stop_loss_close_at_high = current_price > price ? 0 : 1;
 
@@ -190,40 +207,44 @@
             });
     
             $('#stopLossModal').on('hidden.bs.modal', function () {
+                $(this).find('.current-price-modal').text('');
+                clearInterval(intervalIdSL);
                 $(this).find('form').trigger('reset');
                  isSLUpdateModalContent = true;
             });
         });
     
         function updateModalContent(order, jsonData) {
-            var modal = $('#stopLossModal');
+            var modal           = $('#stopLossModal');
     
-            let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
+            let current_price   = jsonData[order.pair.symbol].replace(/,/g, '');
             
-            current_price = parseFloat(current_price);
-            
+            current_price       = parseFloat(current_price);
+
+            let decimalCount    = countDecimalPlaces(current_price);
+
             if (order.pair.symbol === 'GOLD') {
                 if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * order.pair.spread) + current_price;
+                    current_price   = (current_price * order.pair.spread) + current_price;
                 }
-                current_price = current_price.toFixed(2);
+                current_price       = current_price.toFixed(decimalCount);
             } else {
                 if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * order.pair.spread) + current_price;
+                    current_price   = (current_price * order.pair.spread) + current_price;
                 }
-                current_price = formatWithPrecision(current_price); 
+                current_price       = current_price.toFixed(decimalCount); 
             }
             
-            let lotValue = order.pair.percent_charge_for_buy;
+            let lotValue            = order.pair.percent_charge_for_buy;
             
-            let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
-            let total_price = parseInt(order.order_side) === 2
+            let lotEquivalent       = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+            let total_price         = parseInt(order.order_side) === 2
                 ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent))
                 : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
     
             if (isSLUpdateModalContent) {
-                $('#stopLossModal .stop-loss-current-price-modal').text(`${parseFloat(current_price)}`);
-                $('.slprice').val(`${parseFloat(current_price)}`);
+                $('#stopLossModal .stop-loss-current-price-modal').text(`${current_price}`);
+                $('.slprice').val(`${current_price}`);
                 $('.plvalue').text(`${parseInt($('.slpipsequivalent').text()) + Math.abs(total_price)}`);
             }
         }
@@ -241,7 +262,7 @@
             
             modal.find('.symbol-modal').text(`${data.symbol}`);
             modal.find('.open-price-modal').text(`${data.open}`);
-            // modal.find('.stop-loss-current-price-modal').text(`${data.curr}`);
+            modal.find('.stop-loss-current-price-modal').text(`${data.curr}`);
             modal.find('.volume-modal').text(`${data.volume}`);
     
             modal.find('.slprice').val(`${data.curr}`);

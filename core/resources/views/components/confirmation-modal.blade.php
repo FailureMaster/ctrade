@@ -58,6 +58,23 @@
     (function ($) {
         "use strict";
     
+        function countDecimalPlaces(num) {
+            // Convert the number to a string
+            const numStr = num.toString();
+
+            // Check if there is a decimal point
+            const decimalIndex = numStr.indexOf('.');
+
+            // If there's no decimal point, return 0
+            if (decimalIndex === -1) {
+                return 0;
+            }
+
+            // Calculate the number of decimal places
+            const decimalPlaces = numStr.length - decimalIndex - 1;
+
+            return decimalPlaces;
+        }
         var intervalId; // Define intervalId globally
     
         function updateModalContent(order, jsonData) {
@@ -66,17 +83,19 @@
             let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
             
             current_price = parseFloat(current_price);
-    
+            
+            let decimalCount    = countDecimalPlaces(current_price);
+
             if (order.pair.symbol === 'GOLD') {
                 if (parseInt(order.order_side) === 2) {
                     current_price = (current_price * order.pair.spread) + current_price;
                 }
-                current_price = current_price.toFixed(2);
+                current_price = current_price.toFixed(decimalCount);
             } else {
                 if (parseInt(order.order_side) === 2) {
                     current_price = (current_price * order.pair.spread) + current_price;
                 }
-                current_price = formatWithPrecision(current_price); 
+                current_price = current_price.toFixed(decimalCount);
             }
             let lotValue = order.pair.percent_charge_for_buy;
     
@@ -86,7 +105,7 @@
                 : formatWithPrecision(((parseFloat(current_price.replace(/,/g, '')) - parseFloat(order.rate)) * lotEquivalent));
     
             let profitModal = modal.find('.profit-modal');
-            let profitValue = total_price;
+            let profitValue = formatWithPrecision1(total_price);
             profitModal.text(`\$ ${profitValue}`);
     
             if (parseFloat(profitValue) <= 0) {
@@ -113,7 +132,7 @@
             modal.find('.volume-modal').text(`${data.volume}`);
     
             let profitModal = modal.find('.profit-modal');
-            let profitValue = data.profit;
+            let profitValue = formatWithPrecision1(data.profit);
             profitModal.text(`\$ ${profitValue}`);
     
             if (parseFloat(profitValue) <= 0) {

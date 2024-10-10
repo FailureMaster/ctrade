@@ -196,26 +196,31 @@
             });
     
             $('#takeProfitModal').on('hidden.bs.modal', function () {
+                $(this).find('.current-price-modal').text('');
+                clearInterval(intervalId);
                 $(this).find('form').trigger('reset');
                 isTPUpdateModalContent = true;
             });
         });
     
         function updateModalContent(order, jsonData) {
-            let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
+            let current_price   = jsonData[order.pair.symbol].replace(/,/g, '');
             
-            current_price = parseFloat(current_price);
+            current_price       = parseFloat(current_price);
             
+            let decimalCount    = countDecimalPlaces(current_price) ;
+
             if (order.pair.symbol === 'GOLD') {
                 if (parseInt(order.order_side) === 2) {
                     current_price = (current_price * order.pair.spread) + current_price;
                 }
-                current_price = current_price.toFixed(2);
+                current_price = current_price.toFixed(decimalCount);
             } else {
                 if (parseInt(order.order_side) === 2) {
                     current_price = (current_price * order.pair.spread) + current_price;
                 }
-                current_price = formatWithPrecision(current_price); 
+                // current_price = formatWithPrecision(current_price); 
+                current_price = current_price.toFixed(decimalCount);
             }
             
             let lotValue = order.pair.percent_charge_for_buy;
@@ -226,16 +231,16 @@
                 : formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
     
             if (isTPUpdateModalContent) {
-                $('.current-price-modal').text(`${parseFloat(current_price)}`);
-                $('.tpprice').val(`${parseFloat(current_price)}`);
+                $('.current-price-modal').text(`${current_price}`);
+                $('.tpprice').val(`${current_price}`);
     
                 $('.tpplvalue').text(`${parseInt($('.tppipsequivalent').text()) + Math.abs(total_price)}`);
             }
         }
     
         $(document).on('click','.takeProfitModalBtn', function () {
-            var modal   = $('#takeProfitModal');
-            let data    = $(this).data();
+            var modal       = $('#takeProfitModal');
+            let data        = $(this).data();
             
             // Clear previous interval if exists
             clearInterval(intervalId);
@@ -246,7 +251,7 @@
             
             modal.find('.symbol-modal').text(`${data.symbol}`);
             modal.find('.open-price-modal').text(`${data.open}`);
-            // modal.find('.current-price-modal').text(`${data.curr}`);
+            modal.find('.current-price-modal').text(`${data.curr}`);
             modal.find('.volume-modal').text(`${data.volume}`);
     
             modal.find('.tpprice').val(`${data.curr}`);
@@ -267,8 +272,8 @@
                     url: actionUrl,
                     method: 'GET',
                     success: function(response) {
-                        let jsonMarketData = response.marketData;
-                        let order = response.order;
+                        let jsonMarketData  = response.marketData;
+                        let order           = response.order;
     
                         updateModalContent(order, jsonMarketData[order.pair.type]);
                     },
