@@ -622,36 +622,53 @@
         }
 
         function updateSpanValues(currentPrice) {
-            let coin_name = `{{@$pair->type}}`;
-            let coin_symbol = `{{@$pair->symbol}}`;
+            let coin_name           = `{{@$pair->type}}`;
+            let coin_symbol         = `{{@$pair->symbol}}`;
 
-            var curr_price = parseFloat((coin_name === 'Crypto' || coin_name === 'COMMODITY' || coin_name === 'INDEX' ? parseFloat(currentPrice.replace(/,/g, '')).toFixed(5) : formatWithPrecision(currentPrice)));
+            var curr_price          = parseFloat((coin_name === 'Crypto' || coin_name === 'COMMODITY' || coin_name === 'INDEX' ? parseFloat(currentPrice.replace(/,/g, '')).toFixed(5) : formatWithPrecision(currentPrice)));
             
-            var buyValue = calculateBuyValue(curr_price);
-            var sellValue = calculateSellValue(curr_price);
+            var buyValue            = calculateBuyValue(curr_price);
+            var sellValue           = calculateSellValue(curr_price);
             
-            document.title = `${curr_price} {{@$pair->symbol}}`;
+            document.title          = `${curr_price} {{@$pair->symbol}}`;
             
-            let sellSpan = document.getElementById("sellSpan");
-            let buySpan = document.getElementById("buySpan");
+            let sellSpan            = document.getElementById("sellSpan");
+            let buySpan             = document.getElementById("buySpan");
             
-            let sellRate = document.querySelector(".sell-rate");
-            let buyRate = document.querySelector(".buy-rate");
+            let sellRate            = document.querySelector(".sell-rate");
+            let buyRate             = document.querySelector(".buy-rate");
 
-            let buyDecimal = countDecimalPlaces(sellValue);
+            let buyDecimal          = countDecimalPlaces(sellValue);
+
+            let adjustedBuyValue    = buyValue;
+
             if (coin_symbol === 'GOLD') {
-                sellSpan.innerText  = removeTrailingZeros(sellValue.toFixed(2));
-                buySpan.innerText   = removeTrailingZeros(buyValue.toFixed(buyDecimal));
+                if (buyDecimal == 0) {
+                    sellSpan.innerText  = removeTrailingZeros(sellValue);
+                    buySpan.innerText   = removeTrailingZeros(buyValue);
+                    adjustedBuyValue    = removeTrailingZeros(buyValue);
+                }else{
+                    sellSpan.innerText  = removeTrailingZeros(sellValue.toFixed(2));
+                    buySpan.innerText   = removeTrailingZeros(buyValue.toFixed(buyDecimal));
+                    adjustedBuyValue    = removeTrailingZeros(buyValue.toFixed(buyDecimal));
+                }
             } else {
-                buySpan.innerText   = removeTrailingZeros((coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue.toFixed(buyDecimal)));
-                sellSpan.innerText  = removeTrailingZeros((coin_name === 'Crypto' ? sellValue.toFixed(5) : sellValue.toFixed(5)));
+                if (buyDecimal == 0 && coin_name === 'Crypto') {
+                    buySpan.innerText   = Math.floor(buyValue);
+                    sellSpan.innerText  = sellValue;
+                    adjustedBuyValue    = buyValue;
+                    
+                } else {
+                    buySpan.innerText   = removeTrailingZeros((coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue.toFixed(buyDecimal)));
+                    sellSpan.innerText  = removeTrailingZeros((coin_name === 'Crypto' ? sellValue.toFixed(5) : sellValue.toFixed(5)));
+                    adjustedBuyValue    = (coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue.toFixed(buyDecimal));
+                }
+                
             }
 
-            buyRate.value = buyValue;
+            
+            buyRate.value = adjustedBuyValue;
             sellRate.value = sellValue;
-
-            // buySpan.style.fontWeight = 'bold';
-            // sellSpan.style.fontWeight = 'bold';
 
             setTimeout(function() {
                 buySpan.style.fontWeight = 'normal';
@@ -775,7 +792,6 @@
     });
 
     function updateLotValues(select) {
-        console.log('Is select triggered')
         var selectedOption  = select.options[select.selectedIndex];
         var selectedLotText = selectedOption.textContent;
         var selectedLot     = select.value;
@@ -796,30 +812,28 @@
     }
 
     function updateLLSize() {
-        let lotEquivalent = parseFloat(document.querySelector('.lot-eq-span').innerText);
+        let lotEquivalent   = parseFloat(document.querySelector('.lot-eq-span').innerText);
         
-        let currentPrice = document.querySelector("#sellSpan").innerText;
-        let llSizeVal = parseFloat(currentPrice) * lotEquivalent;
-        let llSize = parseInt(llSizeVal) >= 0 ? llSizeVal : 0;
+        let currentPrice    = document.querySelector("#sellSpan").innerText;
+        let llSizeVal       = parseFloat(currentPrice) * lotEquivalent;
+        let llSize          = parseInt(llSizeVal) >= 0 ? llSizeVal : 0;
         
         document.querySelector('.ll-size-span').innerText = llSize.toFixed();
 
-        let leverage = parseFloat({{ @$pair->percent_charge_for_sell }} || 0);
+        let leverage        = parseFloat({{ @$pair->percent_charge_for_sell }} || 0);
         let required_margin = llSize / leverage;
         document.querySelector('.required-margin-value').innerText = `${formatWithPrecision1(required_margin)} USD`;
     }
 
     function updatePipValue(select) {
-        let pipValueElement = document.querySelector('.pip-value');
-        pipValueElement.innerText = '$ ' + select.value;
+        let pipValueElement         = document.querySelector('.pip-value');
+        pipValueElement.innerText   = '$ ' + select.value;
     }
     
     function removeTrailingZeros(number) {
-        var numberString = number.toString();
-
+        var numberString        = number.toString();
         var trimmedNumberString = numberString.replace(/\.?0+$/, '');
-
-        var trimmedNumber = parseFloat(trimmedNumberString);
+        var trimmedNumber       = parseFloat(trimmedNumberString);
 
         if (Number.isInteger(trimmedNumber)) {
             return trimmedNumber.toFixed(2);
@@ -829,7 +843,7 @@
     }
     
     function isLevelMoreThanOrEqualToEquity() {
-        let level = parseFloat(document.querySelector('#level-span').innerText.replace(/ USD/g, ""));
+        let level   = parseFloat(document.querySelector('#level-span').innerText.replace(/ USD/g, ""));
         let equity = parseFloat(document.querySelector('#equity-span').innerText.replace(/ USD/g, ""));
         
         return level >= equity;
@@ -859,8 +873,6 @@
                 width: 'resolve',
                 dropdownParent: $('#modalBuySell'),
                 createTag: function (params) {
-                    console.log(params)
-                    
                     if (! isValidNumberOrDecimal(params.term)) {
                         return null;
                     }
@@ -882,7 +894,6 @@
                 height: 'resolve',
                 width: 'resolve',
                 createTag: function (params) {
-                    console.log(params)
                     
                     if (! isValidNumberOrDecimal(params.term)) {
                         return null;

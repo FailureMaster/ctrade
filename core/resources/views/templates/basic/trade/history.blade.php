@@ -115,7 +115,7 @@ $(document).ready(function() {
     var i = 1;
     
     function generateHistoryRow(order, jsonData) {
-        let current_price           = order.rate.replace(/,/g, '');
+        let current_price           = order.rate;
         
         let lotValue                = order.pair.percent_charge_for_buy;
         

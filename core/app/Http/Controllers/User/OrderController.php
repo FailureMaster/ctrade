@@ -77,13 +77,12 @@ class OrderController extends Controller
 
     public function save(Request $request, $symbol)
     {
-      
         $validator = Validator::make($request->all(), [
-            'sell_rate'       => 'required|numeric|gt:0',
-            'buy_rate'       => 'required|numeric|gt:0',
-            'amount'     => 'required|numeric|gt:0',
-            'order_side' => 'required|in:' . Status::BUY_SIDE_ORDER . ',' . Status::SELL_SIDE_ORDER . '',
-            'order_type' => 'required|in:' . Status::ORDER_TYPE_LIMIT . ',' . Status::ORDER_TYPE_MARKET . '',
+            'sell_rate'         => 'required|numeric|gt:0',
+            'buy_rate'          => 'required|numeric|gt:0',
+            'amount'            => 'required|numeric|gt:0',
+            'order_side'        => 'required|in:' . Status::BUY_SIDE_ORDER . ',' . Status::SELL_SIDE_ORDER . '',
+            'order_type'        => 'required|in:' . Status::ORDER_TYPE_LIMIT . ',' . Status::ORDER_TYPE_MARKET . '',
         ]);
 
         if ($validator->fails()) {
@@ -93,11 +92,11 @@ class OrderController extends Controller
 
         if (!$pair) return $this->response('Pair not found');
 
-            $amount = Fee::first()->status ?  $request->amount : 0;
+            $amount         = Fee::first()->status ?  $request->amount : 0;
 
-            $requestRate = $request->order_side ==  Status::BUY_SIDE_ORDER ? $request->buy_rate : $request->sell_rate;
-            $rate        = $request->order_type == Status::ORDER_TYPE_LIMIT ? $requestRate : $pair->marketData->price;
-            $totalAmount = $amount * $rate;
+            $requestRate    = $request->order_side ==  Status::BUY_SIDE_ORDER ? $request->buy_rate : $request->sell_rate;
+            $rate           = $request->order_type == Status::ORDER_TYPE_LIMIT ? $requestRate : $pair->marketData->price;
+            $totalAmount    = $amount * $rate;
 
             $coin           = $pair->coin;
             $marketCurrency = $pair->market->currency;
@@ -110,18 +109,12 @@ class OrderController extends Controller
         }
         
         if ($request->order_side ==  Status::BUY_SIDE_ORDER) {
-            // if ($amount < $pair->minimum_buy_amount) {
-            //     return $this->response("Minimum buy amount " . showAmount($pair->minimum_buy_amount) . ' ' . $coin->symbol);
-            // }
 
             if ($amount > $pair->maximum_buy_amount &&  $pair->maximum_buy_amount != -1) {  //-1 for unlimited maximum amount
                 return $this->response("Maximum buy amount " . showAmount($pair->maximum_buy_amount) . ' ' . $coin->symbol);
             }
 
             $charge = ($totalAmount / 100) * $pair->percent_charge_for_buy;
-            // if (($charge + $totalAmount) > $wallet->balance) {
-            //     return $this->response('You don\'t have sufficient ' . $marketCurrency->symbol . ' wallet balance for buy coin.');
-            // }
             if ($amount > $wallet->balance) {
                 // return $this->response('You don\'t have sufficient ' . $marketCurrency->symbol . ' wallet balance for buy coin.');
                 return $this->response('You dont have sufficient balance please do a Deposit');
@@ -130,9 +123,6 @@ class OrderController extends Controller
         }
         
         if ($request->order_side ==  Status::SELL_SIDE_ORDER) {
-            // if ($amount < $pair->minimum_sell_amount) {
-            //     return $this->response("Minimum sell amount " . showAmount($pair->minimum_sell_amount) . ' ' . $coin->symbol);
-            // }
             if ($amount > $pair->maximum_sell_amount && $pair->maximum_sell_amount != -1) {
                 return $this->response("Maximum sell amount " . showAmount($pair->maximum_sell_amount) . ' ' . $coin->symbol);
             }
@@ -142,49 +132,6 @@ class OrderController extends Controller
             }
             $orderSide = "Sell";
         }
-        
-        // if ($request->order_side ==  Status::BUY_SIDE_ORDER) {
-
-        //     $userMarketCurrencyWallet = Wallet::where('user_id', $user->id)->where('currency_id', $marketCurrency->id)->spot()->first();
-
-        //     if (!$userMarketCurrencyWallet) {
-        //         return $this->response('Your market currency wallet not found');
-        //     }
-
-        //     if ($amount < $pair->minimum_buy_amount) {
-        //         return $this->response("Minimum buy amount " . showAmount($pair->minimum_buy_amount) . ' ' . $coin->symbol);
-        //     }
-
-        //     if ($amount > $pair->maximum_buy_amount &&  $pair->maximum_buy_amount != -1) {  //-1 for unlimited maximum amount
-        //         return $this->response("Maximum buy amount " . showAmount($pair->maximum_buy_amount) . ' ' . $coin->symbol);
-        //     }
-
-        //     $charge = ($totalAmount / 100) * $pair->percent_charge_for_buy;
-        //     if (($charge + $totalAmount) > $userMarketCurrencyWallet->balance) {
-        //         return $this->response('You don\'t have sufficient ' . $marketCurrency->symbol . ' wallet balance for buy coin.');
-        //     }
-        //     $orderSide = "Buy";
-        // }
-
-        // if ($request->order_side ==  Status::SELL_SIDE_ORDER) {
-        //     $userCoinWallet = Wallet::where('user_id', $user->id)->where('currency_id', $coin->id)->spot()->first();
-
-        //     if (!$userCoinWallet) {
-        //         return $this->response('Your coin wallet not found');
-        //     }
-        //     if ($request->amount < $pair->minimum_sell_amount) {
-        //         return $this->response("Minimum sell amount " . showAmount($pair->minimum_sell_amount) . ' ' . $coin->symbol);
-        //     }
-        //     if ($request->amount > $pair->maximum_sell_amount && $pair->maximum_sell_amount != -1) {
-        //         return $this->response("Maximum sell amount " . showAmount($pair->maximum_sell_amount) . ' ' . $coin->symbol);
-        //     }
-        //     $charge = ($totalAmount / 100) * $pair->percent_charge_for_sell;
-        //     if ($request->amount > $userCoinWallet->balance) {
-        //         return $this->response('You don\'t have sufficient ' . $userCoinWallet->symbol . ' wallet balance for sell coin.');
-        //     }
-        //     $orderSide = "Sell";
-        // }
-
 
         $order                     = new Order();
         $order->trx                = getTrx();
@@ -200,7 +147,7 @@ class OrderController extends Controller
         $order->charge             = $charge;
         $order->coin_id            = $coin->id;
         $order->market_currency_id = $marketCurrency->id;
-        $order->no_of_lot           = $request->no_of_lot;
+        $order->no_of_lot          = $request->no_of_lot;
         $order->required_margin    = $request->required_margin;
         $order->save();
         
@@ -212,18 +159,10 @@ class OrderController extends Controller
             $walletBalance = $this->createTrx($wallet, 'order_sell', $amount, 0, $details, $user);
         }
 
-        // if ($request->order_side ==  Status::BUY_SIDE_ORDER) {
-        //     $details       = "Open order for buy coin on " . $pair->symbol . " pair";
-        //     $walletBalance = $this->createTrx($userMarketCurrencyWallet, 'order_buy', $totalAmount, $charge, $details, $user);
-        // } else {
-        //     $details       = "Open order for sell coin on " . $pair->symbol . " pair";
-        //     $walletBalance = $this->createTrx($userCoinWallet, 'order_sell', $amount, 0, $details, $user);
-        // }
 
         try {
             event(new EventsOrder($order, $pair->symbol));
-        } catch (Exception $ex) {
-        }
+        } catch (Exception $ex) { }
 
         $adminNotification            = new AdminNotification();
         $adminNotification->user_id   = $user->id;
@@ -250,6 +189,7 @@ class OrderController extends Controller
 
         return $this->response("Your order open successfully", true, $data);
     }
+
 
     private function response($message, $status = false, $data = [])
     {
@@ -552,6 +492,7 @@ class OrderController extends Controller
         $user = auth()->user();
         
         $order = Order::with('pair')->findOrFail($id);
+        // dd($order);
         
         $pair = CoinPair::activeMarket()->activeCoin()->with('coin', 'marketData')->where('symbol', $order->pair->symbol)->first();
         $coin = $pair->coin;
@@ -594,9 +535,15 @@ class OrderController extends Controller
         
         $pair = CoinPair::activeMarket()->activeCoin()->with('coin', 'marketData')->where('symbol', $order->pair->symbol)->first();
         $coin = $pair->coin;
+
+        $customClosePrice = $request->get('closed_price');
         
+        if( $order->stop_loss <> null ) $customClosePrice = $order->stop_loss;
+        
+        if( $order->take_profit <> null && $order->take_profit <= $request->get('closed_price') ) $customClosePrice = $order->take_profit;
+
         $order->status = Status::ORDER_CANCELED;
-        $order->closed_price = $request->get('closed_price');
+        $order->closed_price = $customClosePrice;
         $order->profit = $request->get('profit');
         $order->save();
         
