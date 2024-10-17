@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PermissionGroupController;
+use App\Http\Controllers\Admin\ClientGroupsController;
 use App\Http\Middleware\LanguageMiddleware;
 
 
@@ -84,6 +85,15 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
 
         Route::get('download-attachments/{file_hash}', 'downloadAttachment')->name('download.attachment');
         Route::get('load/data', 'loadData')->name('load.data');
+    });
+
+    Route::controller('ClientGroupsController')->group(function () {
+        Route::get('groups', 'index')->name('groups.index');
+        Route::post('groups/create', 'create')->name('groups.create');
+        Route::get('groups/coinlist', 'coinlist')->name('groups.coinlist');
+        Route::get('groups/truncate', 'truncate');
+        // Route::post('groups/{group}/add-user', 'addUserToGroup')->name('groups.addUser');
+        // Route::post('groups/{group}/update-settings', 'updateSettings')->name('groups.updateSettings');
     });
 
     // Currency Manager

@@ -116,6 +116,15 @@
                     </a>
                 </li>
                 @endif
+
+                @if(can_access('add-symbol'))
+                <li class="sidebar-menu-item ">
+                    <a href="{{route('admin.groups.index')}}" class="nav-link ">
+                        <i class="menu-icon las la-users"></i>
+                        <span class="menu-title">@lang('VIP Groups')</span>
+                    </a>
+                </li>
+                @endif
                 <li class="sidebar-menu-item {{menuActive('admin.managelots*')}}">
                     <a href="{{route('admin.managelots')}}" class="nav-link ">
                         <i class="menu-icon fas fa-exchange-alt"></i>
