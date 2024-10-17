@@ -229,6 +229,9 @@
                 modal.find('form').attr('action', addurl);
 
                 $('#editContainer').addClass('d-none');
+                $('#createGroupForm')[0].reset();
+                $('.modal-footer button[type="submit"]').text('Create Group');
+
                   
             })
 
@@ -257,7 +260,7 @@
                 let level       = $(this).attr('data-level');
 
                 // Set form action URL for updating the group (you can modify the URL as needed)
-                let updateUrl = '/admin/groups/update/' + id;
+                let updateUrl = "{{ route('admin.groups.update', ':id') }}".replace(':id', id);
                 modal.find('form').attr('action', updateUrl);
 
                 // Populate the form fields with the data
@@ -292,6 +295,8 @@
                 // Set selected values for users and symbols
                 $('.usersm').val(users).trigger('change');
                 $('#symbols').val(symbols).trigger('change');
+
+                $('.modal-footer button[type="submit"]').text('Update Group');
 
                 // Show the modal
                 modal.modal('show');

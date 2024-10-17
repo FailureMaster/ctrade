@@ -108,4 +108,48 @@ class ClientGroupsController extends Controller
         }
     }
 
+    public function update(Request $request, $id) {
+        // Validate the request
+        $request->validate([
+            'groupName' => 'required|string|max:255',
+            'symbols'   => 'required|array', // Multiple symbols
+            'users'     => 'required|array', // Multiple users
+            'spread'    => 'required|numeric',
+            'lots'      => 'required|numeric',
+            'leverage'  => 'required|numeric',
+            'level'     => 'required|numeric',
+        ]);
+    
+        // Find the group by ID
+        $group = ClientGroups::findOrFail($id);
+    
+        // Update the group name
+        $group->update(['name' => $request->groupName]);
+    
+        // Update group settings (delete existing settings first)
+        ClientGroupSetting::where('client_group_id', $group->id)->delete();
+        foreach ($request->symbols as $symbolId) {
+            ClientGroupSetting::create([
+                'client_group_id' => $group->id,
+                'symbol'          => $symbolId,
+                'spread'          => $request->spread,
+                'lots'            => $request->lots,
+                'leverage'        => $request->leverage,
+                'level'           => $request->level,
+            ]);
+        }
+    
+        // Update users in the group (delete existing users first)
+        ClientGroupUser::where('client_group_id', $group->id)->delete();
+        foreach ($request->users as $userId) {
+            ClientGroupUser::create([
+                'client_group_id' => $group->id,
+                'user_id'         => $userId,
+            ]);
+        }
+    
+        return returnBack('Group updated successfully!', 'success');
+    }
+    
+
 }
