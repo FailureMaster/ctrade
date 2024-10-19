@@ -45,13 +45,25 @@
 
                                 <!-- List all symbols and display their settings -->
                                 <td>
-                                    {{ implode(', ', $group->settings->pluck('symbol')->toArray()) }}
+                                   @php
+                                        $arr = [];
+                                        $groupSettings = $group->settings->pluck('symbol')->toArray();
+                                        // var_dump($groupSettings);
+
+                                        foreach ($symbols as $symbol){
+                                            if (in_array($symbol->id,$groupSettings )) {
+                                                array_push($arr, $symbol->symbol);
+                                            }
+                                        }
+                                   @endphp
+                                    {{ implode(', ', $arr) }}
                                 </td>
 
-                                <td>{{ $group->settings->first()->spread ?? 'N/A' }}</td>
-                                <td>{{ $group->settings->first()->lots ?? 'N/A' }}</td>
-                                <td>{{ $group->settings->first()->leverage ?? 'N/A' }}</td>
-                                <td>{{ $group->settings->first()->level ?? 'N/A' }}</td>
+                                <td>{{ rtrim(rtrim(number_format($group->settings->first()->spread ?? 0, 10), '0'), '.') }}</td>
+                                <td>{{ $group->settings->first()->lots ?? 0 }}</td>
+                                <td>{{ $group->settings->first()->leverage ?? 0 }}</td>
+                                <td>{{ $group->settings->first()->level ?? 0 }}</td>
+
                                 
                                 <td>
                                     <a 
@@ -69,7 +81,13 @@
                                         Edit
                                     </a>
 
-                                    <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                    <a href="#" 
+                                        class="btn btn-danger btn-sm btn-delete" 
+                                        data-id="{{ $group->id }}" 
+                                        data-name="{{ $group->name }}"
+                                    >
+                                        Delete
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
@@ -111,9 +129,6 @@
                             <div id="editContainerClone">
                                 <label for="usersm" class="form-label">Users</label>
                                 <select class="form-control usersm" multiple="multiple" name="users[]">
-                                    {{-- @foreach ($usersAll as $user)
-                                        <option value="{{$user->id}}">{{$user->firstname}}</option>
-                                    @endforeach --}}
                                 </select>
                             </div>
                         </div>
@@ -133,7 +148,7 @@
                         <!-- Spread -->
                         <div class="mb-3">
                             <label for="spread" class="form-label" >Spread</label>
-                            <input type="number" step="0.01" class="form-control" id="spread" name="spread" placeholder="Enter spread" required>
+                            <input type="number" step="0.000000001" class="form-control" id="spread" name="spread" placeholder="Enter spread" required>
                         </div>
                         
                         <!-- Lots -->
@@ -176,133 +191,155 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
-       $(document).ready(function() {
+        $(document).ready(function() {
             // Initialize Select2 for users and symbols fields when the modal is opened
-            let userAll        ="{{  json_encode($userAllArrJson)}}"    ;
-            
-        
-            
-          
-            $('#users').select2({
-                    dropdownParent: $('#createGroupModal'),
-                    placeholder: "Select users",
-                    allowClear: true
-            });
-
+            let userAll = "{{ json_encode($userAllArrJson) }}";
             let editSelect2 = $('#editContainerClone').clone();
-
+    
+            // Initialize Select2 for creating group
+            $('#users').select2({
+                dropdownParent: $('#createGroupModal'),
+                placeholder: "Select users",
+                allowClear: true
+            });
+    
+            // Handle modal show event for editing
             $('#createGroupModal').on('shown.bs.modal', function() {
+                // Initialize Select2 for editing users
                 $('.usersm').select2({
                     dropdownParent: $('#createGroupModal'),
                     placeholder: "Select users",
                     allowClear: true
-            });
-               
-              
-
+                });
+    
+                // Initialize Select2 for symbols
                 $('#symbols').select2({
                     dropdownParent: $('#createGroupModal'),
                     placeholder: "Select symbols",
                     allowClear: true
                 });
-
             });
-
-            
+    
+            // Handle modal hidden event
             $('#createGroupModal').on('hidden.bs.modal', function() {
-                //create group
+                // Show create group container
                 $('#addContainer').removeClass('d-none');
-
-                //edit group
-                // $('#editContainer').html(editSelect2);
-                
+    
+                // Clear users for edit
                 $('.usersm').find('option').remove();
-                
+    
+                // Show edit container
                 $('#editContainer').removeClass('d-none');
-                
             });
-
+    
+            // Handle add button click event
             $(document).on('click', '#btn_add', function() {
-                let addurl  = "{{route('admin.groups.create')}}";
-                let modal   = $('#createGroupModal');
-
+                let addurl = "{{ route('admin.groups.create') }}";
+                let modal = $('#createGroupModal');
+    
                 modal.find('form').attr('action', addurl);
-
+    
                 $('#editContainer').addClass('d-none');
                 $('#createGroupForm')[0].reset();
                 $('.modal-footer button[type="submit"]').text('Create Group');
-
-                  
-            })
-
-            // Handle the edit button click event
+            });
+    
+            // Handle edit button click event
             $(document).on('click', '.btn-edit', function() {
                 let modal = $('#createGroupModal');
-                
                 userAll = userAll.replace(/&quot;/g, '"');
-
+    
                 // Parse the JSON string into a JavaScript array
                 let array = JSON.parse(userAll);
-
-
-
-                //edit group
+    
+                // Hide create group container
                 $('#addContainer').addClass('d-none');
-
+    
                 // Get data from the clicked button
                 let id          = $(this).attr('data-id');
                 let groupName   = $(this).attr('data-group-name');
-                let users       = $(this).attr('data-users').split(','); // Split user IDs by comma
-                let symbols     = $(this).attr('data-symbols').split(','); // Split symbols by comma
-                let spread      = $(this).attr('data-spread');
+                let users       = $(this).attr('data-users').split(',');
+                let symbols     = $(this).attr('data-symbols').split(',');
+                let spread      = parseFloat($(this).attr('data-spread')).toString(); // Remove trailing zeros
                 let lots        = $(this).attr('data-lots');
                 let leverage    = $(this).attr('data-leverage');
                 let level       = $(this).attr('data-level');
-
-                // Set form action URL for updating the group (you can modify the URL as needed)
+    
+                // Set form action URL for updating the group
                 let updateUrl = "{{ route('admin.groups.update', ':id') }}".replace(':id', id);
                 modal.find('form').attr('action', updateUrl);
-
+    
                 // Populate the form fields with the data
                 modal.find('#groupName').val(groupName);
                 modal.find('#spread').val(spread);
                 modal.find('#lots').val(lots);
                 modal.find('#leverage').val(leverage);
                 modal.find('#level').val(level);
-
-                let usersInGroups = $('#usersInGroups').val().split(',');
-
-                usersInGroups = usersInGroups.filter(item => !users.includes(item));
-                console.log('user in groups', usersInGroups);
-                
-                
+    
+                let usersInGroups   = $('#usersInGroups').val().split(',');
+                usersInGroups       = usersInGroups.filter(item => !users.includes(item));
+    
                 array.forEach(option => {
-                    console.log(usersInGroups.indexOf(option.id));
-                    console.log(option.id);
-                    console.log(usersInGroups);
-                    
-                   
-                        
-                        let newOption = new Option(option.name, option.id, false, false);
-                        $('.usersm').append(newOption);
-                    
+                    let newOption = new Option(option.name, option.id, false, false);
+                    $('.usersm').append(newOption);
                 });
+    
                 usersInGroups.forEach(id => {
-                    // Loop through each user in the group
                     modal.find('.usersm').find('option[value="' + id + '"]').remove();
                 });
-
+    
                 // Set selected values for users and symbols
                 $('.usersm').val(users).trigger('change');
                 $('#symbols').val(symbols).trigger('change');
-
+    
                 $('.modal-footer button[type="submit"]').text('Update Group');
-
+    
                 // Show the modal
                 modal.modal('show');
             });
-        });
+    
+            // Check if the group was deleted
+            if (localStorage.getItem('groupDeleted') === 'true') {
+                // Show the success notification
+                notify('success', 'Group deleted successfully!');
+                // Remove the flag from localStorage
+                localStorage.removeItem('groupDeleted');
+            }
 
+
+            // Handle delete button click event
+            $(document).on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+
+                let id = $(this).attr('data-id');
+                let groupName = $(this).attr('data-name');
+                let url = "{{ route('admin.groups.delete', ':id') }}".replace(':id', id); // Use the correct route
+
+                // Confirm deletion
+                if (confirm(`Are you sure you want to delete the group "${groupName}"?`)) {
+                    $.ajax({
+                        url: url, // Use the generated URL
+                        type: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}' // CSRF token for security
+                        },
+                        success: function(response) {
+                            // Set a flag in localStorage indicating a successful deletion
+                            localStorage.setItem('groupDeleted', 'true');
+                            // Reload the page to update the list
+                            location.reload();
+                        },
+                        error: function(xhr) {
+                            // Use iziToast to show an error notification
+                            notify('error', 'An error occurred while deleting the group. Please try again.');
+                        }
+                    });
+                }
+            });
+
+
+        });
     </script>
+    
 @endpush
 

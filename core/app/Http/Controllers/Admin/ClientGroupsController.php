@@ -52,7 +52,7 @@ class ClientGroupsController extends Controller
             'groupName'      => 'required|string|max:255',
             'symbols'        => 'required|array', // Multiple symbols
             'users'          => 'required|array', // Multiple users
-            'spread'         => 'required|numeric',
+            'spread'         => ['required', 'numeric', 'regex:/^\d+(\.\d{1,9})?$/'],
             'lots'           => 'required|numeric',
             'leverage'       => 'required|numeric',
             'level'          => 'required|numeric',
@@ -114,7 +114,7 @@ class ClientGroupsController extends Controller
             'groupName' => 'required|string|max:255',
             'symbols'   => 'required|array', // Multiple symbols
             'users'     => 'required|array', // Multiple users
-            'spread'    => 'required|numeric',
+            'spread' => ['required', 'numeric', 'regex:/^\d+(\.\d+)?$/'], // Allow any number of decimal places
             'lots'      => 'required|numeric',
             'leverage'  => 'required|numeric',
             'level'     => 'required|numeric',
@@ -150,6 +150,25 @@ class ClientGroupsController extends Controller
     
         return returnBack('Group updated successfully!', 'success');
     }
+
+
+    public function delete($id) {
+        // Find the group by ID
+        $group = ClientGroups::findOrFail($id);
+    
+        // Delete associated settings and users first
+        ClientGroupSetting::where('client_group_id', $group->id)->delete();
+        ClientGroupUser::where('client_group_id', $group->id)->delete();
+    
+        // Delete the group
+        $group->delete();
+    
+        // Return a JSON response with a success message
+        return response()->json(['message' => 'Group deleted successfully!'], 200);
+        // return returnBack('Group updated successfully!', 'success');
+    }
+    
+    
     
 
 }

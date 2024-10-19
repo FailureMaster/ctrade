@@ -90,8 +90,9 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
     Route::controller('ClientGroupsController')->group(function () {
         Route::get('groups', 'index')->name('groups.index');
         Route::post('groups/create', 'create')->name('groups.create');
-        Route::get('groups/truncate', 'truncate');
         Route::post('groups/update/{group}', 'update')->name('groups.update');
+        Route::delete('groups/{group}', 'delete')->name('groups.delete');
+        Route::get('groups/truncate', 'truncate');
     });
 
     // Currency Manager
