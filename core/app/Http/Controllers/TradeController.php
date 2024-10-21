@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fee;
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Trade;
 use App\Models\Market;
@@ -11,17 +13,18 @@ use App\Models\Currency;
 use App\Constants\Status;
 use App\Models\LotManager;
 use App\Constants\Defaults;
+use App\Models\ClientGroups;
 use App\Models\FavoritePair;
 use Illuminate\Http\Request;
 use App\Models\FavoriteSymbol;
+use App\Models\ClientGroupUser;
 use App\Models\GatewayCurrency;
-use App\Http\Controllers\Controller;
-use App\Models\Fee;
-use App\Models\User;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Validator;
+use App\Models\ClientGroupSetting;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
 
 class TradeController extends Controller
 {
@@ -88,13 +91,19 @@ class TradeController extends Controller
     {
         $symbol = null;
         if ($request->has('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv')) {
-                   
-                   $symbol = $request->input('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv');
-                   $parts = explode(':', $symbol);
-                   $symbol = $parts[1];
+            $symbol = $request->input('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv');
+            $parts = explode(':', $symbol);
+            $symbol = $parts[1];
         }
+        
+        $userId         = auth()->id() ?? 0;
+        $usersInGroups  = ClientGroupUser::pluck('user_id')->toArray();
+        
+       
+        
+        $pair           = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
 
-        $pair = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
+        
         if ($symbol) {
             $pair = $pair->where('symbol', $symbol)->first();
         } else {
@@ -104,9 +113,41 @@ class TradeController extends Controller
             $notify[] = ['error', 'No pair found'];
             return back()->withNotify($notify);
         }
-        
+        // dd($symbol);
+        //check if current user is in groups
+        if (in_array($userId, $usersInGroups)){
+            $groups                 = ClientGroups::with(['settings', 'groupUsers', 'groupUsers.user'])->get();
+            $clientGroupId          = ClientGroupUser::where('user_id', $userId)->first()->client_group_id;
+            $clientGroupSettings    = ClientGroupSetting::where('client_group_id', $clientGroupId)->first();
+            // $clientGroupSymbols    = ClientGroupSetting::where('client_group_id', $clientGroupId)->get();
+            // // $symbolId               = ClientGroupSetting::with('symbol')->first()->symbol;
+            // $symbolName             = CoinPair::find($clientGroupSettings->symbol);
+
+            // dd($clientGroupSettings );
+
+            $clientGroup = ClientGroups::whereHas('groupUsers', function($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->first();
+
+            // dd($clientGroup);
+            
+            if ($clientGroup !== null) {
+                $pair->percent_charge_for_buy   = $clientGroupSettings->lots;
+
+                //leverage
+                $pair->percent_charge_for_sell  = $clientGroupSettings->leverage;
+    
+                //level
+                $pair->level_percent            = $clientGroupSettings->level;
+    
+                //spread
+                $pair->spread                   = $clientGroupSettings->spread;
+            }
+           
+        }
+
         $markets = Market::with('currency:id,name,symbol')->active()->get();
-        $userId = auth()->id() ?? 0;
+        
         $coinWallet = Wallet::where('user_id', $userId)->where('currency_id', $pair->coin->id)->spot()->first();
         
         $order_count = Order::query()

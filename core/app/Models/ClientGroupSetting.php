@@ -16,6 +16,8 @@ class ClientGroupSetting extends Model
     }
 
     public function symbol(){
-        return $this->hasOne(CoinPair::class, 'id', 'symbol');
+        // return $this->hasOne(CoinPair::class, 'id', 'symbol');
+
+        return $this->belongsTo(CoinPair::class, 'symbol', 'id');
     }
 }
