@@ -286,7 +286,7 @@
                                 <label>@lang('Mobile Number') </label>
                                 <div class="input-group ">
                                     <span class="input-group-text mobile-code"></span>
-                                    <input type="number" name="mobile" value="{{ old('mobile') }}" id="mobile"
+                                    <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
                                         class="form-control checkUser" required>
                                 </div>
                             </div>
@@ -638,6 +638,7 @@
 @endif
 @endpush
 
+{{-- @dd({{ $user->mobile }}) --}}
 
 @push('style')
 <style>
@@ -681,8 +682,11 @@
 
             let dialCode = $('select[name=country] :selected').data('mobile_code');
             let mobileNumber = `{{ $user->mobile }}`;
+            console.log(parseFloat(mobileNumber));
+            
 
             mobileNumber = mobileNumber.replace(dialCode, '');
+            console.log(mobileNumber);
             $('input[name=mobile]').val(mobileNumber);
             mobileElement.text(`+${dialCode}`);
 

@@ -970,7 +970,7 @@ class ManageUsersController extends Controller
                                     'firstname' => $row[0],
                                     'lastname' => $row[1],
                                     'email' => $row[2],
-                                    'mobile' => $dialCode . $row[3],
+                                    'mobile' => $row[3],
                                     'address' => [
                                         'address' => '',
                                         'state' => '',
