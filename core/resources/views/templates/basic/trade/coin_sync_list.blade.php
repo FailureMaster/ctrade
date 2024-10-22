@@ -284,7 +284,7 @@
                                         }
                                     });
 
-                                    console.log(categorizedData); // This will have the structure you need
+                                    // console.log(categorizedData); // This will have the structure you need
 
                                     let arabicSymbols = ["ADNOCGAS", "FAB", "JAZEERA", "STC", "BOUBYAN", "NBK", "ZAIN", "NOOR", "MASAKEN" , "ALDAR"  , "DANA" , "ADIB" , "BAYANAT" , "ADCB" , "SIB" , "CBI" , "ADNIC", "ABK", "WARBABANK", "OOREDOO", "KFH", "KIB", "IFA", "BPCC", "ABAR"];
                                     let arabicObj = [];
@@ -322,7 +322,8 @@
                                     let commodityData = categorizedData.COMMODITY;
                                     generateCoinssHTML(commodityData, '.market-commodity-body', 'commodity', 'COMMODITY', favorited)
 
-                                    fetchFavorites(resp);
+                                    // fetchFavorites(resp);
+                                    fetchFavorites(categorizedData);
 
                                     updateElementValue();
                                 },
@@ -426,8 +427,6 @@
             
         }
         
-        
-
         function generateCoinssHTML(coinsData, className, category, belongsTo, favoriteCoins = []) {
             let html = '';
             for (let coin in coinsData) {
@@ -568,19 +567,49 @@
                 $('.coin-search-list-body').css('display', 'block');
             }
 
-            let url = "{{ route('trade.fetch.coin') }}";
-
             $.ajax({
-                url: url,
+                url: "https://tradehousecrm.com/trade/fetch-coin",
                 type: "GET",
                 dataType: 'json',
                 cache: false,
                 success: function(resp) {
+                    
+                    let api_res = resp;
+
+                    let categorizedData = {};
+
+                    $.each(coinDataDb.pairs, function(i, pair) {
+                        // Find the matching pair in api_res based on symbol
+                        let matchingPair = api_res[pair.symbol.replace('_', '')];
+
+                        if (matchingPair) {
+                            // If it exists, get the type and create a key if it doesn't exist
+                            let type = pair.type;
+
+                            if (!categorizedData[type]) {
+                                categorizedData[type] = {}; // Initialize the object for this type
+                            }
+
+                            // Add the pair to the categorized data
+                            categorizedData[type][pair.symbol] = {
+                                symbol: matchingPair.symbol,
+                                price: matchingPair.price,
+                                percent: matchingPair.percent,
+                                current: matchingPair.current,
+                                logo_url: matchingPair.logo_url,
+                                logo_url2: matchingPair.logo_url2,
+                                company: matchingPair.company,
+                                dataSymbol: matchingPair.dataSymbol,
+                            };
+                        }
+                    });
+
                     const filteredData = {};
-                    for (const category in resp) {
-                        for (const symbol in resp[category]) {
+
+                    for (const category in categorizedData) {
+                        for (const symbol in categorizedData[category]) {
                             if (symbol.toUpperCase().includes(searchInput)) {
-                                let symbolData = resp[category][symbol];
+                                let symbolData = categorizedData[category][symbol];
                                 symbolData['symbol'] = symbol;
                                 symbolData['category'] = category;
 
