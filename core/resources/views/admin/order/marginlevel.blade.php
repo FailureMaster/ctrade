@@ -148,6 +148,7 @@
                                 <th>@lang('Email')</th>
                                 <th>@lang('Country')</th>
                                 <th>@lang('Registered')</th>
+                                <th>@lang('Equity')</th>
                                 <th class="text-center">@lang('Margin Level')</th>
                             </tr>
                         </thead>
@@ -200,6 +201,9 @@
                                             {{-- showDateTime($user->created_at, 'd-m-y - H:i') }}  --}}
                                     </td>
     
+                                    <td class="text-center equity{{$user->id}}" >
+                                        0.0000
+                                    </td>
                                     <td class="text-center margin-level{{$user->id}}" >
                                         0.0000
                                     </td>
@@ -339,7 +343,7 @@
                     cache: false,
                     data: {user_ids:$('#userIds').val()},
                     success: function(resp) {
-                        
+                        console.log('ito resposne', resp);
                         resp.users.forEach(user => {
                             let html = '';
                             let initial_equity = Number(user.custom_wallets.balance) + Number(user.custom_wallets.bonus) + Number(user.custom_wallets.credit);
@@ -370,7 +374,11 @@
                             } else {
                                 margin_level = (equity / user.totalRequiredMargin) * 100;
                             }
+                            let bonus = parseFloat(user.custom_wallets.bonus) || 0;
+                            let credit = parseFloat(user.custom_wallets.credit) || 0;
 
+                            // $(`.equity${user.id}`).html(`${equity}`);
+                            $(`.equity${user.id}`).html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
                             $(`.margin-level${user.id}`).html(`${formatWithPrecision1(margin_level)} %`);
 
                         });
@@ -380,6 +388,8 @@
                         console.error("Error fetching order history: ", error);
                     }
                 });
+
+
             }
 
             function formatWithPrecision(value, precision = 5) {
