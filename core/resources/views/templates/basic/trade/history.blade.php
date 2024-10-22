@@ -20,7 +20,8 @@
                                     <th class="text-center">@lang('Volume')</th>
                                     <th class="text-center">@lang('Type')</th>
                                     <th class="text-center">@lang('Symbol')</th>
-                                    <th class="text-center">@lang('Date')</th>
+                                    <th class="text-center">@lang('Close Date')</th>
+                                    <th class="text-center">@lang('Open Date')</th>
                                     <th class="text-center">@lang('Order ID')</th>
                                     <!--<th></th>-->
                                 </tr>
@@ -29,7 +30,8 @@
                             <thead>
                                 <tr>
                                     <th class="text-center">@lang('Order ID')</th>
-                                    <th class="text-center">@lang('Date')</th>
+                                    <th class="text-center">@lang('Open Date')</th>
+                                    <th class="text-center">@lang('Close Date')</th>
                                     <th class="text-center">@lang('Symbol')</th>
                                     <th class="text-center">@lang('Type')</th>
                                     <th class="text-center">@lang('Volume')</th>
@@ -133,6 +135,7 @@ $(document).ready(function() {
 
 
         let decimalCount = countDecimalPlaces(current_price);
+        console.log('ito order: ', order);
         
         
         if (window.innerWidth < 579) {
@@ -146,7 +149,7 @@ $(document).ready(function() {
             return `
                
                     
-                    <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
+                <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
                     <td><span class="chevron"  ></span></td>
                     <td>#${order.id}</td>
                     <td>${order.pair.symbol.replace('_', '/')}</td>
@@ -175,6 +178,7 @@ $(document).ready(function() {
                 <tr data-order-id="${order.id}">
                     <td class="text-center p-2">#${order.id}</td>
                     <td class="text-center p-2">${order.formatted_date}</td>
+                    <td class="text-center p-2">${order.close_date}</td>
                     <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
                     <td class="text-center p-2">${order.order_side_badge}</td>
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
@@ -196,6 +200,7 @@ $(document).ready(function() {
                     <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
                     <td class="text-center p-2">${order.order_side_badge}</td>
                     <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
+                    <td class="text-center p-2">${order.close_date}</td>
                     <td class="text-center p-2">${order.formatted_date}</td>
                     <td class="text-center p-2">#${order.id}</td>
                 </tr>

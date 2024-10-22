@@ -21,6 +21,7 @@ class Order extends Model
         'order_side_badge',
         'formatted_date',
         'status_badge',
+        'close_date'
     ];
 
     public function pair()
@@ -38,6 +39,11 @@ class Order extends Model
     public function trades()
     {
         return $this->hasMany(Trade::class, 'order_id');
+    }
+
+    public function getCloseDateAttribute()
+    {
+        return showDateTime($this->updated_at);
     }
     public function getFormattedDateAttribute()
     {
