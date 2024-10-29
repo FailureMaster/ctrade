@@ -7,7 +7,47 @@
         .d-container{
             width: 250px;
         }
+
+        .text-right{
+            text-align:right !important;
+        }
     </style>
+
+    @if(App::getLocale() == 'ar')
+        <style>
+            .dashboard-card > div{
+                flex-direction: row-reverse !important;
+            }
+            input,select{
+                text-align:right;
+            }
+
+            form label{
+                text-align:right;
+            }
+
+            .form--control{
+                line-height: unset !important;
+            }
+
+            #detailModal .modal-header, #detailModal .modal-body ul li{
+                flex-direction: row-reverse;
+            }
+
+            #filterContent{
+                flex-direction: row-reverse !important;
+                text-align:right !important
+            }
+
+            #card-info-content{
+                flex-direction: row-reverse !important;
+            }
+
+            #wl-table{
+                text-align:right !important;
+            }
+        </style>
+    @endif
 @endpush
 @section('content')
     <div class="row justify-content-end gy-3 align-items-center justify-content-between">
@@ -18,7 +58,7 @@
                     <x-date-filter :currentFilter="$currentFilter" :currentUrl="url()->current()" />
                     <div>
                         <form action="">
-                            <div class="d-flex gap-2 align-items-end">
+                            <div class="d-flex gap-2 align-items-end" id="filterContent">
                                 <div class="flex-grow-1">
                                     <label>@lang('Transactions')</label>
                                     <input type="text" name="search" class="form-control form--control" value="{{ request()->search }}">
@@ -56,7 +96,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-12 d-flex align-items-center">
+        <div class="col-lg-12 d-flex align-items-center" id="card-info-content">
             <h4 class="mb-0">{{ __($pageTitle) }}</h4>
             <div class="mx-2 d-container">
                 <div class="dashboard-card skeleton">
@@ -129,71 +169,135 @@
         </div> --}}
         <div class="col-lg-12">
             <div class="table-wrapper">
-                <table class="table table--responsive--lg">
+                <table class="table table--responsive--lg" id="wl-table">
                     <thead>
-                        <tr>
-                            <th>@lang('Currency')</th>
-                            <th>@lang('Gateway')</th>
-                            <th>@lang('Transaction')</th>
-                            <th>@lang('Initiated')</th>
-                            <th>@lang('Amount')</th>
-                            <th>@lang('Status')</th>
-                            <th>@lang('Action')</th>
-                        </tr>
+                        @if(App::getLocale() != 'ar')
+                            <tr>
+                                <th>@lang('Currency')</th>
+                                <th>@lang('Gateway')</th>
+                                <th>@lang('Transaction')</th>
+                                <th>@lang('Initiated')</th>
+                                <th>@lang('Amount')</th>
+                                <th>@lang('Status')</th>
+                                <th>@lang('Action')</th>
+                            </tr>
+                        @else
+                            <tr>
+                                <th>@lang('Action')</th>
+                                <th>@lang('Status')</th>
+                                <th>@lang('Amount')</th>
+                                <th>@lang('Initiated')</th>
+                                <th>@lang('Transaction')</th>
+                                <th>@lang('Gateway')</th>
+                                <th>@lang('Currency')</th>
+                            </tr>
+                        @endif
                     </thead>
                     <tbody>
                         @forelse($withdraws as $withdraw)
-
-                            <tr>
-                                <td>
-                                    <div>
-                                        <span>{{ __(@$withdraw->wallet->currency->symbol) }}</span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <span class="fw-bold"><span class="text-primary">
-                                                {{ __(@$withdraw->method->name) }}</span></span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <span >{{ $withdraw->trx }}</span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ showDateTime($withdraw->created_at) }} <br>
-                                        {{ diffForHumans($withdraw->created_at) }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ showAmount($withdraw->amount) }} - <span class="text--danger"
-                                            title="@lang('charge')">{{ showAmount($withdraw->charge) }} </span>
-                                        <br>
-                                        <strong title="@lang('Amount after charge')">
-                                            {{ showAmount($withdraw->amount - $withdraw->charge) }}
-                                            {{ @$withdraw->currency }}
-                                        </strong>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="text-end text-lg-start">
-                                        @php echo $withdraw->statusBadge @endphp
-                                    </div>
-                                </td>
-                                <td>
-                                    <button class="btn btn--sm btn--base detailBtn outline"
-                                        data-user_data="{{ json_encode($withdraw->withdraw_information) }}"
-                                        @if ($withdraw->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $withdraw->admin_feedback }}" @endif>
-                                        <i class="las la-desktop"></i> @lang('Details')
-                                    </button>
-                                </td>
-                            </tr>
+                            @if(App::getLocale() != 'ar')
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <span>{{ __(@$withdraw->wallet->currency->symbol) }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="fw-bold"><span class="text-primary">
+                                                    {{ __(@$withdraw->method->name) }}</span></span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span >{{ $withdraw->trx }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ showDateTime($withdraw->created_at) }} <br>
+                                            {{ diffForHumans($withdraw->created_at) }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ showAmount($withdraw->amount) }} - <span class="text--danger"
+                                                title="@lang('charge')">{{ showAmount($withdraw->charge) }} </span>
+                                            <br>
+                                            <strong title="@lang('Amount after charge')">
+                                                {{ showAmount($withdraw->amount - $withdraw->charge) }}
+                                                {{ @$withdraw->currency }}
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="text-end text-lg-start">
+                                            @php echo $withdraw->statusBadge @endphp
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn--sm btn--base detailBtn outline"
+                                            data-user_data="{{ json_encode($withdraw->withdraw_information) }}"
+                                            @if ($withdraw->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $withdraw->admin_feedback }}" @endif>
+                                            <i class="las la-desktop"></i> @lang('Details')
+                                        </button>
+                                    </td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td>
+                                        <button class="btn btn--sm btn--base detailBtn outline"
+                                            data-user_data="{{ json_encode($withdraw->withdraw_information) }}"
+                                            @if ($withdraw->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $withdraw->admin_feedback }}" @endif>
+                                            <i class="las la-desktop"></i> @lang('Details')
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            @php echo $withdraw->statusBadge @endphp
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ showAmount($withdraw->amount) }} - <span class="text--danger"
+                                                title="@lang('charge')">{{ showAmount($withdraw->charge) }} </span>
+                                            <br>
+                                            <strong title="@lang('Amount after charge')">
+                                                {{ showAmount($withdraw->amount - $withdraw->charge) }}
+                                                {{ @$withdraw->currency }}
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            {{ showDateTime($withdraw->created_at) }} <br>
+                                            {{ diffForHumans($withdraw->created_at) }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span >{{ $withdraw->trx }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span class="fw-bold"><span class="text-primary">
+                                                    {{ __(@$withdraw->method->name) }}</span></span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <span>{{ __(@$withdraw->wallet->currency->symbol) }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
                         @empty
                             @php echo userTableEmptyMessage('withdraw ') @endphp
                         @endforelse

@@ -4,18 +4,61 @@
 @extends($activeTemplate . 'layouts.master')
 @push('style')
     <style>
-       .table thead tr th:last-child {
-            text-align: left !important;
-        }
-
         .d-container{
-            width: 220px;
+            width: 216px;
         }
 
         .d-container:first-child{
             margin-right: .5rem !important;
         }
+
+        .text-right{
+            text-align:right !important;
+        }
+
+        select.form-select{
+            padding: 0 15px !important;
+        }
+
+        #card-info-content h6, a{
+            font-size:18px !important;
+        }
     </style>
+    @if(App::getLocale() == 'ar')
+        <style>
+            .dashboard-card > div{
+                flex-direction: row-reverse !important;
+            }
+            input,select{
+                text-align:right;
+            }
+
+            form label{
+                text-align:right;
+            }
+
+            .form--control{
+                line-height: unset !important;
+            }
+
+            #detailModal .modal-header, #detailModal .modal-body ul li{
+                flex-direction: row-reverse;
+            }
+
+            #filterContent{
+                flex-direction: row-reverse !important;
+                text-align:right !important
+            }
+
+            #card-info-content{
+                flex-direction: row-reverse !important;
+            }
+
+            #tl-table{
+                text-align:right !important;
+            }
+        </style>
+    @endif
 @endpush
 @section('content')
     <div class="row justify-content-center gy-2">
@@ -29,7 +72,7 @@
                     <x-date-filter :currentFilter="$currentFilter" :currentUrl="url()->current()" />
                     <div>
                         <form action="">
-                            <div class="d-flex flex-wrap gap-4">
+                            <div class="d-flex flex-wrap gap-4" id="filterContent">
                                 <div class="flex-grow-1">
                                     <label class="form-label">@lang('Order ID')</label>
                                     <input type="text" name="search" value="{{ request()->search }}"
@@ -61,9 +104,8 @@
                 </div>
             </div>
         </div>
-        <h4 class="mb-0">{{ __($pageTitle) }}</h4>
-        <div class="col-lg-12 d-flex flex-wrap align-items-center">
-           
+        <h4 class="mb-0 @if(App::getLocale() == 'ar') text-right @endif">{{ __($pageTitle) }}</h4>
+        <div class="col-lg-12 d-flex flex-wrap align-items-center justify-content-between" id="card-info-content">
             <div class="d-container">
                 <div class="dashboard-card skeleton">
                     <div class="d-flex justify-content-between align-items-center">
@@ -134,106 +176,202 @@
         </div>
         <div class="col-md-12 mt-3">
             <div class="table-wrapper">
-                <table class="table table--responsive--lg">
+                <table class="table table--responsive--lg" id="tl-table">
                     <thead>
-                        <tr>
-                            <th>@lang('Order ID')</th>
-                            <th>@lang('Open Date')</th>
-                            <th>@lang('Close Date')</th>
-                            <th>@lang('Symbol')</th>
-                            <th>@lang('Type')</th>
-                            <th>@lang('Volume')</th>
-                            <th>@lang('Open Price')</th>
-                            <th>@lang('Closed Price')</th>
-                            <th>@lang('Stop Loss')</th>
-                            <th>@lang('Take Profit')</th>
-                            <th class="text-left">@lang('Profit')</th>
-                        </tr>
+                        @if(App::getLocale() != 'ar')
+                            <tr>
+                                <th>@lang('Order ID')</th>
+                                <th>@lang('Open Date')</th>
+                                <th>@lang('Close Date')</th>
+                                <th>@lang('Symbol')</th>
+                                <th>@lang('Type')</th>
+                                <th>@lang('Volume')</th>
+                                <th>@lang('Open Price')</th>
+                                <th>@lang('Closed Price')</th>
+                                <th>@lang('Stop Loss')</th>
+                                <th>@lang('Take Profit')</th>
+                                <th class="text-left">@lang('Profit')</th>
+                            </tr>
+                        @else
+                            <tr>
+                                <th>@lang('Profit')</th>
+                                <th>@lang('Take Profit')</th>
+                                <th>@lang('Stop Loss')</th>
+                                <th>@lang('Closed Price')</th>
+                                <th>@lang('Open Price')</th>
+                                <th>@lang('Volume')</th>
+                                <th>@lang('Type')</th>
+                                <th>@lang('Symbol')</th>
+                                <th>@lang('Close Date')</th>
+                                <th>@lang('Open Date')</th>
+                                <th class="text-right">@lang('Order ID')</th>
+                            </tr>
+                        @endif
                     </thead>
                     <tbody>
                         @forelse($transactions as $trx)
                             @php
                                 $decimalPlaces = countDecimal($trx->rate);
                             @endphp
-                            <tr>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        <span>#{{ $trx->id }}</span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ $trx->formatted_date }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ $trx->close_date }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ $trx->pair->symbol }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {!! $trx->order_side_badge !!}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ $trx->no_of_lot }}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ number_format((float) $trx->rate, 2, '.', '') }}
-                                        {{-- @if( $decimalPlaces > 0 )
-                                            {{ number_format((float) $trx->rate, $decimalPlaces, '.', '') }}
-                                        @else
-                                            {{ $trx->rate }}
-                                        @endif --}}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ number_format((float) $trx->closed_price, 2, '.', '') }}
-                                        {{-- @if( $decimalPlaces > 0 )
-                                            {{ number_format((float) $trx->closed_price, $decimalPlaces, '.', '') }}
-                                        @else
-                                            {{ $trx->closed_price }}
-                                        @endif --}}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        {{ $trx->stop_loss ? number_format((float) $trx->stop_loss, 2, '.', '') ?: 0 : '-'; }}
-                                        {{-- @if( $decimalPlaces > 0 )
-                                            {{ number_format((float) $trx->stop_loss, $decimalPlaces, '.', '') }}
-                                        @else
-                                            {{ $trx->stop_loss }}
-                                        @endif --}}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start" style="font-size: 0.8125rem">
-                                        {{ $trx->take_profit ? number_format((float) $trx->take_profit, 2, '.', '') ?: 0 : '-'; }}
-                                        {{-- @if( $decimalPlaces > 0 )
-                                            {{ number_format((float) $trx->take_profit, $decimalPlaces, '.', '') }}
-                                        @else
-                                            {{ $trx->take_profit }}
-                                        @endif --}}
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                    <div class="text-end text-lg-start {{ $trx->profit < 1 ? 'text-danger' : 'text-success'}}">
-                                        {{  number_format($trx->profit, 2) }}
-                                    </div>
-                                </td>
-                            </tr>
+                            @if(App::getLocale() != 'ar')
+                                <tr>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            <span>#{{ $trx->id }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ $trx->formatted_date }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ $trx->close_date }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ $trx->pair->symbol }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {!! $trx->order_side_badge !!}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ $trx->no_of_lot }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ number_format((float) $trx->rate, 2, '.', '') }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->rate, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->rate }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ number_format((float) $trx->closed_price, 2, '.', '') }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->closed_price, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->closed_price }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            {{ $trx->stop_loss ? number_format((float) $trx->stop_loss, 2, '.', '') ?: 0 : '-'; }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->stop_loss, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->stop_loss }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start" style="font-size: 0.8125rem">
+                                            {{ $trx->take_profit ? number_format((float) $trx->take_profit, 2, '.', '') ?: 0 : '-'; }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->take_profit, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->take_profit }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start {{ $trx->profit < 1 ? 'text-danger' : 'text-success'}}">
+                                            {{  number_format($trx->profit, 2) }}
+                                        </div>
+                                    </td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td>
+                                        <div class="{{ $trx->profit < 1 ? 'text-danger' : 'text-success'}}">
+                                            {{  number_format($trx->profit, 2) }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="" style="font-size: 0.8125rem">
+                                            {{ $trx->take_profit ? number_format((float) $trx->take_profit, 2, '.', '') ?: 0 : '-'; }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->take_profit, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->take_profit }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ $trx->stop_loss ? number_format((float) $trx->stop_loss, 2, '.', '') ?: 0 : '-'; }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->stop_loss, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->stop_loss }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ number_format((float) $trx->closed_price, 2, '.', '') }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->closed_price, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->closed_price }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ number_format((float) $trx->rate, 2, '.', '') }}
+                                            {{-- @if( $decimalPlaces > 0 )
+                                                {{ number_format((float) $trx->rate, $decimalPlaces, '.', '') }}
+                                            @else
+                                                {{ $trx->rate }}
+                                            @endif --}}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ $trx->no_of_lot }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {!! $trx->order_side_badge !!}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ $trx->pair->symbol }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ $trx->close_date }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            {{ $trx->formatted_date }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            <span>#{{ $trx->id }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                </tr>  
+                            @endif
                         @empty
                             @php echo userTableEmptyMessage('transactions') @endphp
                         @endforelse

@@ -1,6 +1,6 @@
 <div class="mb-4">
     <form method="GET" action="{{ $currentUrl }}">
-        <div class="btn-group d-flex w-100 mb-2" role="group" aria-label="Basic example">
+        <div class="btn-group d-flex w-100 mb-2 @if(App::getLocale() == 'ar') flex-row-reverse @endif" role="group" aria-label="Basic example">
             <button
                 type="submit"
                 name="filter"
@@ -71,9 +71,9 @@
 <div class="modal fade" id="customDateFilterModal" tabindex="-1" role="dialog" aria-labelledby="customDateFilterLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header @if(App::getLocale() == 'ar') flex-row-reverse @endif" >
                 <h5 class="modal-title" id="customDateFilterLabel">
-                    By Date
+                    @lang('By Date')
                 </h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -81,8 +81,8 @@
             </div>
             <div class="modal-body">
                 <form id="customDateFilterForm" action="{{ url()->current() }}" method="GET">
-                    <div class="flex-grow-1">
-                        <label>@lang('Sart date - End date')</label>
+                    <div class="flex-grow-1 @if(App::getLocale() == 'ar') text-right @endif">
+                        <label>@lang('Start date - End date')</label>
                         <input
                             name="customfilter"
                             data-range="true"
@@ -96,7 +96,7 @@
                             >
                     </div>
                     <div class="my-3">
-                        <button type="submit" class="btn-lg btn-primary w-100">Start Filter</button>
+                        <button type="submit" class="btn-lg btn-primary w-100">@lang('Start Filter')</button>
                     </div>
                 </form>
             </div>

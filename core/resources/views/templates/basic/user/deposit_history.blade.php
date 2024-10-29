@@ -7,7 +7,38 @@
         .d-container{
             width: 250px;
         }
+
+        .text-right{
+            text-align:right !important;
+        }
     </style>
+
+    @if(App::getLocale() == 'ar')
+        <style>
+            .dashboard-card > div{
+                flex-direction: row-reverse !important;
+            }
+            input,select{
+                text-align:right;
+            }
+
+            form label{
+                text-align:right;
+            }
+
+            .form--control{
+                line-height: unset !important;
+            }
+
+            #detailModal .modal-header, #detailModal .modal-body ul li{
+                flex-direction: row-reverse;
+            }
+
+            #dh-table{
+                text-align:right !important;
+            }
+        </style>
+    @endif
 @endpush
 @section('content')
     <div class="row justify-content-between align-items-center gy-4">
@@ -18,7 +49,7 @@
                     <x-date-filter :currentFilter="$currentFilter" :currentUrl="url()->current()" />
                     <div>
                         <form action="">
-                            <div class="d-flex gap-2 align-items-end">
+                            <div class="d-flex gap-2 align-items-end @if(App::getLocale() == 'ar')text-end flex-row-reverse @endif">
                                 <div class="flex-grow-1">
                                     <label>@lang('Transactions')</label>
                                     <input type="text" name="search" class="form-control form--control" value="{{ request()->search }}">
@@ -58,7 +89,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-12 d-flex align-items-center">
+        <div class="col-lg-12 d-flex align-items-center @if(App::getLocale() == 'ar') flex-row-reverse @endif">
             <h4 class="mb-0">{{ __($pageTitle) }}</h4>
             <div class="mx-2 d-container">
                 <div class="dashboard-card skeleton">
@@ -134,78 +165,148 @@
  
         <div class="col-md-12">
             <div class="table-wrapper">
-                <table class="table table--responsive--lg">
+                <table class="table table--responsive--lg" id="dh-table">
                     <thead>
-                        <tr>
-                            <th>@lang('Currency')</th>
-                            <th>@lang('Gateway')</th>
-                            <th>@lang('Transaction')</th>
-                            <th>@lang('Initiated')</th>
-                            <th>@lang('Amount')</th>
-                            <th>@lang('Status')</th>
-                            <th>@lang('Details')</th>
-                        </tr>
+                        @if(App::getLocale() != 'ar')
+                            <tr>
+                                <th>@lang('Currency')</th>
+                                <th>@lang('Gateway')</th>
+                                <th>@lang('Transaction')</th>
+                                <th>@lang('Initiated')</th>
+                                <th>@lang('Amount')</th>
+                                <th>@lang('Status')</th>
+                                <th>@lang('Details')</th>
+                            </tr>
+                        @else
+                            <tr>
+                                <th>@lang('Details')</th>
+                                <th>@lang('Status')</th>
+                                <th>@lang('Amount')</th>
+                                <th>@lang('Initiated')</th>
+                                <th>@lang('Transaction')</th>
+                                <th>@lang('Gateway')</th>
+                                <th>@lang('Currency')</th>
+                            </tr>
+                        @endif
                     </thead>
                     <tbody>
                         @forelse($deposits as $deposit)
                             @php
                                 $symbol = @$deposit->wallet->currency->symbol;
                             @endphp
-                            <tr>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        <span>{{ __($symbol) }}</span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        <span class="text-primary fw-bold">{{ __($deposit->gateway?->name) }}</span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start">
-                                        <span>{{ $deposit->trx }} </span>
-                                        <br>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start fw-normal">
-                                        <span>{{ showDateTime($deposit->created_at) }}</span> <br>
-                                        <small>{{ diffForHumans($deposit->created_at) }}</small>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="text-end text-lg-start fw-normal">
-                                        {{ showAmount($deposit->amount) }} +
-                                        <span class="text--danger"
-                                            title="@lang('charge')">{{ showAmount($deposit->charge) }}
-                                        </span>
-                                        <br>
-                                        <span title="@lang('Amount with charge')">
-                                            {{ showAmount($deposit->amount + $deposit->charge) }}
-                                            {{ $symbol }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="text-end text-lg-start">
-                                        @php echo $deposit->statusBadge @endphp
-                                    </div>
-                                </td>
-                                @php
-                                    $details = $deposit->detail != null ? json_encode($deposit->detail) : null;
-                                @endphp
-                                <td>
-                                    <button type="button"
-                                        class="btn btn--base btn--sm outline @if ($deposit->method_code >= 1000) detailBtn @else disabled @endif"
-                                        @if ($deposit->method_code >= 1000) data-info="{{ $details }}" @endif
-                                        @if ($deposit->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $deposit->admin_feedback }}" @endif>
-                                        <i class="las la-desktop"></i> @lang('Details')
-                                    </button>
-                                </td>
-                            </tr>
+                            @if(App::getLocale() != 'ar')
+                                <tr>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            <span>{{ __($symbol) }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            <span class="text-primary fw-bold">{{ __($deposit->gateway?->name) }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start">
+                                            <span>{{ $deposit->trx }} </span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start fw-normal">
+                                            <span>{{ showDateTime($deposit->created_at) }}</span> <br>
+                                            <small>{{ diffForHumans($deposit->created_at) }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="text-end text-lg-start fw-normal">
+                                            {{ showAmount($deposit->amount) }} +
+                                            <span class="text--danger"
+                                                title="@lang('charge')">{{ showAmount($deposit->charge) }}
+                                            </span>
+                                            <br>
+                                            <span title="@lang('Amount with charge')">
+                                                {{ showAmount($deposit->amount + $deposit->charge) }}
+                                                {{ $symbol }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="text-end text-lg-start">
+                                            @php echo $deposit->statusBadge @endphp
+                                        </div>
+                                    </td>
+                                    @php
+                                        $details = $deposit->detail != null ? json_encode($deposit->detail) : null;
+                                    @endphp
+                                    <td>
+                                        <button type="button"
+                                            class="btn btn--base btn--sm outline @if ($deposit->method_code >= 1000) detailBtn @else disabled @endif"
+                                            @if ($deposit->method_code >= 1000) data-info="{{ $details }}" @endif
+                                            @if ($deposit->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $deposit->admin_feedback }}" @endif>
+                                            <i class="las la-desktop"></i> @lang('Details')
+                                        </button>
+                                    </td>
+                                </tr>
+                            @else
+                                <tr>
+                                    @php
+                                        $details = $deposit->detail != null ? json_encode($deposit->detail) : null;
+                                    @endphp
+                                    <td>
+                                        <button type="button"
+                                            class="btn btn--base btn--sm outline @if ($deposit->method_code >= 1000) detailBtn @else disabled @endif"
+                                            @if ($deposit->method_code >= 1000) data-info="{{ $details }}" @endif
+                                            @if ($deposit->status == Status::PAYMENT_REJECT) data-admin_feedback="{{ $deposit->admin_feedback }}" @endif>
+                                            <i class="las la-desktop"></i> @lang('Details')
+                                        </button>
+                                    </td>
+                                    <td class="">
+                                        <div class="">
+                                            @php echo $deposit->statusBadge @endphp
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-normal">
+                                            {{ showAmount($deposit->amount) }} +
+                                            <span class="text--danger"
+                                                title="@lang('charge')">{{ showAmount($deposit->charge) }}
+                                            </span>
+                                            <br>
+                                            <span title="@lang('Amount with charge')">
+                                                {{ showAmount($deposit->amount + $deposit->charge) }}
+                                                {{ $symbol }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-normal">
+                                            <span>{{ showDateTime($deposit->created_at) }}</span> <br>
+                                            <small>{{ diffForHumans($deposit->created_at) }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            <span>{{ $deposit->trx }} </span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            <span class="text-primary fw-bold">{{ __($deposit->gateway?->name) }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            <span>{{ __($symbol) }}</span>
+                                            <br>
+                                        </div>
+                                    </td>
+                                </tr>  
+                            @endif
                         @empty
                             @php echo userTableEmptyMessage('deposit') @endphp
                         @endforelse
