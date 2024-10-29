@@ -11,6 +11,7 @@ use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Models\Withdrawal;
 use App\Models\WithdrawMethod;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class WithdrawController extends Controller
@@ -111,13 +112,13 @@ class WithdrawController extends Controller
 
         $user = auth()->user();
 
-        if ($user->ts) {
-            $response = verifyG2fa($user, $request->authenticator_code);
-            if (!$response) {
-                $notify[] = ['error', 'Wrong verification code'];
-                return back()->withNotify($notify);
-            }
-        }
+        // if ($user->ts) {
+        //     $response = verifyG2fa($user, $request->authenticator_code);
+        //     if (!$response) {
+        //         $notify[] = ['error', 'Wrong verification code'];
+        //         return back()->withNotify($notify);
+        //     }
+        // }
 
         if ($withdraw->amount > $wallet->balance) {
             $notify[] = ['error', 'You do not have sufficient wallet balance for withdraw.'];
@@ -168,8 +169,77 @@ class WithdrawController extends Controller
 
     public function withdrawLog(Request $request)
     {
-        $pageTitle = "Withdraw Log";
-        $withdraws = Withdrawal::searchable(['trx', 'withdrawCurrency:symbol'])->where('user_id', auth()->id())->where('status', '!=', Status::PAYMENT_INITIATE)->with('method', 'wallet.currency')->orderBy('id', 'desc')->paginate(getPaginate());
-        return view($this->activeTemplate . 'user.withdraw.log', compact('pageTitle', 'withdraws'));
+        $pageTitle = "Withdraw Logs";
+
+         // Newly added
+         $filter = $request->get('filter');
+
+         if ($request->get('customfilter')) {
+             $filter = 'custom';
+         }
+
+        $withdraws = Withdrawal::searchable(['trx', 'withdrawCurrency:symbol'])->where('user_id', auth()->id())->where('status', '!=', Status::PAYMENT_INITIATE)->with('method', 'wallet.currency')->orderBy('id', 'desc');
+
+        $startDate = null;
+        $endDate = null;
+ 
+        switch ($filter) {
+            case 'today':
+                $startDate = Carbon::today();
+                $endDate = Carbon::today()->endOfDay();
+                break;
+            case 'yesterday':
+                $startDate = Carbon::yesterday();
+                $endDate = Carbon::yesterday()->endOfDay();
+                break;
+            case 'this_week':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
+            case 'last_week':
+                $startDate = Carbon::now()->subWeek()->startOfWeek();
+                $endDate = Carbon::now()->subWeek()->endOfWeek();
+                break;
+            case 'this_month':
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                break;
+            case 'last_month':
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                break;
+            case 'custom':
+                $date = explode('-', $request->get('customfilter'));
+                $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
+                $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                break;
+        }
+
+        $method_ids = ( clone $withdraws )->select('method_id')->get()->pluck('method_id')->toArray();
+
+        $methods = WithdrawMethod::whereIn('id', $method_ids)->get();
+
+        
+        if ($startDate && $endDate) {
+            $withdraws->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        // Dont uncomment
+        // Gateway filter
+        if ($request->has('gateway') && $request->gateway <> "") {
+            $withdraws->where('method_id', $request->gateway);
+        }
+
+        // Status filter
+        if ($request->has('status') && $request->status <> "") {
+            $withdraws->where('status', $request->status);
+        }
+
+        $withdrawsData = ( clone $withdraws)->get();
+
+        $withdraws = $withdraws->paginate(getPaginate());
+
+       
+        return view($this->activeTemplate . 'user.withdraw.log', compact('pageTitle', 'withdraws', 'methods', 'withdrawsData'));
     }
 }

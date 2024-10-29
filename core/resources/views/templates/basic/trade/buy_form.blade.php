@@ -62,7 +62,7 @@
 
                             </label>
                             <small class="text-themed d-block mb-1 d-none">
-                                <span class="lot-label"></span>
+                                <span class="lot-label"></span>:
                                 <span class="lot-value"></span>
                             </small>
                         </div>
@@ -478,8 +478,13 @@
                     <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 @if(App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="me-2">
                             <small class="text-themed d-block mb-1">
-                                <span class="lot-label"></span>
-                                <span class="lot-value"></span>
+                                @if(App::getLocale() != 'ar')
+                                    <span class="lot-label"></span>:
+                                    <span class="lot-value"></span>
+                                @else
+                                    <span class="lot-value"></span>:
+                                    <span class="lot-label"></span>
+                                @endif
                             </small>
                             {{-- <h6 class="mb-0">Send money</h6> --}}
                         </div>
@@ -797,7 +802,7 @@
         var selectedLot     = select.value;
         var lotLabel        = document.querySelector('.lot-label');
         
-        lotLabel.innerText                              =  "@lang('Lot'):";
+        lotLabel.innerText                              =  "@lang('Lot')";
         document.querySelector('.lot-value').innerText  = selectedLotText
         
         let lotValue                                     = {{ @$pair->percent_charge_for_buy }};

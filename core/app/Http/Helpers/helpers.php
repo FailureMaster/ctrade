@@ -328,8 +328,9 @@ function diffForHumans($date)
     return Carbon::parse($date)->diffForHumans();
 }
 
-function showDateTime($date, $format = 'Y-m-d h:i A')
+function showDateTime($date, $format = 'Y-m-d H:i')
 {
+    $orig_format = 'Y-m-d h:i A';
     // $lang = session()->get('lang');
     // Carbon::setlocale($lang);
     return Carbon::parse($date)->translatedFormat($format);
@@ -870,6 +871,26 @@ if (!function_exists('enabledIpAddressChecker')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('countDecimal')) {
+    function countDecimal($num) {
+        // Convert the number to a string
+        $numStr = (string) $num;
+
+        // Check if there is a decimal point
+        $decimalIndex = strpos($numStr, '.');
+
+        // If there's no decimal point, return 0
+        if ($decimalIndex === false) {
+            return 0;
+        }
+
+        // Calculate the number of decimal places
+        $decimalPlaces = strlen($numStr) - $decimalIndex - 1;
+
+        return $decimalPlaces;
     }
 }
 

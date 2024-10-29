@@ -1,10 +1,120 @@
+@php
+    $currentFilter = request('filter');
+@endphp
 @extends($activeTemplate . 'layouts.master')
+@push('style')
+    <style>
+        .d-container{
+            width: 250px;
+        }
+    </style>
+@endpush
 @section('content')
     <div class="row justify-content-end gy-3 align-items-center justify-content-between">
-        <div class="col-lg-3">
-            <h4 class="mb-0">{{ __($pageTitle) }}</h4>
+
+        <div class="col-lg-12">
+            <div class="card responsive-filter-card mb-4">
+                <div class="card-body">
+                    <x-date-filter :currentFilter="$currentFilter" :currentUrl="url()->current()" />
+                    <div>
+                        <form action="">
+                            <div class="d-flex gap-2 align-items-end">
+                                <div class="flex-grow-1">
+                                    <label>@lang('Transactions')</label>
+                                    <input type="text" name="search" class="form-control form--control" value="{{ request()->search }}">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>@lang('Gateway')</label>
+                                    <select name="gateway" class="form-control form--control">
+                                        <option value="">@lang('Select One')</option>
+                                        @foreach( $methods as $m )
+                                            <option value="{{$m->id}}" @selected(request()->gateway == $m->id)>{{ $m->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>@lang('Status')</label>
+                                    <select name="status" class="form-control form--control">
+                                        <option value="">@lang('Select One')</option>
+                                        <option value="1" @selected(request()->status == 1)>
+                                            Approved
+                                        </option>
+                                        <option value="2" @selected(request()->status == 2)>
+                                            Pending
+                                        </option>
+                                        <option value="3" @selected(request()->status == 3)>
+                                            Rejected
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="flex-grow-1 align-self-end">
+                                    <button class="btn btn--base w-100"><i class="las la-filter"></i> Filter</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-12 d-flex align-items-center">
+            <h4 class="mb-0">{{ __($pageTitle) }}</h4>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Withdraw Amount') </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $withdrawsData->where('status', 1)->sum('amount') }}$</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Total Withdraw') </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $withdrawsData->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Approved') </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $withdrawsData->where('status', 1)->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Pending') </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $withdrawsData->where('status', 2)->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Rejected') </a>
+                        </div>
+                         <h6 class="dashboard-card__coin-title">{{ $withdrawsData->where('status', 3)->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- <div class="col-lg-3">
             <div class="d-flex gap-3">
                 <form action="" class="flex-fill">
                     <div class="input-group">
@@ -16,14 +126,15 @@
                     </div>
                 </form>
             </div>
-        </div>
+        </div> --}}
         <div class="col-lg-12">
             <div class="table-wrapper">
                 <table class="table table--responsive--lg">
                     <thead>
                         <tr>
                             <th>@lang('Currency')</th>
-                            <th>@lang('Gateway | Transaction')</th>
+                            <th>@lang('Gateway')</th>
+                            <th>@lang('Transaction')</th>
                             <th>@lang('Initiated')</th>
                             <th>@lang('Amount')</th>
                             <th>@lang('Status')</th>
@@ -36,7 +147,7 @@
                             <tr>
                                 <td>
                                     <div>
-                                        <span>{{ @$withdraw->wallet->currency->symbol }}</span>
+                                        <span>{{ __(@$withdraw->wallet->currency->symbol) }}</span>
                                         <br>
                                     </div>
                                 </td>
@@ -45,7 +156,12 @@
                                         <span class="fw-bold"><span class="text-primary">
                                                 {{ __(@$withdraw->method->name) }}</span></span>
                                         <br>
-                                        <small>{{ $withdraw->trx }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <span >{{ $withdraw->trx }}</span>
+                                        <br>
                                     </div>
                                 </td>
                                 <td>
@@ -85,7 +201,7 @@
                 </table>
             </div>
             @if ($withdraws->hasPages())
-                {{ paginateLinks($withdraws) }}
+                {{-- {{ paginateLinks($withdraws) }} --}}
             @endif
         </div>
     </div>

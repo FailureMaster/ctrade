@@ -1,27 +1,145 @@
+@php
+    $currentFilter = request('filter');
+@endphp
 @extends($activeTemplate . 'layouts.master')
+@push('style')
+    <style>
+        .d-container{
+            width: 250px;
+        }
+    </style>
+@endpush
 @section('content')
     <div class="row justify-content-between align-items-center gy-4">
-        <div class="col-lg-4">
-            <h4 class="mb-0">{{ __($pageTitle) }}</h4>
-        </div>
-        <div class="col-lg-3">
-            <form>
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control form--control" value="{{ request()->search }}"
-                        placeholder="@lang('Search by transactions')">
-                    <button class="input-group-text bg-primary text-white">
-                        <i class="las la-search"></i>
-                    </button>
+        {{-- <x-date-filter :currentFilter="$currentFilter" :currentUrl="url()->current()" /> --}}
+        <div class="col-lg-12">
+            <div class="card responsive-filter-card mb-4">
+                <div class="card-body">
+                    <x-date-filter :currentFilter="$currentFilter" :currentUrl="url()->current()" />
+                    <div>
+                        <form action="">
+                            <div class="d-flex gap-2 align-items-end">
+                                <div class="flex-grow-1">
+                                    <label>@lang('Transactions')</label>
+                                    <input type="text" name="search" class="form-control form--control" value="{{ request()->search }}">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>@lang('Gateway')</label>
+                                    <select name="gateway" class="form-control form--control">
+                                        <option value="">@lang('Select One')</option>
+                                        @foreach ($gateway as $g)
+                                            <option value="{{ $g->method_code }}">
+                                                {{ __($g->name) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>@lang('Status')</label>
+                                    <select name="status" class="form-control form--control">
+                                        <option value="">@lang('Select One')</option>
+                                        <option value="1" @selected(request()->status == 1)>
+                                            Approved
+                                        </option>
+                                        <option value="2" @selected(request()->status == 2)>
+                                            Pending
+                                        </option>
+                                        <option value="3" @selected(request()->status == 3)>
+                                            Rejected
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="flex-grow-1 align-self-end">
+                                    <button class="btn btn--base w-100"><i class="las la-filter"></i> @lang('Filter')</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
+        <div class="col-lg-12 d-flex align-items-center">
+            <h4 class="mb-0">{{ __($pageTitle) }}</h4>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Deposit Amount') </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $depositsData->where('status', 1)->sum('amount') }}$</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @lang('Total Deposits') </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $depositsData->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @if(App::getLocale() == 'ar')
+                                    @lang('Approved Deposits') 
+                                @else
+                                    @lang('Approved') 
+                                @endif
+                            </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $depositsData->where('status', 1)->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @if(App::getLocale() == 'ar')
+                                    @lang('Pending Deposit') 
+                                @else
+                                    @lang('Pending') 
+                                @endif
+                            </a>
+                        </div>
+                        <h6 class="dashboard-card__coin-title">{{ $depositsData->where('status', 2)->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="mx-2 d-container">
+                <div class="dashboard-card skeleton">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="dashboard-card__content">
+                            <a class="dashboard-card__coin-name mb-0 ">
+                                @if(App::getLocale() == 'ar')
+                                    @lang('Rejected Deposits') 
+                                @else
+                                    @lang('Rejected') 
+                                @endif
+                            </a>
+                        </div>
+                         <h6 class="dashboard-card__coin-title">{{ $depositsData->where('status', 3)->count() }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
         <div class="col-md-12">
             <div class="table-wrapper">
                 <table class="table table--responsive--lg">
                     <thead>
                         <tr>
                             <th>@lang('Currency')</th>
-                            <th>@lang('Gateway | Transaction')</th>
+                            <th>@lang('Gateway')</th>
+                            <th>@lang('Transaction')</th>
                             <th>@lang('Initiated')</th>
                             <th>@lang('Amount')</th>
                             <th>@lang('Status')</th>
@@ -44,7 +162,12 @@
                                     <div class="text-end text-lg-start">
                                         <span class="text-primary fw-bold">{{ __($deposit->gateway?->name) }}</span>
                                         <br>
-                                        <small> {{ $deposit->trx }} </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-end text-lg-start">
+                                        <span>{{ $deposit->trx }} </span>
+                                        <br>
                                     </div>
                                 </td>
                                 <td>

@@ -39,12 +39,21 @@
                 <li class="nav-item" role="presentation" data-order-type="trades">
                     <button class="order-nav-link nav-link" type="button"></button>
                 </li>
-                <li class="nav-item" role="presentation" data-order-type="orders">
-                    <button class="order-nav-link nav-link active" type="button">@lang('Orders')</button>
-                </li>
-                <li class="nav-item" role="presentation" data-order-type="history">
-                    <button class="order-nav-link nav-link" type="button">@lang('History')</button>
-                </li>
+                @if(App::getLocale() != 'ar')
+                    <li class="nav-item" role="presentation" data-order-type="orders">
+                        <button class="order-nav-link nav-link active" type="button">@lang('Orders')</button>
+                    </li>
+                    <li class="nav-item" role="presentation" data-order-type="history">
+                        <button class="order-nav-link nav-link" type="button">@lang('Closed')</button>
+                    </li>
+                @else
+                    <li class="nav-item" role="presentation" data-order-type="history">
+                        <button class="order-nav-link nav-link" type="button">@lang('Closed')</button>
+                    </li>
+                    <li class="nav-item" role="presentation" data-order-type="orders">
+                        <button class="order-nav-link nav-link active" type="button">@lang('Orders')</button>
+                    </li>
+                @endif
             </ul>
         </div>
         <!--<div class="float-end text-white me-3">Equity: <span id="equity-span"></span></div>-->
@@ -73,11 +82,13 @@
             $(".order-nav-link").removeClass("active");
             $(this).addClass("active");
 
-            if ($(".order-nav-link").eq(0).is($(this))) {
+            let orderType = $(this).parent('li').attr('data-order-type');
+
+            if( orderType == "trades" ){
                 $(".order-book-pan").css("display", "block");
                 $(".my_order").css("display", "none");
                 $(".history").css("display", "none");
-            } else if ($(".order-nav-link").eq(1).is($(this))) {
+            } else if( orderType == "orders" ){
                 $(".order-book-pan").css("display", "none");
                 $(".my_order").css("display", "block");
                 $(".history").css("display", "none");

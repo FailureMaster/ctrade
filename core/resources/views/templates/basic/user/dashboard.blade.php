@@ -1,7 +1,7 @@
 @extends($activeTemplate . 'layouts.master')
 @section('content')
     <div class="row justify-content-center gy-4">
-        <div class=" col-xxl-9 col-lg-12">
+        <div class="col-xxl-9 col-lg-12" style="padding-top:1rem;">
             <div class="row gy-3">
                 @php
                     $kycContent = getContent('kyc_content.content', true);
@@ -60,21 +60,72 @@
                                 </span>
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
-                                        @lang('Open Order') </a>
-                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['open_order']) }} </h6>
+                                        @lang('Closed Orders') </a>
+                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['closed_orders']) }} </h6>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-xxl-4 col-sm-6">
-                        
+                        <div class="dashboard-card skeleton">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="dashboard-card__icon text--base">
+                                    <i class="las la-spinner"></i>
+                                </span>
+                                <div class="dashboard-card__content">
+                                    <a class="dashboard-card__coin-name mb-0 ">
+                                        @lang('P & L') </a>
+                                    <h6 class="dashboard-card__coin-title {{ getAmount($widget['pl']) >= 0 ? 'text-success' : 'text-danger' }}"> {{ getAmount($widget['pl']) }}$ </h6>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-xxl-4 col-sm-6">
-                        
+                        <div class="dashboard-card skeleton">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="dashboard-card__icon text--base">
+                                    <i class="las la-spinner"></i>
+                                </span>
+                                <div class="dashboard-card__content">
+                                    <a class="dashboard-card__coin-name mb-0 ">
+                                        @lang('Total Deposit') </a>
+                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['total_deposit']) }}$ </h6>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
-                <div class="row gy-4 mb-3 justify-content-center">
+                <div class="row gy-4 mb-3">
+                    <div class="col-xxl-4 col-sm-6">
+                        <div class="dashboard-card skeleton">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="dashboard-card__icon text--base">
+                                    <i class="las la-spinner"></i>
+                                </span>
+                                <div class="dashboard-card__content">
+                                    <a class="dashboard-card__coin-name mb-0 ">
+                                        @lang('Total withdraw') </a>
+                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['total_withdraw']) }}$ </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6">
+                        <div class="dashboard-card skeleton">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="dashboard-card__icon text--base">
+                                    <i class="las la-spinner"></i>
+                                </span>
+                                <div class="dashboard-card__content">
+                                    <a class="dashboard-card__coin-name mb-0 ">
+                                        @lang('Pending Tickets') </a>
+                                    <h6 class="dashboard-card__coin-title"> {{ $widget['open_tickets'] }} </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- <div class="row gy-4 mb-3 justify-content-center">
                     <div class="col-lg-6">
                         <div class="transection" style="height: 500px; overflow-y: auto; scrollbar-color: #283c40 #111e21">
                             <h5 class="transection__title skeleton @if(App::getLocale() == 'ar') text-end @endif"> @lang('Order') </h5>
@@ -179,17 +230,17 @@
                             @endforelse
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
-        <div class=" col-xxl-3">
+        <div class="col-xxl-3">
             <div class="dashboard-right">
                 <div class="right-sidebar">
                     <div class="right-sidebar__header mb-3 skeleton">
                         <div class="d-flex flex-between flex-wrap @if(App::getLocale() == 'ar') justify-content-end @endif">
                             <div>
                                 <h4 class="mb-0 fs-18">@lang('Balance Overview')</h4>
-                                <p class="mt-0 fs-12">@lang('Available wallet balance including the converted total balance')</p>
+                                {{-- <p class="mt-0 fs-12">@lang('Available wallet balance including the converted total balance')</p> --}}
                             </div>
                             <span class="toggle-dashboard-right dashboard--popup-close"><i
                                     class="las la-times"></i></span>

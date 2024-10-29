@@ -14,7 +14,7 @@
                                     <th class="text-center">@lang('Status')</th>
                                     <th class="text-center">@lang('Profit')</th>
                                     <th class="text-center">@lang('Take Profit')</th>
-                                     <th class="text-center">@lang('Stop Loss')</th>
+                                    <th class="text-center">@lang('Stop Loss')</th>
                                     <th class="text-center">@lang('Closed Price')</th>
                                     <th class="text-center">@lang('Open Price')</th>
                                     <th class="text-center">@lang('Volume')</th>
@@ -135,8 +135,6 @@ $(document).ready(function() {
 
 
         let decimalCount = countDecimalPlaces(current_price);
-        console.log('ito order: ', order);
-        
         
         if (window.innerWidth < 579) {
 

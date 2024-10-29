@@ -7,7 +7,7 @@
                 value="today"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'today' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                Today
+                @lang('Today')
             </button>
             <button
                 type="submit"
@@ -15,7 +15,7 @@
                 value="yesterday"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'yesterday' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                Yesterday
+                @lang('Yesterday')
             </button>
             <button
                 type="submit"
@@ -23,7 +23,7 @@
                 value="this_week"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'this_week' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                This Week
+                @lang('This week')
             </button>
             <button
                 type="submit"
@@ -31,7 +31,7 @@
                 value="last_week"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'last_week' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                Last Week
+                @lang('Last week')
             </button>
             <button
                 type="submit"
@@ -39,7 +39,7 @@
                 value="this_month"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'this_month' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                This Month
+                @lang('This Month')
             </button>
             <button
                 type="submit"
@@ -47,7 +47,7 @@
                 value="last_month"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'last_month' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                Last Month
+                @lang('Last Month')
             </button>
             <button
                 type="submit"
@@ -55,7 +55,7 @@
                 value="all_time"
                 class="btn btn-lg btn-custom-border {{ $currentFilter == 'all_time' ? 'btn-primary' : 'btn-outline-primary' }}"
                 >
-                All Time
+                @lang('All Time')
             </button>
             <a
                 id="customFilterButton"
@@ -63,7 +63,7 @@
                 data-bs-toggle="modal"
                 data-bs-target="#customDateFilterModal"
                 >
-                By Date
+                @lang('By Date')
             </a>
         </div>
     </form>

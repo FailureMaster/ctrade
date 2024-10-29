@@ -49,7 +49,7 @@ class Status
 
     const ORDER_OPEN      = 0;
     const ORDER_COMPLETED = 1;
-    const ORDER_CANCELED  = 9;
+    const ORDER_CANCELED  = 9; // This equivalent to closed orders
 
     const WALLET_TYPE_SPOT    = 1;
     const WALLET_TYPE_FUNDING = 2;

@@ -14,12 +14,17 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Lib\GoogleAuthenticator;
 use App\Http\Controllers\Controller;
+use App\Models\Deposit;
 use App\Models\FavoritePair;
+use App\Models\Gateway;
 use App\Models\GatewayCurrency;
 use App\Models\Order;
 use App\Models\Referral;
+use App\Models\SupportTicket;
 use App\Models\Trade;
+use App\Models\Withdrawal;
 use App\Models\WithdrawMethod;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -39,10 +44,26 @@ class UserController extends Controller
         $currencies = Currency::rankOrdering()->select('name', 'id', 'symbol');
 
         $order                     = Order::where('user_id', $user->id);
+
+        $closed_orders             = $order->where('status', Status::ORDER_CANCELED)->get();
+
         $widget['open_order']      = (clone $order)->open()->count();
         $widget['completed_order'] = (clone $order)->completed()->count();
         // $widget['canceled_order']  = (clone $order)->canceled()->count();
         $widget['total_trade']     = Trade::where('trader_id', $user->id)->count();
+
+        
+        $pl                        = 0;
+
+        foreach($closed_orders as $co ){
+            $pl = ( $pl + $co->profit );
+        }
+
+        $widget['pl'] = $pl;
+        $widget['closed_orders']  = $closed_orders->count();
+        $widget['total_deposit']  = Deposit::where('user_id', $user->id)->where('status', Status::PAYMENT_SUCCESS)->sum('amount');
+        $widget['total_withdraw'] = Withdrawal::where('user_id', $user->id)->approved()->sum('amount');
+        $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
 
         $recentOrders       = $order->with('pair.coin')->orderBy('id', 'DESC')->get();
         $recentTransactions = Transaction::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
@@ -60,9 +81,78 @@ class UserController extends Controller
     }
     public function depositHistory(Request $request)
     {
-        $pageTitle = 'Deposit History';
-        $deposits  = auth()->user()->deposits()->searchable(['trx', 'currency:symbol'])->with(['gateway', 'wallet.currency'])->orderBy('id', 'desc')->paginate(getPaginate());
-        return view($this->activeTemplate . 'user.deposit_history', compact('pageTitle', 'deposits'));
+        $pageTitle = 'Deposit Logs';
+
+        $deposits  = auth()->user()->deposits()->searchable(['trx', 'currency:symbol'])->with(['gateway', 'wallet.currency'])->orderBy('id', 'desc');
+        // Newly added
+        $filter = $request->get('filter');
+
+        if ($request->get('customfilter')) {
+            $filter = 'custom';
+        }
+
+        $method_code_ids = (clone $deposits)->get()->pluck('method_code')->unique()->toArray();
+        
+        $gateway = GatewayCurrency::whereHas('method', function ($gate) {
+            $gate->where('status', Status::ENABLE);
+        })
+        ->whereIn('method_code', $method_code_ids)
+        ->select('method_code', 'name')
+        ->get();
+
+
+        $startDate = null;
+        $endDate = null;
+
+        switch ($filter) {
+            case 'today':
+                $startDate = Carbon::today();
+                $endDate = Carbon::today()->endOfDay();
+                break;
+            case 'yesterday':
+                $startDate = Carbon::yesterday();
+                $endDate = Carbon::yesterday()->endOfDay();
+                break;
+            case 'this_week':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
+            case 'last_week':
+                $startDate = Carbon::now()->subWeek()->startOfWeek();
+                $endDate = Carbon::now()->subWeek()->endOfWeek();
+                break;
+            case 'this_month':
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                break;
+            case 'last_month':
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                break;
+            case 'custom':
+                $date = explode('-', $request->get('customfilter'));
+                $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
+                $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                break;
+        }
+
+        if ($startDate && $endDate) {
+            $deposits->whereBetween('deposits.created_at', [$startDate, $endDate]);
+        }
+
+        if ($request->has('gateway') && $request->gateway <> "") {
+            $deposits->where('deposits.method_code', $request->gateway);
+        }
+
+        if ($request->has('status') && $request->status <> "") {
+            $deposits->where('deposits.status', $request->status);
+        }
+
+        $depositsData = ( clone $deposits)->get();
+
+        $deposits = $deposits->paginate(getPaginate());
+
+        return view($this->activeTemplate . 'user.deposit_history', compact('pageTitle', 'deposits', 'gateway', 'depositsData'));
     }
 
     public function show2faForm()
@@ -114,9 +204,9 @@ class UserController extends Controller
         return back()->withNotify($notify);
     }
 
-    public function transactions()
+    public function transactions(Request $request)
     {
-        $pageTitle    = 'Transactions';
+        $pageTitle    = 'Transactions Logs';
 
         $excludedRemarks = [
             'balance_subtract',
@@ -132,11 +222,85 @@ class UserController extends Controller
             ->orderBy('remark')
             ->get('remark');
         $replacevalue = ['wallet_type' => ['spot' => Status::WALLET_TYPE_SPOT, 'funding' => Status::WALLET_TYPE_FUNDING]];
-        $query        = Transaction::where('user_id', auth()->id())->searchable(['trx'])->combineColumnValue($replacevalue)->filter(['trx_type', 'remark', 'wallet.currency:symbol', 'wallet:wallet_type']);
-        $transactions = $query->orderBy('id', 'desc')->with('wallet.currency')->paginate(getPaginate());
+   
         $currencies   = Currency::active()->rankOrdering()->get();
 
-        return view($this->activeTemplate . 'user.transactions', compact('pageTitle', 'transactions', 'remarks', 'currencies'));
+        $filter = $request->get('filter');
+
+        if ($request->get('customfilter')) {
+            $filter = 'custom';
+        }
+        
+        $startDate = null;
+        $endDate = null;
+
+        switch ($filter) {
+            case 'today':
+                $startDate = Carbon::today();
+                $endDate = Carbon::today()->endOfDay();
+                break;
+            case 'yesterday':
+                $startDate = Carbon::yesterday();
+                $endDate = Carbon::yesterday()->endOfDay();
+                break;
+            case 'this_week':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
+            case 'last_week':
+                $startDate = Carbon::now()->subWeek()->startOfWeek();
+                $endDate = Carbon::now()->subWeek()->endOfWeek();
+                break;
+            case 'this_month':
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                break;
+            case 'last_month':
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                break;
+            case 'custom':
+                $date = explode('-', $request->get('customfilter'));
+                $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
+                $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                break;
+        }
+
+        $transactions = Order::with('pair')->where('user_id', auth()->id())
+            ->where('status', Status::ORDER_CANCELED)
+            ->orderBy('updated_at', 'desc');
+
+        if ($startDate && $endDate) {
+            $transactions->whereBetween('updated_at', [$startDate, $endDate]);
+        }
+
+        if ( $request->has('symbol') && $request->symbol <> "" ) {
+            $transactions->where('pair_id', $request->symbol);
+        }
+
+        if ( $request->has('trx_type') && $request->trx_type <> "" ) {
+            $transactions->where('order_side', $request->trx_type);
+        }
+
+        $transactions = $transactions->searchable(['id'])->paginate(getPaginate());
+
+        $closed_orders             = Order::where('status', Status::ORDER_CANCELED)->where('user_id', auth()->id())->get();
+        
+        $pl                        = 0;
+        $total_profit              = 0;
+        $total_loss                = 0;
+
+        foreach($closed_orders as $co ){
+
+            if( $co->profit > 1 )  $total_profit =  $total_profit + $co->profit;
+            if( $co->profit < 1 )  $total_loss =  $total_loss + $co->profit;
+
+            $pl = ( $pl + $co->profit );
+        }
+
+        $currency = CoinPair::whereIn('id', $closed_orders->pluck('pair_id')->unique()->toArray())->select('id', 'symbol')->get();
+
+        return view($this->activeTemplate . 'user.transactions', compact('pageTitle', 'transactions', 'remarks', 'currencies', 'pl', 'closed_orders', 'total_profit', 'total_loss', 'currency'));
     }
 
     public function kycForm()
