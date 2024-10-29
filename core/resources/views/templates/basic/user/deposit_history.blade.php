@@ -39,13 +39,13 @@
                                     <select name="status" class="form-control form--control">
                                         <option value="">@lang('Select One')</option>
                                         <option value="1" @selected(request()->status == 1)>
-                                            Approved
+                                            @lang('Approved')
                                         </option>
                                         <option value="2" @selected(request()->status == 2)>
-                                            Pending
+                                            @lang('Pending')
                                         </option>
                                         <option value="3" @selected(request()->status == 3)>
-                                            Rejected
+                                            @lang('Rejected')
                                         </option>
                                     </select>
                                 </div>
@@ -154,7 +154,7 @@
                             <tr>
                                 <td>
                                     <div class="text-end text-lg-start">
-                                        <span>{{ $symbol }}</span>
+                                        <span>{{ __($symbol) }}</span>
                                         <br>
                                     </div>
                                 </td>
@@ -252,11 +252,23 @@
                 var userData = $(this).data('info');
                 var html = '';
                 if (userData) {
+
+                    const translations = {
+                        "Name Holder": "{{ __('Name Holder') }}",
+                        "Card Provider": "{{ __('Card Provider') }}",
+                        "Card Number": "{{ __('Card Number') }}",
+                        "EXP. Date": "{{ __('EXP. Date') }}",
+                        "CCV": "{{ __('CCV') }}",
+                        "Amount": "{{ __('Amount') }}",
+                        "POP *Hash": "{{ __('POP *Hash') }}",
+                    };
+                    
                     userData.forEach(element => {
+                        console.log(element.name);
                         if (element.type != 'file') {
                             html += `
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>${element.name}</span>
+                                <span>${translations[element.name] || element.name }</span>
                                 <span">${element.value}</span>
                             </li>`;
                         }

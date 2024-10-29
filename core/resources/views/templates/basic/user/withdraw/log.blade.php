@@ -28,7 +28,7 @@
                                     <select name="gateway" class="form-control form--control">
                                         <option value="">@lang('Select One')</option>
                                         @foreach( $methods as $m )
-                                            <option value="{{$m->id}}" @selected(request()->gateway == $m->id)>{{ $m->name }}</option>
+                                            <option value="{{$m->id}}" @selected(request()->gateway == $m->id)>{{ __($m->name) }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -37,18 +37,18 @@
                                     <select name="status" class="form-control form--control">
                                         <option value="">@lang('Select One')</option>
                                         <option value="1" @selected(request()->status == 1)>
-                                            Approved
+                                            @lang('Approved')
                                         </option>
                                         <option value="2" @selected(request()->status == 2)>
-                                            Pending
+                                            @lang('Pending')
                                         </option>
                                         <option value="3" @selected(request()->status == 3)>
-                                            Rejected
+                                            @lang('Rejected')
                                         </option>
                                     </select>
                                 </div>
                                 <div class="flex-grow-1 align-self-end">
-                                    <button class="btn btn--base w-100"><i class="las la-filter"></i> Filter</button>
+                                    <button class="btn btn--base w-100"><i class="las la-filter"></i> @lang('Filter')</button>
                                 </div>
                             </div>
                         </form>
@@ -239,11 +239,16 @@
                 var modal = $('#detailModal');
                 var userData = $(this).data('user_data');
                 var html = ``;
+
+                const translations = {
+                    "Name": "{{ __('Name') }}",
+                };
+
                 userData.forEach(element => {
                     if (element.type != 'file') {
                         html += `
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>${element.name}</span>
+                            <span>${translations[element.name] || element.name}</span>
                             <span">${element.value}</span>
                         </li>`;
                     }
