@@ -8,6 +8,7 @@
     $lots                 = @$meta->lots;
     $fee_status                 = @$meta->fee_status;
     $isCategory = isset($_GET['category']);
+    $widget = $meta->widget;
 @endphp
 
 <div class="tab-inner-wrapper" style="background-color: var(--pane-bg); {{is_mobile() ? 'margin: 0' : ''}}">
@@ -49,6 +50,9 @@
         </div>
         <div class="tab-pane fade" id="trade-history-sm" role="tabpanel">
             <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair]" />
+        </div>
+        <div class="tab-pane fade" id="wallet-sm" role="tabpanel">
+            <x-flexible-view :view="$activeTemplate . 'trade.portfolio'" :meta="['widget' => $widget]" />
         </div>
         <div class="tab-pane fade" id="menu-sm" role="tabpanel">
             <div class="summary-container">
@@ -194,11 +198,11 @@
                         aria-controls="pills-chartthree"
                         aria-selected="true"
                         >
-                        <i class="fas fa-briefcase"></i>
-                        @lang('Portfolio')
+                        <i class="fas fa-briefcase" id="trade-btn-pill"></i>
+                        @lang('Trade')
                     </a>
                 </li>
-                <li class="nav-item" role="presentation">
+                {{-- <li class="nav-item" role="presentation">
                     <a class="nav-link d-flex flex-column"
                         data-bs-toggle="pill"
                         data-bs-target="#order-book-sm"
@@ -209,7 +213,7 @@
                         <i class="fas fa-users"></i>
                         @lang('Orders')
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item" role="presentation">
                     <a
                         class="nav-link d-flex flex-column"
@@ -220,7 +224,21 @@
                         aria-selected="false"
                         >
                         <i class="fas fa-history"></i>
-                        @lang('History')
+                        @lang('Closed Orders')
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation" data-status="0">
+                    <a
+                        href="#"
+                        class="nav-link m-portfolio d-flex flex-column"
+                        data-bs-toggle="pill"
+                        data-bs-target="#wallet-sm"
+                        role="tab"
+                        aria-controls="pills-orderbookthree"
+                        aria-selected="false"
+                        >
+                        <i class="fas fa-briefcase" id="trade-btn-pill"></i>
+                        @lang('Portfolio')
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
