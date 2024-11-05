@@ -21,7 +21,8 @@ class Order extends Model
         'order_side_badge',
         'formatted_date',
         'status_badge',
-        'close_date'
+        'close_date',
+        'custom_order_side_badge',
     ];
 
     public function pair()
@@ -111,5 +112,18 @@ class Order extends Model
     public function scopeBuySideOrder($query)
     {
         return $query->where('order_side', Status::BUY_SIDE_ORDER);
+    }
+
+    public function customOrderSideBadge(): Attribute
+    {
+        return new Attribute(function () {
+            $html = '';
+            if ($this->order_side == Status::BUY_SIDE_ORDER) {
+                $html = '<span class="text-primary">' . trans('Buy') . '</span>';
+            } else {
+                $html = '<span class="text-danger">' . trans('Sell') . '</span>';
+            }
+            return $html;
+        });
     }
 }

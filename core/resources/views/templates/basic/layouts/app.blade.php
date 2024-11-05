@@ -52,7 +52,7 @@
     type="text/css" />
     @stack('style-lib')
     @stack('style')
-    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
     <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/auth_color.php') }}?color={{ $general->auth_color }}">
     
     <style>
