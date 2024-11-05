@@ -22,6 +22,10 @@ use App\Models\GatewayCurrency;
 use App\Models\ClientGroupSetting;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Deposit;
+use App\Models\SupportTicket;
+use App\Models\Withdrawal;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
@@ -175,8 +179,26 @@ class TradeController extends Controller
             'user_id' => $userId,
             'currency_id' => Defaults::DEF_WALLET_CURRENCY_ID
         ])->join('currencies', 'wallets.currency_id', 'currencies.id')->spot()->sum(DB::raw('currencies.rate * wallets.balance'));
+
+        // Additional
+        $order         = Order::where('user_id', $userId);
+        $closed_orders = $order->where('status', Status::ORDER_CANCELED)->get();
+        $widget['open_order']      = Order::where('user_id', $userId)->where('status', Status::ORDER_OPEN)->count();
+        $widget['completed_order'] = (clone $order)->completed()->count();
+        $widget['total_trade']     = Trade::where('trader_id', $userId)->count();
+        $pl                        = 0;
+
+        foreach($closed_orders as $co ){
+            $pl = ( $pl + $co->profit );
+        }
+
+        $widget['pl'] = $pl;
+        $widget['closed_orders']  = $closed_orders->count();
+        $widget['total_deposit']  = Deposit::where('user_id', $userId)->where('status', Status::PAYMENT_SUCCESS)->sum('amount');
+        $widget['total_withdraw'] = Withdrawal::where('user_id', $userId)->approved()->sum('amount');
+        $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
        
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance'));
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget'));
     }
 
     public function fetchUserBalance()
@@ -283,6 +305,47 @@ class TradeController extends Controller
         } else {
             $query->where('status', Status::ORDER_CANCELED);
             $query->orderBy('updated_at', 'desc');
+        }
+
+        $filter = $request->get('filter');
+        
+        $startDate = null;
+        $endDate = null;
+
+        switch ($filter) {
+            case 'today':
+                $startDate = Carbon::today();
+                $endDate = Carbon::today()->endOfDay();
+                break;
+            case 'yesterday':
+                $startDate = Carbon::yesterday();
+                $endDate = Carbon::yesterday()->endOfDay();
+                break;
+            case 'this_week':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
+            case 'last_week':
+                $startDate = Carbon::now()->subWeek()->startOfWeek();
+                $endDate = Carbon::now()->subWeek()->endOfWeek();
+                break;
+            case 'this_month':
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                break;
+            case 'last_month':
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                break;
+            case 'custom':
+                $date = explode('-', $request->get('customfilter'));
+                $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
+                $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                break;
+        }
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
         }
 
         $orders = $query->orderBy('id', 'desc')->get();
