@@ -80,7 +80,9 @@
             
     
         <table id="tablesOrder" style="display: inline-table;">
-            <thead>
+
+            {{-- Comment this tomorrow  --}}
+            {{-- <thead>
                 <!-- <tr> -->
                     <th></th> <!-- Empty for chevron icon -->
                     <th>ID</th>
@@ -89,7 +91,9 @@
                     <!-- <th>Volume</th> -->
                     <th>Profit</th>
                 <!-- </tr> -->
-            </thead>
+            </thead> --}}
+            {{-- End of Comment this tomorrow  --}}
+
             <tbody class="order-list-body">
                 <!-- Order Row 1 -->
                 
@@ -282,26 +286,59 @@ $(document).ready(function() {
                 is_collapsed = 1;
             }
 
+            // Old code
+            // return `
+            //         <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
+            //             <td><span class="chevron"></span></td>
+            //             <td>#${order.id}</td>
+            //             <td>${order.pair.symbol.replace('_', '/')}</td>
+            //             <td class="buy">${order.order_side_badge}</td>
+                        
+            //             <td class="${ total_price < 0 ? 'negative' : 'text-success'}" id="orderTest_${order.id}">${total_price}</td>
+            //         </tr>
+                    
+            //         <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
+            //             <td colspan="6">
+            //                 <strong>Date:</strong> ${order.formatted_date}<br><br>
+            //                 <strong>Open price:</strong>  ${formatWithPrecision(order.rate)} <br><br>
+            //                 <strong>Current price:</strong> ${current_price}<br><br>
+            //                 <strong>Current price:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
+            //                 <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
+            //             </td>
+            //         </tr>
+            // `;
+           
+            // new code
             return `
                     <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
-                        <td><span class="chevron"></span></td>
-                        <td>#${order.id}</td>
-                        <td>${order.pair.symbol.replace('_', '/')}</td>
-                        <td class="buy">${order.order_side_badge}</td>
-                        
-                        <td class="${ total_price < 0 ? 'negative' : 'text-success'}" id="orderTest_${order.id}">${total_price}</td>
+                        <td>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex flex-column">
+                                    <div>
+                                        <span>${order.pair.symbol.replace('_', '/')},</span>
+                                        <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${order.custom_order_side_badge}</span>
+                                        <span>${removeTrailingZeros(order.no_of_lot)}</span>
+                                    </div>
+                                    <div>
+                                        <span>${parseFloat(order.rate).toFixed(decimalCount)}</span>
+                                        <span>&rarr;</span>
+                                        <span >${current_price}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</span>
+                                </div>
+                            </div>     
+                        </td>
                     </tr>
                     
                     <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
                         <td colspan="6">
-                            <strong>Date:</strong> ${order.formatted_date}<br><br>
-                            <strong>Open price:</strong>  ${formatWithPrecision(order.rate)} <br><br>
-                            <strong>Current price:</strong> ${current_price}<br><br>
-                            <strong>Current price:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
                             <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
                         </td>
                     </tr>
             `;
+        
         }
    
         return `
@@ -416,7 +453,7 @@ $(document).ready(function() {
                 }
 
                 closeOrdersBasedOnSLTP(resp)
-
+                
                 $('.order-list-body').html(html);
             },
             error: function(xhr, status, error) {
@@ -649,7 +686,7 @@ table {
 }
 
 th, td {
-    padding: 5px;
+    /* padding: 5px; */
     text-align: left;
     color: white;
 }
@@ -684,7 +721,7 @@ tr th:last-child {
 
 .details-row td {
     color: #fff;
-    padding: 5px;
+    /* padding: 5px; */
     text-align: left;
 }
 
@@ -726,7 +763,7 @@ tr th:last-child {
     }
 
     .trading-table .table th, .trading-table .table td {
-        padding: 8px !important;
+        /* padding: 8px !important; */
         font-size: 10px !important;
     }
 }

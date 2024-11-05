@@ -60,6 +60,20 @@
                                 </span>
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
+                                        @lang('Open Orders') </a>
+                                    <h6 class="dashboard-card__coin-title">  {{ getAmount($widget['open_order']) }}  </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6">
+                        <div class="dashboard-card skeleton">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="dashboard-card__icon text--base">
+                                    <i class="las la-spinner"></i>
+                                </span>
+                                <div class="dashboard-card__content">
+                                    <a class="dashboard-card__coin-name mb-0 ">
                                         @lang('Closed Orders') </a>
                                     <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['closed_orders']) }} </h6>
                                 </div>
@@ -80,6 +94,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="row gy-4 mb-3">
                     <div class="col-xxl-4 col-sm-6">
                         <div class="dashboard-card skeleton">
                             <div class="d-flex justify-content-between align-items-center">
@@ -94,8 +110,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row gy-4 mb-3">
                     <div class="col-xxl-4 col-sm-6">
                         <div class="dashboard-card skeleton">
                             <div class="d-flex justify-content-between align-items-center">

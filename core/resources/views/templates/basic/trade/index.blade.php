@@ -62,7 +62,7 @@
         <div class="trading-mobile">
             <x-flexible-view
                 :view="$activeTemplate . 'trade.trading_mobile'" 
-                :meta="['screen' => 'small', 'markets' => $markets, 'pair' => $pair, 'marketCurrencyWallet' => $marketCurrencyWallet, 'coinWallet' => $coinWallet, 'order_count' => $order_count, 'lots' => $lots,'fee_status' => $fee_status]"
+                :meta="['screen' => 'small', 'markets' => $markets, 'widget' => $widget, 'pair' => $pair, 'marketCurrencyWallet' => $marketCurrencyWallet, 'coinWallet' => $coinWallet, 'order_count' => $order_count, 'lots' => $lots,'fee_status' => $fee_status]"
                 />
         </div>
     @endif
@@ -329,9 +329,32 @@
 @if( is_mobile() )
     @push('style')
         <style>
-          .trading-right, .trading-table__mobile, .trading-table__mobile{
+          .trading-right, .trading-table__mobile, .trading-table__mobile, .tab-inner-wrapper{
             margin-top: 0 ;
+            padding: 0;
           }
+
+          [data-theme=dark] .tab-inner-wrapper {
+            background-color: #0f1821 !important;
+          }
+
+          .trading-right{
+            border:none;
+          }
+
         </style>
     @endpush
+@else
+        @push('style')
+            <style>
+                #market-nav a, #market-nav div, #market-nav span{
+                    font-size:13px !important;
+                }
+
+                .trading-right{
+                    padding-right: 0 !important;
+                    padding-left: 0 !important;
+                }
+            </style>
+        @endpush
 @endif

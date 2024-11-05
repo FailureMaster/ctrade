@@ -137,112 +137,13 @@
         </div>
     </div>
 
-        @if( $view_portfolio )
-            <!--<div class="p-4" id="portfolio-content-2" style="background-color: #0d1e23; color: #fff; font-size: 0.75rem;">-->
-            <!--     Accordion Body with the rest of the details -->
-            <!--    <div class="d-flex justify-content-between mt-1">-->
-            <!--        <h7 class="buy-sell__title">@lang('Balance')</h7>-->
-            <!--        <span class="">-->
-            <!--            @auth-->
-            <!--                <span class="text-themed">{{ showAmount(@$marketCurrencyWallet->balance) }} USD</span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-
-            <!--    <div class="d-flex justify-content-between mt-1">-->
-            <!--        <h7 class="buy-sell__title">@lang('Equity')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="equity-span"></span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-                
-            <!--    <div class="d-flex justify-content-between mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('P/L')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="pl-span"></span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-
-            <!--    <div class="d-flex justify-content-between mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('Bonus')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="bonus-span">{{ showAmount(@$marketCurrencyWallet->bonus) }} USD</span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-
-            <!--    <div class="d-flex justify-content-between mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('Credit')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="credit-span">{{ showAmount(@$marketCurrencyWallet->credit) }} USD</span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-
-            <!--    <div class="d-flex justify-content-between mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('Free Margin')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="free-margin-span">0</span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-            <!--    <div class="d-flex justify-content-between mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('Used Margin')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="used-margin-span">0</span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-
-            <!--    <div class="d-none mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('ST Level') ({{ number_format($pair->level_percent, 0) }}%)</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="level-span"></span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-
-            <!--    <div class="d-flex justify-content-between mt-2">-->
-            <!--        <h7 class="buy-sell__title">@lang('Margin Level')</h7>-->
-            <!--        <span class="fs-12 text-themed">-->
-            <!--            @auth-->
-            <!--                <span id="margin_level_span"></span>-->
-            <!--            @else-->
-            <!--                <span>00000</span>-->
-            <!--            @endauth-->
-            <!--        </span>-->
-            <!--    </div>-->
-            <!--</div>-->
-            
-           <div class="summary-container">
-                <h2>Portfolio</h2>
-                <div class="summary-item">
-                    <div class="label">Balance</div>
+        @if( $view_portfolio )          
+           <div class="summary-container pb-0">
+                <h2 class="h-title p-0 mb-0 border-0">Portfolio</h2>
+                <h2 class="p-0 ch5"></h2>
+                <div class="portfolio-item">
+                    <div class="label p-0">Balance</div>
+                    <div class="dots"></div>
                     @auth
                         <div class="value-box">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
                     @else
@@ -250,8 +151,9 @@
                     @endauth
                 </div>
             
-                <div class="summary-item">
+                <div class="portfolio-item">
                     <div class="label">Equity</div>
+                    <div class="dots"></div>
                     @auth
                         <div class="value-box" id="equity-span"></div>
                     @else
@@ -259,35 +161,19 @@
                     @endauth
                 </div>
             
-                <div class="summary-item">
+                <div class="portfolio-item">
                     <div class="label">P/L</div>
+                    <div class="dots"></div>
                     @auth
                         <div class="value-box" id="pl-span"></div>
                     @else
                         <div class="value-box">00000</div>
                     @endauth
-                </div>
+                </div>    
             
-                <div class="summary-item">
-                    <div class="label">Bonus</div>
-                    @auth
-                        <div class="value-box">{{ showAmount(@$marketCurrencyWallet->bonus) }} $</div>
-                    @else
-                        <div class="value-box">00000</div>
-                    @endauth
-                </div>
-            
-                <div class="summary-item">
-                    <div class="label">Credit</div>
-                    @auth
-                        <div class="value-box">{{ showAmount(@$marketCurrencyWallet->credit) }} $</div>
-                    @else
-                        <div class="value-box">00000</div>
-                    @endauth
-                </div>
-            
-                <div class="summary-item">
+                <div class="portfolio-item">
                     <div class="label">Free Margin</div>
+                    <div class="dots"></div>
                     @auth
                         <div class="value-box" id="free-margin-span">0</div>
                     @else
@@ -295,17 +181,13 @@
                     @endauth
                 </div>
             
-                <div class="summary-item">
-                    <div class="label">Used Margin</div>
-                    @auth
-                        <div class="value-box" id="used-margin-span">0</div>
-                    @else
-                        <div class="value-box">00000</div>
-                    @endauth
-                </div>
+                @auth
+                    <span id="used-margin-span" class="d-none">0</span>
+                @endauth
             
-                <div class="summary-item d-none">
+                <div class="portfolio-item d-none">
                     <div class="label">ST Level ({{ number_format($pair->level_percent, 0) }}%)</div>
+                    <div class="dots"></div>
                     @auth
                         <div class="value-box" id="level-span"></div>
                     @else
@@ -313,13 +195,34 @@
                     @endauth
                 </div>
             
-                <div class="summary-item">
+                <div class="portfolio-item p-0 m-0">
                     <div class="label">Margin Level</div>
+                    <div class="dots"></div>
                     @auth
                         <div class="value-box" id="margin_level_span"></div>
                     @else
                         <div class="value-box">00000</div>
                     @endauth
+                </div>
+                <h2 class="mb-1 p-0 ch1"></h2>
+            </div>
+
+            <h2 class="p-0 ch5"></h2>
+            
+            <div class="trading-table__mobile pt-0" style="margin-top: 0px;margin-bottom:80px;">
+                <div class="summary-container pt-0">
+                    <div class="positions-header p-0 m-0 align-items-end">
+                        <h2 class="border-0 p-0 mb-0 h-title">Positions</h2>
+                        <label class="ellipsis-menu">•••</label>
+                    </div>
+
+                    <h2 class="mb-1 p-0 ch5"></h2>
+                    
+                    <table id="tablesOrder" style="display: inline-table;">
+                        <tbody class="order-list-body">
+                            <!-- Table content goes here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         @endif
@@ -612,7 +515,6 @@
 
     <x-flexible-view :view="$activeTemplate . 'trade.traders_trend'"/>
 </form>
-
 @push('scripts')
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -822,7 +724,7 @@
         let currentPrice    = document.querySelector("#sellSpan").innerText;
         let llSizeVal       = parseFloat(currentPrice) * lotEquivalent;
         let llSize          = parseInt(llSizeVal) >= 0 ? llSizeVal : 0;
-        
+
         document.querySelector('.ll-size-span').innerText = llSize.toFixed();
 
         let leverage        = parseFloat({{ @$pair->percent_charge_for_sell }} || 0);
@@ -911,8 +813,17 @@
                     }
                 }
             });
+
+            
+
         });
+
+
+    
+
     </script>
+
+    
 @endif
 @endpush
 
@@ -1046,8 +957,19 @@
         height: 100vh;
     }
 
-    .summary-container {
-        background-color: #0d1e23;
+    [data-theme=dark] .trading-right {
+        background-color: #0f1821;
+    }
+
+    .trading-right{
+        padding: 20px;
+        border-radius: 8px;
+        width: 100%; /* Full width */
+        max-width: 100%; /* Max width 100% for larger devices */
+    }
+
+    .summary-container, .tab-inner-wrapper{
+        background-color: #0f1821;
         padding: 20px;
         border-radius: 8px;
         width: 100%; /* Full width */
@@ -1119,13 +1041,41 @@
     .summary-item:nth-child(7) { background-color: #6e6e6e; }
     .summary-item:nth-child(8) { background-color: #4f4f4f; }
 
+    .label, .value-box, .c-icon, .portfolio-item, #tablesOrder td, #tablesOrder tr, #tablesOrder{
+        font-family: 'Roboto', sans-serif;
+        font-weight: 400;
+        font-size: 16px;
+    }
+
+    #tablesOrder td, #tblHistory td{
+        padding: 0 !important;
+    }
+    td div div:first-child div:first-child span:first-child{
+        font-weight: bold;
+    }
+    td div div:first-child div:first-child span:last-child, td div div:first-child div:first-child span:nth-child(2){
+        color: #3b8bfb !important;
+        font-weight: 400;
+    }
+
+    td div div:first-child div:last-child span{
+        color: #97a6b5;
+    }
+
+    .negative, .text-danger{
+        color: #c2424b !important;
+    }
+
+    .text-primary{
+        color: #3b8bfb !important;
+    }
+
     .label {
         font-size: 16px;
         color: white;
     }
 
     .value-box {
-        font-weight: bold;
         font-size: 16px;
     }
 
@@ -1135,6 +1085,69 @@
         border-radius: 50%;
         object-fit: cover;
     }
+
+    /* uncomment this tomorrow */
+    .portfolio-item {
+        align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .portfolio-item .label, 
+    .portfolio-item .value {
+      padding: 0 5px;
+      position: relative;
+      z-index: 1;
+    } 
+
+    /* This css is for displaying dotted lines */
+
+.dots {
+    flex-grow: 1;
+    height: 8px;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 4px); /* Tiny 1px circles with 4px padding */
+    background-size: 10px; /* 5px horizontal spacing between circles */
+    opacity: 0.2;
+    margin: 0 20px; /* Space around the entire .dots element */
+}
+
+
+.positions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    /* border-bottom: 1px solid #2f2f2f;  */
+    /* padding-bottom: 5px; */
+}
+
+.h-title{
+    font-size: 16px !important;
+    color: #97a6b5 !important;
+}
+
+.ellipsis-menu {
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    padding-right: 10px; /* Adjust as needed for spacing */
+}
+
+.ch5 {
+    margin-top: 5px !important;
+    margin-bottom : 5px !important;
+}
+
+.ch1{
+    margin-top: 5px !important;
+    margin-bottom: 0 !important;
+}
+
+#tablesOrder .clickable-row{
+    border-color: #3c4a54 !important;
+}
+
 </style>
 
 @endpush

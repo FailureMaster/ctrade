@@ -61,18 +61,26 @@
 </div>
 <div class="trading-table__mobile">
      <div class="summary-container">
-            <h2>History</h2>
-    <table style="display: inline-table;">
-        <thead>
+        
+        <div class="d-flex justify-content-between">
+            <h2 class="h-title p-0 mb-0 border-0">Closed Orders</h2>
+        </div>
+            
+        <h2 class="p-0 ch5 ch5-history"></h2>
+
+    <table id="tblHistory" style="display: inline-table;">
+
+        {{-- Comment this tomorrow --}}
+        {{-- <thead>
             <tr>
-                <th></th> <!-- Empty for chevron icon -->
+                <th></th> 
                 <th>ID</th>
                 <th>Symbol</th>
                 <th>Type</th>
-                {{-- <th>Volume</th> --}}
                 <th>Profit</th>
             </tr>
-        </thead>
+        </thead> --}}
+        {{-- End of Comment this tomorrow --}}
         <tbody class="history-body">
             <!-- Order Row 1 -->
             
@@ -88,7 +96,7 @@
         font-size: 0.875rem !important;
     }
     .history-body > tr > td {
-        border-bottom: 1px solid hsl(var(--base-two)/0.09) !important;
+        border-bottom: 1px solid #3c4a54 !important;
     }    
 </style>
 @endpush
@@ -144,32 +152,70 @@ $(document).ready(function() {
                 is_collapsed = 1;
             }
 
+            // Comment this tomorrow
+            // return `
+            //     <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
+            //         <td><span class="chevron"  ></span></td>
+            //         <td>#${order.id}</td>
+            //         <td>${order.pair.symbol.replace('_', '/')}</td>
+            //         <td class="buy">${order.order_side_badge}</td>
+            //         <td class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</td>
+            //     </tr>
+                    
+            //     <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}">
+            //         <td colspan="6">
+            //             <strong>Date:</strong> ${order.formatted_date}<br><br>
+            //             <strong>Open Price:</strong> ${formatWithPrecision(order.rate)}<br><br>
+            //             <strong>Closed Price:</strong> <span>${removeTrailingZeros(formatWithPrecision(order.closed_price)) || 0}</span><br><br>
+            //             <strong>Stop Loss:</strong> ${order.stop_loss ? formatWithPrecision(order.stop_loss) : '-'}<br><br>
+            //             <strong>Take Profit:</strong> ${order.take_profit ? formatWithPrecision(order.take_profit) : '-'}<br><br>
+            //             <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
+            //             <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br><br>
+            //             <strong>Status:</strong> ${order.status_badge}<br>
+            //         </td>
+            //     </tr>
+            // `;
+            // End of comment this tomorrow
+
+            // Uncomment this tomorrow
+            let customOrderProfit = removeTrailingZeros(formatWithPrecision(order.profit));
             return `
-               
+                    <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
+                        <td class="p-0">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex flex-column">
+                                    <div>
+                                        <span>${order.pair.symbol.replace('_', '/')},</span>
+                                        <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${order.custom_order_side_badge}</span>
+                                        <span>${removeTrailingZeros(order.no_of_lot)}</span>
+                                    </div>
+                                    <div>
+                                        <span>${parseFloat(order.rate).toFixed(decimalCount)}</span>
+                                        <span>&rarr;</span>
+                                        <span >${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(customOrderProfit).toFixed(2) || 0}</span>
+                                </div>
+                            </div>     
+                        </td>
+                    </tr>
                     
-                <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
-                    <td><span class="chevron"  ></span></td>
-                    <td>#${order.id}</td>
-                    <td>${order.pair.symbol.replace('_', '/')}</td>
-                    <td class="buy">${order.order_side_badge}</td>
-                    <td class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</td>
-                </tr>
-                    
-                <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}">
-                    <td colspan="6">
-                        <strong>Date:</strong> ${order.formatted_date}<br><br>
-                        <strong>Open Price:</strong> ${formatWithPrecision(order.rate)}<br><br>
-                        <strong>Closed Price:</strong> <span>${removeTrailingZeros(formatWithPrecision(order.closed_price)) || 0}</span><br><br>
-                        <strong>Stop Loss:</strong> ${order.stop_loss ? formatWithPrecision(order.stop_loss) : '-'}<br><br>
-                        <strong>Take Profit:</strong> ${order.take_profit ? formatWithPrecision(order.take_profit) : '-'}<br><br>
-                        <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
-                        <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br><br>
-                        <strong>Status:</strong> ${order.status_badge}<br>
-                    </td>
-                </tr>
-
-
+                    <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
+                        <td colspan="6">
+                            <strong>Date:</strong> ${order.formatted_date}<br><br>
+                            <strong>Open Price:</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br><br>
+                            <strong>Closed Price:</strong> <span>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span><br><br>
+                            <strong>Stop Loss:</strong> ${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}<br><br>
+                            <strong>Take Profit:</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}<br><br>
+                            <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
+                            <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br><br>
+                            <strong>Status:</strong> ${order.status_badge}<br>
+                        </td>
+                    </tr>
             `;
+            // End of Uncomment this tomorrow
         }
         return `
             @if (App::getLocale() != 'ar')
@@ -209,7 +255,17 @@ $(document).ready(function() {
     let openRowsHistory = [];
     
     function fetchHistory() {
+
+        let date_filter = null;
+
+        if( $('.dropdown-item.active').length > 0 ){
+            date_filter = $('.dropdown-item.active').attr('data-value');
+        }
+
         let actionUrl = "{{ route('trade.order.list', ['pairSym' => @$pair->symbol ?? 'default_symbol', 'status' => 'history' ]) }}";
+
+        actionUrl += `?filter=${date_filter}`;
+
         $.ajax({
             url: actionUrl,
             type: "GET",
@@ -252,10 +308,93 @@ $(document).ready(function() {
     setInterval(function func() { 
         return func; 
     }(), 10000); 
+
+    $(document).on('click', '.dropdown-item', function(){
+        $('.dropdown-item').removeClass('active');
+        $(this).addClass('active');
+    })
 });
 </script>
 @endpush
 
+@push('style')
+<style>
+    .dropdown-toggle::after {
+        content: none;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dropdown-item .label {
+      display: flex;
+      align-items: center;
+    }
+
+    .dropdown-item .label i {
+      font-size: 1.2rem;
+    }
+
+    .dropdown-item .date-range {
+      font-size: 0.9rem;
+      color: white !important;
+    }
+
+    .dropdown-menu {
+      width: 220px;
+    }
+
+    .dropdown-item.active {
+      background-color: #007bff !important;
+      color: white !important;
+    }
+    
+    .dropdown-menu{
+        background-color:#293543;
+    }
+
+    .dropdown-menu li .dropdown-item{
+        margin:0 !important;
+    }
+
+    .dropdown-menu li .dropdown-item{
+        padding:1rem;
+    }
+
+    #dateFilterDropdown{
+        border: unset !important;
+        color: #fff;
+    }
+
+    .h-title{
+        font-size: 16px !important;
+        color: #97a6b5 !important;
+    }
+    
+    #tblHistory td{
+        padding-right: 0 !important;
+        padding-left: 0 !important;
+    }
+
+    .ch5 {
+        margin-top: 5px !important;
+        margin-bottom : 5px !important;
+    }
+
+    .ch5-history{
+        border-bottom: 1px solid #3c4a54;
+    }
+
+    .label, .value-box, .c-icon, .portfolio-item, #tblHistory td, #tblHistory tr, #tblHistory{
+        font-family: 'Roboto', sans-serif;
+        font-weight: 400;
+        font-size: 16px;
+    }
+</style>
+@endpush
 {{-- @php
     $meta = (object) $meta;
     $pair = @$meta->pair;

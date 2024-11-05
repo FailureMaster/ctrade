@@ -327,7 +327,8 @@
                                 notify('error', resp.message);
                             }
 
-
+                            // Redirect to trade page
+                            $("#trade-btn-pill").trigger("click");
                         },
                         error: function(e) {
                             notify("@lang('Something went to wrong')")

@@ -1,10 +1,11 @@
 <div class="trading-right" style="height: 99%; {{!is_mobile() ? 'margin-top: 10px' : ''}}">
-    <div class="trading-right__top">   
-    @if (is_mobile())
-        <div class="summary-container">
-            <h2>@lang('Instruments')</h2>
-        </div>
-    @endif 
+    <div class="trading-right__top @if(is_mobile()) pb-0 @endif">   
+        @if (is_mobile())
+            <div class="summary-container c-summary">
+                <h2 class="border-0 p-0 mb-0 h-title">@lang('Instruments')</h2>
+            </div>
+            <h2 class="p-0 ch5 ch5-history"></h2>
+        @endif 
         <div class="w-100">
             <form id="search-market" onsubmit="searchMarket(event)">
                 <div class="input--group">
@@ -17,7 +18,8 @@
             </form>
         </div>
     </div>
-    <nav id="market-nav">
+    <h2 class="p-0 ch5"></h2>
+    <nav id="market-nav" class="@if(is_mobile()) pt-0 @endif">
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button
                 class="dropdown-btn"
@@ -807,6 +809,17 @@
 
         .search-btn {
             color: hsl(var(--white)) !important;
+        }
+
+        .ch5 {
+            margin-top: 5px !important;
+            margin-bottom : 5px !important;
+        }
+
+        .c-summary{
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+            padding-bottom: 0 !important;
         }
     </style>
 @endpush
