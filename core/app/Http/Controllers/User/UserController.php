@@ -47,12 +47,11 @@ class UserController extends Controller
 
         $closed_orders             = $order->where('status', Status::ORDER_CANCELED)->get();
 
-        $widget['open_order']      = (clone $order)->open()->count();
+        $widget['open_order']      = Order::where('user_id', $user->id)->where('status', Status::ORDER_OPEN)->count();
         $widget['completed_order'] = (clone $order)->completed()->count();
         // $widget['canceled_order']  = (clone $order)->canceled()->count();
         $widget['total_trade']     = Trade::where('trader_id', $user->id)->count();
 
-        
         $pl                        = 0;
 
         foreach($closed_orders as $co ){
