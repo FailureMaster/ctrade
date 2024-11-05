@@ -1,3 +1,10 @@
+@php
+    $meta           = (object) $meta;
+    $closed_orders  = @$meta->closed_orders;
+    $pl             = @$meta->pl;
+    $total_profit   = @$meta->total_profit;
+    $total_loss     = @$meta->total_loss;
+@endphp
 <div class="trading-table two">
     <div class="flex-between trading-table__header">
         {{-- Header Content --}}
@@ -60,33 +67,95 @@
     </div>
 </div>
 <div class="trading-table__mobile">
-     <div class="summary-container">
+        <div class="summary-container pb-0">
+            <h2 class="h-title p-0 mb-0 border-0">@lang('Transactions Logs')</h2>
+            <h2 class="p-0 ch5"></h2>
+            <div class="portfolio-item">
+                <div class="label p-0">@lang('Total Orders')</div>
+                <div class="dots"></div>
+                @auth
+                    @if( $closed_orders <> null )
+                        <div class="value-box">{{ $closed_orders->count() }}</div>
+                    @endif
+                @else
+                    <div class="value-box">00000</div>
+                @endauth
+            </div>
         
+            <div class="portfolio-item">
+                <div class="label">@lang('P/L')</div>
+                <div class="dots"></div>
+                @auth
+                    @if( $pl <> null )
+                        <div class="value-box {{ getAmount($pl) >= 0 ? 'text-success' : 'text-danger' }}" id="">{{ number_format(getAmount($pl), 2, '.', '') }}$</div>
+                    @endif
+                @else
+                    <div class="value-box" id="">00000</div>
+                @endauth
+            </div>
+        
+            <div class="portfolio-item">
+                <div class="label">@lang('Sell')</div>
+                <div class="dots"></div>
+                @auth
+                    @if( $closed_orders <> null )
+                        <div class="value-box {{ getAmount($closed_orders->where('order_side', Status::SELL_SIDE_ORDER)->sum('profit')) >= 0 ? 'text-success' : 'text-danger' }}" id="">{{ getAmount($closed_orders->where('order_side', Status::SELL_SIDE_ORDER)->sum('profit')) }}$</div>
+                    @endif
+                @else
+                    <div class="value-box">00000</div>
+                @endauth
+            </div>    
+        
+            <div class="portfolio-item">
+                <div class="label">@lang('Buy')</div>
+                <div class="dots"></div>
+                @auth
+                    @if( $closed_orders <> null )
+                        <div class="value-box {{ getAmount($closed_orders->where('order_side', Status::BUY_SIDE_ORDER)->sum('profit')) >= 0 ? 'text-success' : 'text-danger' }}" id="">{{ getAmount($closed_orders->where('order_side', Status::BUY_SIDE_ORDER)->sum('profit')) }}$</div>
+                    @endif
+                @else
+                    <div class="value-box">00000</div>
+                @endauth
+            </div>
+
+            <div class="portfolio-item">
+                <div class="label">@lang('Profit')</div>
+                <div class="dots"></div>
+                @auth
+                    @if( $total_profit <> null )
+                        <div class="value-box {{ getAmount($total_profit) >= 0 ? 'text-success' : 'text-danger' }}" id="">{{ getAmount($total_profit) }}$</div>
+                    @endif
+                @else
+                    <div class="value-box">00000</div>
+                @endauth
+            </div>
+        
+            <div class="portfolio-item">
+                <div class="label">@lang('Lose')</div>
+                <div class="dots"></div>
+                @auth
+                    @if( $total_profit <> null )
+                        <div class="value-box {{ getAmount($total_loss) >= 0 ? 'text-success' : 'text-danger' }}" id="">{{ getAmount($total_loss) }}$</div>
+                    @endif
+                @else
+                    <div class="value-box">00000</div>
+                @endauth
+            </div>
+            <h2 class="mb-1 p-0 ch1"></h2>
+        </div>
+
+        <h2 class="p-0 ch5"></h2>
+     <div class="summary-container">
         <div class="d-flex justify-content-between">
-            <h2 class="h-title p-0 mb-0 border-0">Closed Orders</h2>
+            <h2 class="h-title p-0 mb-0 border-0">@lang('Closed Orders')</h2>
         </div>
             
         <h2 class="p-0 ch5 ch5-history"></h2>
 
-    <table id="tblHistory" style="display: inline-table;">
-
-        {{-- Comment this tomorrow --}}
-        {{-- <thead>
-            <tr>
-                <th></th> 
-                <th>ID</th>
-                <th>Symbol</th>
-                <th>Type</th>
-                <th>Profit</th>
-            </tr>
-        </thead> --}}
-        {{-- End of Comment this tomorrow --}}
-        <tbody class="history-body">
-            <!-- Order Row 1 -->
-            
-
-        </tbody>
-    </table>
+        <table id="tblHistory" style="display: inline-table;">
+            <tbody class="history-body">
+            </tbody>
+        </table>
     </div>
     
 </div>

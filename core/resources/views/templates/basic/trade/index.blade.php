@@ -15,7 +15,7 @@
                     <div class="row gy-2">
                         <div class="col-xl-10 col-md-9 mt-1 px-1">
                             {{-- <x-flexible-view :view="$activeTemplate . 'trade.pair'" :meta="['pair' => $pair]" /> --}}
-                            <x-flexible-view :view="$activeTemplate . 'trade.tab'"  :meta="['screen' => 'small', 'markets' => $markets, 'pair' => $pair]" />
+                            <x-flexible-view :view="$activeTemplate . 'trade.tab'"  :meta="['screen' => 'small', 'markets' => $markets, 'pair' => $pair, 'closed_orders' => $closed_orders, 'pl' => $pl, 'total_profit' => $total_profit, 'total_loss' => $total_loss]" />
                             <div class="d-none d-md-block d-xl-none">
                                 <x-flexible-view :view="$activeTemplate . 'trade.tab'" :meta="['screen' => 'medium', 'markets' => $markets, 'pair' => $pair]" />
                             </div>
@@ -62,7 +62,7 @@
         <div class="trading-mobile">
             <x-flexible-view
                 :view="$activeTemplate . 'trade.trading_mobile'" 
-                :meta="['screen' => 'small', 'markets' => $markets, 'widget' => $widget, 'pair' => $pair, 'marketCurrencyWallet' => $marketCurrencyWallet, 'coinWallet' => $coinWallet, 'order_count' => $order_count, 'lots' => $lots,'fee_status' => $fee_status]"
+                :meta="['screen' => 'small', 'markets' => $markets, 'widget' => $widget, 'pair' => $pair, 'marketCurrencyWallet' => $marketCurrencyWallet, 'coinWallet' => $coinWallet, 'order_count' => $order_count, 'lots' => $lots,'fee_status' => $fee_status, 'closed_orders' => $closed_orders, 'pl' => $pl, 'total_profit' => $total_profit, 'total_loss' => $total_loss ]"
                 />
         </div>
     @endif

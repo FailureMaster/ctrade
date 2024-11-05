@@ -3,6 +3,10 @@
     $screen  = @$meta->screen;
     $pair    = $meta->pair;
     $markets = $meta->markets;
+    $closed_orders  = @$meta->closed_orders;
+    $pl             = @$meta->pl;
+    $total_profit   = @$meta->total_profit;
+    $total_loss     = @$meta->total_loss;
 @endphp
 
 <div class="trading-bottom__tab p-0">
@@ -54,7 +58,7 @@
             <!-- <x-flexible-view :view="$activeTemplate . 'trade.pair_list'" :meta="['markets' => $markets, 'screen' => 'small']" /> -->
         </div>
         <div class="tab-pane fade" id="pills-{{ $screen }}-trade-history" role="tabpanel">
-            <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair]" />
+            <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair, 'closed_orders' => $closed_orders, 'pl' => $pl, 'total_profit' => $total_profit, 'total_loss' => $total_loss]" />
         </div>
     </div>
 

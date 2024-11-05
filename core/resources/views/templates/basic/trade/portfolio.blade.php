@@ -126,7 +126,7 @@
             <div class="label p-0">@lang('P & L')</div>
             <div class="dots"></div>
             @auth
-                <div class="value-box {{ getAmount($widget['pl']) >= 0 ? 'text-success' : 'text-danger' }}">{{ getAmount($widget['pl']) }} $</div>
+                <div class="value-box {{ getAmount($widget['pl']) >= 0 ? 'text-success' : 'text-danger' }}">{{ number_format(getAmount($widget['pl']), 2, '.', '')  }} $</div>
             @else
                 <div class="value-box"></div>
             @endauth

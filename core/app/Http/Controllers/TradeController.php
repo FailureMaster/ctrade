@@ -180,15 +180,21 @@ class TradeController extends Controller
             'currency_id' => Defaults::DEF_WALLET_CURRENCY_ID
         ])->join('currencies', 'wallets.currency_id', 'currencies.id')->spot()->sum(DB::raw('currencies.rate * wallets.balance'));
 
-        // Additional
+        // Order Log, Wallet
         $order         = Order::where('user_id', $userId);
         $closed_orders = $order->where('status', Status::ORDER_CANCELED)->get();
         $widget['open_order']      = Order::where('user_id', $userId)->where('status', Status::ORDER_OPEN)->count();
         $widget['completed_order'] = (clone $order)->completed()->count();
         $widget['total_trade']     = Trade::where('trader_id', $userId)->count();
         $pl                        = 0;
+        $total_profit              = 0;
+        $total_loss                = 0;
 
         foreach($closed_orders as $co ){
+
+            if( $co->profit > 1 )  $total_profit =  $total_profit + $co->profit;
+            if( $co->profit < 1 )  $total_loss =  $total_loss + $co->profit;
+
             $pl = ( $pl + $co->profit );
         }
 
@@ -197,8 +203,11 @@ class TradeController extends Controller
         $widget['total_deposit']  = Deposit::where('user_id', $userId)->where('status', Status::PAYMENT_SUCCESS)->sum('amount');
         $widget['total_withdraw'] = Withdrawal::where('user_id', $userId)->approved()->sum('amount');
         $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
+
+        // Transaction Log
+        
        
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget'));
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl'));
     }
 
     public function fetchUserBalance()

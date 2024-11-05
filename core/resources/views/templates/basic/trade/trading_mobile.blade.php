@@ -3,12 +3,16 @@
     $pair    = $meta->pair;
     $markets = $meta->markets;
     $marketCurrencyWallet = $meta->marketCurrencyWallet;
-    $coinWallet = $meta->coinWallet;
-    $order_count = $meta->order_count;
-    $lots                 = @$meta->lots;
-    $fee_status                 = @$meta->fee_status;
-    $isCategory = isset($_GET['category']);
-    $widget = $meta->widget;
+    $coinWallet     = $meta->coinWallet;
+    $order_count    = $meta->order_count;
+    $lots           = @$meta->lots;
+    $fee_status     = @$meta->fee_status;
+    $isCategory     = isset($_GET['category']);
+    $widget         = $meta->widget;
+    $closed_orders  = @$meta->closed_orders;
+    $pl             = @$meta->pl;
+    $total_profit   = @$meta->total_profit;
+    $total_loss     = @$meta->total_loss;
 @endphp
 
 <div class="tab-inner-wrapper" style="background-color: var(--pane-bg); {{is_mobile() ? 'margin: 0' : ''}}">
@@ -49,7 +53,7 @@
             <x-flexible-view :view="$activeTemplate . 'trade.my_order'" :meta="['pair' => $pair, 'screen' => 'small']" />
         </div>
         <div class="tab-pane fade" id="trade-history-sm" role="tabpanel">
-            <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair]" />
+            <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair, 'closed_orders' => $closed_orders, 'pl' => $pl, 'total_profit' => $total_profit, 'total_loss' => $total_loss ]" />
         </div>
         <div class="tab-pane fade" id="wallet-sm" role="tabpanel">
             <x-flexible-view :view="$activeTemplate . 'trade.portfolio'" :meta="['widget' => $widget]" />
@@ -65,42 +69,6 @@
                     @endif
                 </div>
                 <ul class="list-unstyled menu-list">
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-gift"></i>-->
-                    <!--    <span>Rewards & Benefits</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-calendar-alt"></i>-->
-                    <!--    <span>Economic Calendar</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-clipboard-list"></i>-->
-                    <!--    <span>Account Types</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-user"></i>-->
-                    <!--    <span>Personal Details</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-exchange-alt"></i>-->
-                    <!--    <span>Manage Accounts</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-history"></i>-->
-                    <!--    <span>Transaction History</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-wallet"></i>-->
-                    <!--    <span>Wallet</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-undo-alt"></i>-->
-                    <!--    <span>Withdraw</span>-->
-                    <!--</li>-->
-                    <!--<li class="menu-item">-->
-                    <!--    <i class="fas fa-check-circle"></i>-->
-                    <!--    <span>Account Verification</span>-->
-                    <!--</li>-->
                     <li class="menu-item text-white">
                         <a href="{{ route('user.profile.setting') }}" class="text-white">
                             <i class="fas fa-undo-alt"></i>
