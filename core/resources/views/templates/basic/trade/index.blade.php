@@ -179,6 +179,20 @@
                 });
             }
         }
+
+        
+        function ConfirmCloseOnMobile()
+        {
+            const checkClose = sessionStorage.getItem("confirmClose");
+            if( checkClose === "true" ){
+                sessionStorage.removeItem("confirmClose");
+                $("#trade-btn-pill").trigger("click");
+            }
+        }
+        
+        $(document).ready(function(){
+            ConfirmCloseOnMobile(); // this function is to keep trade tab open after closing the order
+        });
     </script>
 @endpush
 
@@ -321,6 +335,18 @@
         @media screen and (min-width: 575px) {
             .trading-mobile {
                 display: none;
+            }
+        }
+
+        @media screen and (max-width: 375px) {
+            .nav-link {
+                font-size: 11px;
+            }
+        }
+
+        @media screen and (max-width: 320px) {
+            .nav-link {
+                font-size: 10px;
             }
         }
     </style>

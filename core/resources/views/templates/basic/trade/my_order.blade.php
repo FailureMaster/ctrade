@@ -310,7 +310,7 @@ $(document).ready(function() {
            
             // new code
             return `
-                    <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
+                    <tr class="clickable-row clickable-header flex flex-column" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
                         <td>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex flex-column">
@@ -329,12 +329,9 @@ $(document).ready(function() {
                                     <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</span>
                                 </div>
                             </div>     
-                        </td>
-                    </tr>
-                    
-                    <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
-                        <td colspan="6">
-                            <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
+                            <div id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' } py-2" aria-labelledby="heading${order.id}">
+                                <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
+                            </div>
                         </td>
                     </tr>
             `;

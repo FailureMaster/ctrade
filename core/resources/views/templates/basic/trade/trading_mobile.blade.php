@@ -158,7 +158,6 @@
                 </li>
                 <li class="nav-item" role="presentation" data-status="0">
                     <a
-                        href="#"
                         class="nav-link m-portfolio d-flex flex-column"
                         data-bs-toggle="pill"
                         data-bs-target="#portfolio-sm"
@@ -197,7 +196,6 @@
                 </li>
                 <li class="nav-item" role="presentation" data-status="0">
                     <a
-                        href="#"
                         class="nav-link m-portfolio d-flex flex-column"
                         data-bs-toggle="pill"
                         data-bs-target="#wallet-sm"
@@ -205,13 +203,12 @@
                         aria-controls="pills-orderbookthree"
                         aria-selected="false"
                         >
-                        <i class="fas fa-briefcase" id="trade-btn-pill"></i>
+                        <i class="fas fa-briefcase" id=""></i>
                         @lang('Portfolio')
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
                     <a
-                        href="#"
                         class="nav-link d-flex flex-column"
                         data-bs-toggle="pill"
                         data-bs-target="#menu-sm"

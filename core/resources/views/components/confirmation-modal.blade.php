@@ -170,6 +170,8 @@
             submitBtn.prop('disabled', true); 
     
             submitBtn.append(' <i class="fa fa-spinner fa-spin"></i>');
+
+            sessionStorage.setItem("confirmClose", "true");
     
             setTimeout(function () {
                 submitBtn.prop('disabled', false);
