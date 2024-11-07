@@ -17,6 +17,23 @@
 </script>
 @endpush
 @push('style')
+
+    @if( is_mobile() ) 
+        <style>
+            .trading-chart iframe {
+                width: 100%;
+                height: 80vh; /* Default height */
+            }
+        </style>
+    @else
+        <style>
+            .trading-chart iframe {
+                width: 100%;
+                height: 560px; /* Default height */
+            }
+        </style>
+    @endif
+
 <style>
     [data-theme=light] .chart-dark {
         display: none;
@@ -24,74 +41,66 @@
     [data-theme=dark] .chart-light {
         display: none;
     }
- 
-    .trading-chart iframe {
-    width: 100%;
-    height: 560px; /* Default height */
-}
 
-@media screen and (max-width: 575px) {
-    .trading-chart iframe {
-        height: 590px; /* Height for small screen width (mobile) */
+    [data-theme=dark] .trading-bottom, [data-theme=dark] .trading-chart{
+        background-color: #0f1821 !important;
     }
-}
 
-@media (max-height: 780px) {
-    .trading-chart iframe {
-        height: 540px; /* Height for 780px screen height */
+    @media screen and (min-width: 320px) and (max-height: 568px){
+        .trading-chart iframe {
+            height: 70vh;
+        }
     }
-}
 
-@media (min-height: 800px) and (max-height: 804px) {
-    .trading-chart iframe {
-        height: 555px; /* Height for screens between 800px and 804px */
+    @media screen and (min-width: 360px) and (max-height: 780px){
+        .trading-chart iframe {
+            height: 75vh;
+        }
     }
-}
 
-@media (max-height: 851px) {
-    .trading-chart iframe {
-        height: 670px; /* Height for 851px screen height */
+    @media screen and (min-width: 375px) and (max-height: 812px){
+        .trading-chart iframe {
+            height: 75vh;
+        }
     }
-}
 
-@media (max-height: 915px) {
-    .trading-chart iframe {
-        height: 668px; /* Height for 915px screen height */
+    @media screen and (min-width: 384px) and (max-height: 832px){
+        .trading-chart iframe {
+            height: 75vh;
+        }
     }
-}
-
-@media (max-height: 880px) {
-    .trading-chart iframe {
-        height: 635px; /* Height for 880px screen height */
-    }
-}
-
-@media (max-height: 812px) {
-    .trading-chart iframe {
-        height: 490px; /* Height for 812px screen height */
-    }
-}
-
-@media (max-height: 844px) {
-    .trading-chart iframe {
-        height: 515px; /* Height for 844px screen height */
-    }
-}
-
-@media (max-height: 896px) {
-    .trading-chart iframe {
-        height: 490px; /* Height for 896px screen height */
-    }
-}
-
-@media (max-height: 568px) {
-    .trading-chart iframe {
-        height: 291px; /* Height for 568px phone screen height */
-    }
-}
-
 
     
+    @media screen and (min-width: 412px) and (max-height: 916px){
+        .trading-chart iframe {
+            height: 80vh;
+        }
+    }
+
+    @media screen and (min-width: 414px) and (max-height: 896px){
+        .trading-chart iframe {
+            height: 575px;
+        }
+    }
+
+
+    @media screen and (min-width: 428px) and (max-height: 926px){
+        .trading-chart iframe {
+            height: 600px;
+        }
+    }
+
+    @media screen and (min-width: 430px) and (max-height: 932px){
+        .trading-chart iframe {
+            height: 600px;
+        }
+    }
+
+    @media screen and (min-width: 440px) and (max-height: 956px){
+        .trading-chart iframe {
+            height: 600px;
+        }
+    }
 </style>
 @endpush
 
