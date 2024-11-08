@@ -284,11 +284,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>@lang('Mobile Number') </label>
-                                <div class="input-group ">
+                                {{-- <div class="input-group ">
                                     <span class="input-group-text mobile-code"></span>
                                     <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
                                         class="form-control checkUser" required>
-                                </div>
+                                </div> --}}
+                                <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
+                                class="form-control checkUser" required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -689,6 +691,7 @@
             console.log(mobileNumber);
             $('input[name=mobile]').val(mobileNumber);
             mobileElement.text(`+${dialCode}`);
+            $('#mobile').val(`+${dialCode}${mobileNumber}`);
 
             $('select[name=wallet]').on('change', function (e) {
                 let symbol = $(this).find('option:selected').data('symbol');
