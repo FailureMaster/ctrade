@@ -71,6 +71,7 @@
     <x-stop-loss-modal/>
     <x-take-profit-modal/>
     <x-frozen-account-modal/>
+    <x-mobile-date-modal/>
     
     <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="deposit-canvas" aria-labelledby="offcanvasLabel">
         <div class="offcanvas-header">
@@ -366,6 +367,11 @@
 
           .trading-right{
             border:none;
+          }
+
+          .btn-filter{
+            background-color: #0f1821;
+            color: #ffffff;
           }
 
         </style>

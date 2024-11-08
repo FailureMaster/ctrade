@@ -38,20 +38,20 @@ class TradeController extends Controller
             ->where('status', Status::DISABLE)
             ->pluck('symbol')
             ->toArray();
-    
+
         $jsonData = file_get_contents(resource_path('data/data1.json'));
         $data = json_decode($jsonData, true);
-    
-        $filterData = function($items) use ($disabledSymbol) {
-            return array_filter($items, function($key) use ($disabledSymbol) {
+
+        $filterData = function ($items) use ($disabledSymbol) {
+            return array_filter($items, function ($key) use ($disabledSymbol) {
                 return !in_array($key, $disabledSymbol);
             }, ARRAY_FILTER_USE_KEY);
         };
-    
+
         foreach ($data as $category => $items) {
             $data[$category] = $filterData($items);
         }
-    
+
         return response()->json($data);
     }
 
@@ -65,13 +65,13 @@ class TradeController extends Controller
         $userId = auth()->id();
 
         $existingFavorite = FavoriteSymbol::where('user_id', $userId)
-                                    ->where('symbol', $request->coin)
-                                    ->where('category', $request->category)
-                                    ->first();
+            ->where('symbol', $request->coin)
+            ->where('category', $request->category)
+            ->first();
 
         if ($existingFavorite) {
             $existingFavorite->delete();
-    
+
             return returnBack('Favorite removed successfully', 'success');
         } else {
             $favorite = new FavoriteSymbol();
@@ -99,15 +99,15 @@ class TradeController extends Controller
             $parts = explode(':', $symbol);
             $symbol = $parts[1];
         }
-        
+
         $userId         = auth()->id() ?? 0;
         $usersInGroups  = ClientGroupUser::pluck('user_id')->toArray();
-        
-       
-        
+
+
+
         $pair           = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
 
-        
+
         if ($symbol) {
             $pair = $pair->where('symbol', $symbol)->first();
         } else {
@@ -119,7 +119,7 @@ class TradeController extends Controller
         }
         // dd($symbol);
         //check if current user is in groups
-        if (in_array($userId, $usersInGroups)){
+        if (in_array($userId, $usersInGroups)) {
             $groups                 = ClientGroups::with(['settings', 'groupUsers', 'groupUsers.user'])->get();
             $clientGroupId          = ClientGroupUser::where('user_id', $userId)->first()->client_group_id;
             $clientGroupSettings    = ClientGroupSetting::where('client_group_id', $clientGroupId)->first();
@@ -129,47 +129,46 @@ class TradeController extends Controller
 
             // dd($clientGroupSettings );
 
-            $clientGroup = ClientGroups::whereHas('groupUsers', function($query) use ($userId) {
+            $clientGroup = ClientGroups::whereHas('groupUsers', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->first();
 
             // dd($clientGroup);
-            
+
             if ($clientGroup !== null) {
                 $pair->percent_charge_for_buy   = $clientGroupSettings->lots;
 
                 //leverage
                 $pair->percent_charge_for_sell  = $clientGroupSettings->leverage;
-    
+
                 //level
                 $pair->level_percent            = $clientGroupSettings->level;
-    
+
                 //spread
                 $pair->spread                   = $clientGroupSettings->spread;
             }
-           
         }
 
         $markets = Market::with('currency:id,name,symbol')->active()->get();
-        
+
         $coinWallet = Wallet::where('user_id', $userId)->where('currency_id', $pair->coin->id)->spot()->first();
-        
+
         $order_count = Order::query()
             ->where('status', Status::ORDER_OPEN)
             ->where('user_id', auth()->id())
             ->count();
-            
+
         $marketCurrencyWallet = Wallet::where('user_id', $userId)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID /* $pair->market->currency->id */)->spot()->first();
-        
+
         $gateways = GatewayCurrency::where(function ($q) use ($pair) {
             $q->where('currency', @$pair->coin->symbol)->orWhere('currency', $pair->market->currency->symbol);
         })->whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method:id,code,crypto')->get();
         $pageTitle = $pair->symbol;
-        
+
         $requiredMarginTotal = $this->requiredMarginTotal();
-        
+
         $currency = Currency::where('id', 4)->first();
 
         $lots = LotManager::all();
@@ -190,12 +189,12 @@ class TradeController extends Controller
         $total_profit              = 0;
         $total_loss                = 0;
 
-        foreach($closed_orders as $co ){
+        foreach ($closed_orders as $co) {
 
-            if( $co->profit > 1 )  $total_profit =  $total_profit + $co->profit;
-            if( $co->profit < 1 )  $total_loss =  $total_loss + $co->profit;
+            if ($co->profit > 1)  $total_profit =  $total_profit + $co->profit;
+            if ($co->profit < 1)  $total_loss =  $total_loss + $co->profit;
 
-            $pl = ( $pl + $co->profit );
+            $pl = ($pl + $co->profit);
         }
 
         $widget['pl'] = $pl;
@@ -205,8 +204,8 @@ class TradeController extends Controller
         $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
 
         // Transaction Log
-        
-       
+
+
         return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl'));
     }
 
@@ -214,7 +213,7 @@ class TradeController extends Controller
     {
         $userId = auth()->id() ?? 0;
         $marketCurrencyWallet = Wallet::where('user_id', $userId)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID /* $pair->market->currency->id */)->spot()->first();
-        
+
         return response()->json([
             'success'   => true,
             'balance'   => isset($marketCurrencyWallet->balance) ? $marketCurrencyWallet->balance : 0,
@@ -222,7 +221,7 @@ class TradeController extends Controller
             'credit'    => isset($marketCurrencyWallet->credit) ? $marketCurrencyWallet->credit : 0,
         ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
-    
+
     public function getCurrentPrice($type, $symbol)
     {
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
@@ -231,11 +230,11 @@ class TradeController extends Controller
         $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
-        return response()->json([ 
-            'current_price' => $marketData->{$type}->{$symbol} 
+        return response()->json([
+            'current_price' => $marketData->{$type}->{$symbol}
         ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
-    
+
     public function closeAllOrders(Request $request)
     {
         // dd([ $request->level, $request->equity ]);
@@ -246,11 +245,11 @@ class TradeController extends Controller
         //         'type' => 'INVALID_PAYLOAD'
         //     ], 500);
         // }
-        
+
         // $orders = Order::query()
         //     ->where('status', Status::ORDER_OPEN)
         //     ->where('user_id', auth()->id());
-            
+
         // if ($orders->count() == 0) {
         //     return response()->json([
         //         'status' => 200,
@@ -258,9 +257,9 @@ class TradeController extends Controller
         //         'message' => 'No orders'
         //     ], 200);
         // }
-        
+
         // $order_closed = $orders->update([ 'status' => Status::ORDER_CANCELED ]);
-            
+
         // return response()->json([
         //     'status' => 200,
         //     'type' => 'ALL_ORDERS_CLOSED',
@@ -284,7 +283,7 @@ class TradeController extends Controller
             'trades' => $trades
         ]);
     }
-    
+
     public function orderList(Request $request, $symbol, $status)
     {
         $validator = Validator::make($request->all(), [
@@ -297,17 +296,17 @@ class TradeController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-        
+
         $userId = ($request->input('user_data')) ? $request->input('user_data') : auth()->id();
-        
+
         $query = Order::with('pair')->where('user_id', $userId);
-      
+
 
         // if ($request->status && $request->status != 'all') {
         //     $scope = $request->status;
         //     $query->$scope();
         // }
-        
+
         if ($status == Status::ORDER_OPEN) {
             $query->where('status', Status::ORDER_OPEN);
             $query->orderBy('created_at', 'desc');
@@ -317,7 +316,7 @@ class TradeController extends Controller
         }
 
         $filter = $request->get('filter');
-        
+
         $startDate = null;
         $endDate = null;
 
@@ -326,30 +325,21 @@ class TradeController extends Controller
                 $startDate = Carbon::today();
                 $endDate = Carbon::today()->endOfDay();
                 break;
-            case 'yesterday':
-                $startDate = Carbon::yesterday();
-                $endDate = Carbon::yesterday()->endOfDay();
-                break;
-            case 'this_week':
-                $startDate = Carbon::now()->startOfWeek();
-                $endDate = Carbon::now()->endOfWeek();
-                break;
             case 'last_week':
                 $startDate = Carbon::now()->subWeek()->startOfWeek();
                 $endDate = Carbon::now()->subWeek()->endOfWeek();
                 break;
-            case 'this_month':
-                $startDate = Carbon::now()->startOfMonth();
-                $endDate = Carbon::now()->endOfMonth();
+            case 'last_3_month':
+                $startDate = Carbon::now()->subMonth(3)->startOfMonth();
+                $endDate = Carbon::now();
                 break;
             case 'last_month':
                 $startDate = Carbon::now()->subMonth()->startOfMonth();
                 $endDate = Carbon::now()->subMonth()->endOfMonth();
                 break;
             case 'custom':
-                $date = explode('-', $request->get('customfilter'));
-                $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
-                $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                $startDate = Carbon::parse($request->from_date);
+                $endDate = Carbon::parse($request->to_date);
                 break;
         }
 
@@ -358,7 +348,7 @@ class TradeController extends Controller
         }
 
         $orders = $query->orderBy('id', 'desc')->get();
-        
+
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
 
@@ -369,7 +359,7 @@ class TradeController extends Controller
             ->where('wallet_type', 1)
             ->where('user_id', $userId)
             ->first();
-       
+
         return response()->json([
             'success' => true,
             'orders' => $orders,
@@ -383,7 +373,7 @@ class TradeController extends Controller
     {
         // $exploded_id = explode(',', $request->user_ids);
         $exploded_id = json_decode($request->user_ids);
-        
+
         $validator = Validator::make($request->all(), [
             'status' => 'nullable|in:all,open,canceled,completed'
         ]);
@@ -394,11 +384,11 @@ class TradeController extends Controller
                 'message' => $validator->errors()->all()
             ]);
         }
-        
+
         $users = User::with([
-            'orders.pair', 
-            'custom_wallets', 
-            'orders'=> function($query)use($status){
+            'orders.pair',
+            'custom_wallets',
+            'orders' => function ($query) use ($status) {
                 if ($status == Status::ORDER_OPEN) {
                     $query->where('status', Status::ORDER_OPEN);
                     $query->orderBy('created_at', 'desc');
@@ -412,7 +402,7 @@ class TradeController extends Controller
         $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);
 
-        $users= $users->map(function($u){
+        $users = $users->map(function ($u) {
             $u->totalRequiredMargin = $u->openOrders()->sum('required_margin');
             return $u;
         });
@@ -430,7 +420,7 @@ class TradeController extends Controller
             ->where('id', $id)
             ->where('user_id', auth()->id())
             ->first();
-        
+
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
 
@@ -504,7 +494,7 @@ class TradeController extends Controller
                     $marketId == 'COMMODITY' ||
                     $marketId == 'INDEX' ||
                     $marketId == 'Crypto')
-                ? 'type' : 'market_id',
+                    ? 'type' : 'market_id',
                 $marketId
             );
         }
@@ -522,8 +512,8 @@ class TradeController extends Controller
             'favoritePairId' => $favoritePairId
         ]);
     }
-    
-    public function requiredMarginTotal($id=null)
+
+    public function requiredMarginTotal($id = null)
     {
         $uid = (!$id) ? auth()->id() : $id;
         return Order::where('user_id', $uid)->open()->sum('required_margin');
