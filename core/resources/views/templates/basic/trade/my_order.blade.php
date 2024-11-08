@@ -329,7 +329,7 @@ $(document).ready(function() {
                                     <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</span>
                                 </div>
                             </div>     
-                            <div id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' } py-2" aria-labelledby="heading${order.id}">
+                            <div id="collapse${order.id}" class="collapse order-collapse ${ is_collapsed ? 'show' : '' } py-2" aria-labelledby="heading${order.id}">
                                 <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
                             </div>
                         </td>
@@ -778,6 +778,10 @@ tr th:last-child {
     #tableOrder{
         display: inline-table !important;
     }
+}
+
+.clickable-row[aria-expanded="true"] {
+    background-color:#212529;
 }
 </style>
 @endpush

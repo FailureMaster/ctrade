@@ -136,6 +136,16 @@
                             </ul>
                         </div>
                     </li>
+                    <li>
+                        <div class="theme-switch-wrapper">
+                            <label class="theme-switch" for="checkbox">
+                                <input type="checkbox" class="d-none" id="checkbox">
+                                <span class="slider">
+                                    <i class="las la-sun"></i>
+                                </span>
+                            </label>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
