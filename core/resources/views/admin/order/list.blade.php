@@ -74,7 +74,18 @@
                                     <th class="text-center">@lang('ID')</th>
                                     <th>@lang('Order ID')</th>
                                     <th>@lang('Name')</th>
-                                    <th>@lang('Date')</th>
+                                    <th>
+                                        @if(request()->routeIs('admin.order.close'))
+                                            @lang('Open Date')
+                                        @else
+                                            @lang('Date')
+                                        @endif
+                                    </th>
+                                    @if(request()->routeIs('admin.order.close'))
+                                        <th>
+                                            @lang('Closed Date')
+                                        </th>
+                                    @endif
                                     <th>@lang('Symbol')</th>
                                     <th>@lang('Order Type')</th>
                                     <th>@lang('Volume')</th>
@@ -88,6 +99,9 @@
                                     <!--<th>@lang('Action')</th>-->
                                     @if ($showStatus)
                                         <th>@lang('Status')</th>
+                                    @endif
+                                    @if(request()->routeIs('admin.order.close'))
+                                        <th>@lang('Profit')</th>
                                     @endif
                                 </tr>
                             </thead>
@@ -117,6 +131,11 @@
                                                 {{ $order->formatted_date }}
                                             </div>
                                         </td>
+                                        @if(request()->routeIs('admin.order.close'))
+                                            <td>
+                                                {{ $order->close_date }}
+                                            </td>
+                                        @endif
                                         <td>
                                             <div>
                                                 {{ @$order->pair->coin_name }}
@@ -131,13 +150,13 @@
                                         <td>
                                             <div>
                                                 
-                                                {{ showAmount($order->rate, 5) }} {{ @$order->pair->market->currency->symbol }}
+                                                {{ showAmount($order->rate, 2) }} {{ @$order->pair->market->currency->symbol }}
                                             </div>
                                         </td>
                                         @if(request()->routeIs('admin.order.close'))
                                             <td>
                                                 <div>
-                                                    {{ $order->closed_price }}
+                                                    {{ number_format($order->closed_price,2) }}
                                                 </div>
                                             </td>
                                         @endif
@@ -173,6 +192,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @if(request()->routeIs('admin.order.close'))
+                                            <td class="{{ $order->profit < 0 ? "text-danger" : "text-success" }}">{{ number_format($order->profit,2) }}</td>
+                                        @endif
                                     </tr>
                                 @empty
                                     <tr>
@@ -291,7 +313,19 @@
                                     ? formatWithPrecision(((rate - current_price) * lot_equivalent))
                                     : formatWithPrecision(((current_price - rate) * lot_equivalent));
 
-                                $(this).find('.order_profit').text(formatWithPrecision1(total_price));
+                                let profitClass = '';
+
+                                if( total_price < 0 ){
+                                    profitClass = "text-danger";
+                                }
+                                else{
+                                    profitClass = "text-success";
+                                }
+
+                                let profitHtml = `<span class="${profitClass}">${formatWithPrecision1(total_price)}</span>`;
+
+
+                                $(this).find('.order_profit').html(profitHtml);
                             } else {
                                 console.error(`Current price not found for type: ${type}, symbol: ${symbol}`);
                             }

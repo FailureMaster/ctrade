@@ -176,10 +176,10 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-6 flex-column align-items-center justify-content-center">
+                    <div class="col-lg-6 d-flex flex-column align-items-center justify-content-center">
                         <div class="d-flex ">
                             <div class="w-100">
-                                <canvas id="pair-chart" style="width: 100% !important; height: 100%"></canvas>
+                                <canvas id="pair-chart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -772,8 +772,8 @@ $lastCron = Carbon\Carbon::parse($general->last_cron)->diffInSeconds();
     }
 
     canvas{
-        width: 195px ;
-        height: 160px !important
+        width: auto !important ;
+        height: 250px !important
     }
 
     .table-container {
