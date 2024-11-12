@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\User\StoreRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\User\SalesStatus\StoreRequest as SalesStatusStoreRequest;
+use Illuminate\Validation\Rule;
 
 class ManageUsersController extends Controller
 {
@@ -414,7 +415,16 @@ class ManageUsersController extends Controller
         $request->validate([
             'firstname' => 'required|string|max:40',
             'lastname' => 'required|string|max:40',
-            'email' => 'required|email|string|max:40|unique:users,email,' . $user->id,
+            // 'email' => 'required|email|string|max:40|unique:users,email,' . $user->id,
+            'email' => [
+                'required',
+                'email',
+                'string',
+                'max:40',
+                Rule::unique('users', 'email')
+                    ->ignore($user->id)
+                    ->whereNull('deleted_at'), // Ignores soft-deleted records
+            ],
             'mobile' => 'required|string|max:40|unique:users,mobile,' . $user->id,
             'country' => 'required|in:' . $countries,
             'status' => 'nullable|in:NEW,CALLBACK,NA,UNDER_AGE,DENY_REGISTRATION,DEPOSIT,NOT_INTERESTED,VOICE_MAIL',
@@ -915,7 +925,7 @@ class ManageUsersController extends Controller
     
    public function import(Request $request)
 {
-    // dd($request->file('filepond')->getRealPath());
+
         Log::info('Import method accessed');
         $request->validate([
             'filepond' => 'required|mimes:csv,txt|max:2048'  // max:2048 means the file size should not be greater than 2MB (2048KB)
@@ -970,7 +980,7 @@ class ManageUsersController extends Controller
                                     'firstname' => $row[0],
                                     'lastname' => $row[1],
                                     'email' => $row[2],
-                                    'mobile' => $row[3],
+                                    'mobile' => preg_replace('/\D/', '', $row[3]),
                                     'address' => [
                                         'address' => '',
                                         'state' => '',
