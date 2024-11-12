@@ -62,7 +62,7 @@ class UserController extends Controller
         $widget['closed_orders']  = $closed_orders->count();
         $widget['total_deposit']  = Deposit::where('user_id', $user->id)->where('status', Status::PAYMENT_SUCCESS)->sum('amount');
         $widget['total_withdraw'] = Withdrawal::where('user_id', $user->id)->approved()->sum('amount');
-        $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
+        $widget['open_tickets']   = SupportTicket::where('user_id', $user->id)->where('status', Status::TICKET_OPEN)->count();
 
         $recentOrders       = $order->with('pair.coin')->orderBy('id', 'DESC')->get();
         $recentTransactions = Transaction::where('user_id', $user->id)->orderBy('id', 'DESC')->get();
