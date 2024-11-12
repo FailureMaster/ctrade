@@ -165,6 +165,7 @@ class TradeController extends Controller
         })->whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method:id,code,crypto')->get();
+
         $pageTitle = $pair->symbol;
 
         $requiredMarginTotal = $this->requiredMarginTotal();
@@ -203,10 +204,10 @@ class TradeController extends Controller
         $widget['total_withdraw'] = Withdrawal::where('user_id', $userId)->approved()->sum('amount');
         $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
 
-        // Transaction Log
+        // User
+        $user = auth()->user();
 
-
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl'));
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user'));
     }
 
     public function fetchUserBalance()

@@ -118,6 +118,8 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::post('profile-setting', 'submitProfile');
                 Route::get('change-password', 'changePassword')->name('change.password');
                 Route::post('change-password', 'submitPassword');
+                Route::post('update-user-password', 'updatePassword')->name('update.password');
+                Route::post('update-profile-setting', 'updateProfile')->name('update.profile');
             });
 
             //wallet
