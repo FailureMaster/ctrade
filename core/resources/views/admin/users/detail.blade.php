@@ -691,7 +691,8 @@
             console.log(mobileNumber);
             $('input[name=mobile]').val(mobileNumber);
             mobileElement.text(`+${dialCode}`);
-            $('#mobile').val(`+${dialCode}${mobileNumber}`);
+            // $('#mobile').val(`+${dialCode}${mobileNumber}`);
+            $('#mobile').val(`${mobileNumber}`);
 
             $('select[name=wallet]').on('change', function (e) {
                 let symbol = $(this).find('option:selected').data('symbol');
