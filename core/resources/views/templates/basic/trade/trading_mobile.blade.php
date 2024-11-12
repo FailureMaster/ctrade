@@ -69,7 +69,7 @@
         <div class="tab-pane fade" id="menu-sm" role="tabpanel">
             <div class="summary-container">
                 <div class="d-flex justify-content-between" id="menuHeaderContainer">
-                    <h3>Menu</h3>
+                    <h2 class="h-title p-0 mb-0 border-0">Menu</h2>
                     @if (Auth::check())
                         <span class="text-white">
                             <i class="fas fa-user me-2"></i> {{ __(auth()->user()->fullname) }}
@@ -77,12 +77,15 @@
                     @endif
                 </div>
                 <ul class="list-unstyled menu-list">
-                    <li class="menu-item text-white">
-                        <a href="{{ route('user.profile.setting') }}" class="text-white">
-                            <i class="fas fa-undo-alt"></i>
-                            <span>@lang('My Profile')</span>
-                        </a>
-                    </li>
+                    @if (Auth::check())
+                        <li class="menu-item text-white">
+                            {{-- <a href="{{ route('user.profile.setting') }}" class="text-white"> --}}
+                                <a href="#" class="text-white myprofile-btn">
+                                <i class="fas fa-undo-alt"></i>
+                                <span>@lang('My Profile')</span>
+                            </a>
+                        </li>
+                    @endif
                     @if (Auth::check())
                         <li class="menu-item">
                             <!-- <a href="{{ route('user.home') }}?d=1" class="text-white "> -->
@@ -94,7 +97,8 @@
                     @endif
                     @if (Auth::check())
                         <li class="menu-item">
-                            <a href="{{ route('user.change.password') }}" class="text-white">
+                            {{-- <a href="{{ route('user.change.password') }}" class="text-white"> --}}
+                            <a href="#" class="text-white changepass-btn">
                                 <i class="fas fa-key"></i>
                                 <span>@lang('Change Password')</span>
                             </a>
