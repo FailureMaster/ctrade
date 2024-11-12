@@ -687,7 +687,7 @@
             console.log(parseFloat(mobileNumber));
             
 
-            mobileNumber = mobileNumber.replace(dialCode, '');
+            // mobileNumber = mobileNumber.replace(dialCode, '');
             console.log(mobileNumber);
             $('input[name=mobile]').val(mobileNumber);
             mobileElement.text(`+${dialCode}`);
