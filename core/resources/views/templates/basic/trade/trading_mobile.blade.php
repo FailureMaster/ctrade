@@ -91,7 +91,7 @@
                             <!-- <a href="{{ route('user.home') }}?d=1" class="text-white "> -->
                             <a class="text-white new--deposit" data-currency="{{ @$pair->market->currency->symbol }}">
                                 <i class="fas fa-money-bill-wave"></i>
-                                <span>Deposit</span>
+                                <span>@lang('Deposit')</span>
                             </a>
                         </li>
                     @endif
@@ -119,8 +119,9 @@
                     @endphp
 
                     <li class="menu-item">
-                        <div class="custom--dropdown">
-                            <div class="custom--dropdown__selected dropdown-list__item">
+                        <div class="custom--dropdown lang-dropdown">
+                            <div class="custom--dropdown__selected dropdown-list__item lang-dropdown-list">
+                                <span>@lang('Language'):</span>
                                 <div class="thumb">
                                     <img
                                         src="{{ getImage(getFilePath('language') . '/' . @$langDetails->flag, getFileSize('language')) }}">
@@ -302,4 +303,24 @@
                 border-bottom: 1px solid #3c4a54;
             }
         </style>
+
+        @if( is_mobile() )
+            <style>
+                .lang-dropdown .dropdown-list__item{
+                    white-space: nowrap;
+                    display: flex;
+                    flex-flow: row;
+                    padding-left:0;
+                    align-items:center;
+                }
+
+                .lang-dropdown span{
+                    margin-right:5px;
+                }
+
+                .lang-dropdown-list .thumb{
+                    width:80px !important;
+                }
+            </style>
+        @endif
     @endpush
