@@ -281,9 +281,9 @@ class UserController extends Controller
             $transactions->where('order_side', $request->trx_type);
         }
 
-        $transactions = $transactions->searchable(['id'])->paginate(getPaginate());
+        $transactions = $transactions->searchable(['id']);
 
-        $closed_orders             = Order::where('status', Status::ORDER_CANCELED)->where('user_id', auth()->id())->get();
+        $closed_orders             = ( clone $transactions )->get();
         
         $pl                        = 0;
         $total_profit              = 0;
@@ -298,6 +298,8 @@ class UserController extends Controller
         }
 
         $currency = CoinPair::whereIn('id', $closed_orders->pluck('pair_id')->unique()->toArray())->select('id', 'symbol')->get();
+
+        $transactions = $transactions->paginate(getPaginate());
 
         return view($this->activeTemplate . 'user.transactions', compact('pageTitle', 'transactions', 'remarks', 'currencies', 'pl', 'closed_orders', 'total_profit', 'total_loss', 'currency'));
     }
