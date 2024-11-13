@@ -636,6 +636,15 @@
             [data-theme=light] h5, [data-theme=light] .ellipsis-menu {
                 color: #000000 !important;
             }
+
+            .offcanvas{
+                width: 100%;
+            }
+
+            #amount{
+                height: 30px !important;
+                padding: 0;
+            }
         </style>
     @endpush
 @else
