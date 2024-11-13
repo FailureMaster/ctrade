@@ -793,7 +793,8 @@
                         free_margin = equity - resp.totalRequiredMargin;
                         document.querySelector(".admin-free-margin-val").innerText = `${formatWithPrecision1(free_margin)} USD`;
                         
-                        $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
+                        // $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
+                        $('.admin-equity-val').html(`${formatWithPrecision1(Number(resp.wallet.balance) + bonus + credit)} USD`);
                         $('.admin-pl-val').html(`${formatWithPrecision1(pl)} USD`);
                         $('.admin-user_margin_level').html(`${formatWithPrecision1(margin_level)} %`);
                         
