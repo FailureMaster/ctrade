@@ -203,6 +203,14 @@
             var i = 1;
 
             function generateHistoryRow(order, jsonData) {
+
+                openRowsHistory = [];
+
+                // Collect IDs of open rows, To retain open state of accordion
+                document.querySelectorAll('.history-collapse.show').forEach(row => {
+                    openRowsHistory.push(row.id);
+                })
+
                 let current_price = order.rate;
 
                 let lotValue = order.pair.percent_charge_for_buy;
@@ -282,15 +290,15 @@
                         </td>
                     </tr>
                     
-                    <tr id="collapse${order.id}" class="collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
+                    <tr id="collapse${order.id}" class="history-collapse collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
                         <td colspan="6">
-                            <strong>Date:</strong> ${order.formatted_date}<br><br>
-                            <strong>Open Price:</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br><br>
-                            <strong>Closed Price:</strong> <span>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span><br><br>
-                            <strong>Stop Loss:</strong> ${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}<br><br>
-                            <strong>Take Profit:</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}<br><br>
-                            <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br><br>
-                            <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br><br>
+                            <strong>Date:</strong> ${order.formatted_date}<br>
+                            <strong>Open Price:</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br>
+                            <strong>Closed Price:</strong> <span>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span><br>
+                            <strong>Stop Loss:</strong> ${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}<br>
+                            <strong>Take Profit:</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}<br>
+                            <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br>
+                            <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br>
                             <strong>Status:</strong> ${order.status_badge}<br>
                         </td>
                     </tr>
@@ -381,12 +389,12 @@
             fetchHistory();
             setInterval(function() {
 
-                openRowsHistory = [];
+                // openRowsHistory = [];
 
-                // Collect IDs of open rows, To retain open state of accordion
-                document.querySelectorAll('.collapse.show').forEach(row => {
-                    openRowsHistory.push(row.id);
-                })
+                // // Collect IDs of open rows, To retain open state of accordion
+                // document.querySelectorAll('.collapse.show').forEach(row => {
+                //     openRowsHistory.push(row.id);
+                // })
 
                 fetchHistory();
             }, 3000);

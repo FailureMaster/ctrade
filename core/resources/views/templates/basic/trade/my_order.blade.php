@@ -166,6 +166,13 @@ $(document).ready(function() {
     function generateOrderRow(order, jsonData) {
         // sell price is current price from API
         // buy price is when you add the spread.
+
+        openRows = [];
+
+        // Collect IDs of open rows, To retain open state of accordion
+        document.querySelectorAll('.collapse.show').forEach(row => {
+            openRows.push(row.id);
+        });
          
         let current_price   = jsonData[order.pair.symbol].replace(/,/g, '')
         let spread          = order.pair.spread;
@@ -468,12 +475,12 @@ $(document).ready(function() {
 
     setInterval(function() {
 
-        openRows = [];
+        // openRows = [];
 
-        // Collect IDs of open rows, To retain open state of accordion
-        document.querySelectorAll('.collapse.show').forEach(row => {
-            openRows.push(row.id);
-        });
+        // // Collect IDs of open rows, To retain open state of accordion
+        // document.querySelectorAll('.collapse.show').forEach(row => {
+        //     openRows.push(row.id);
+        // });
 
         updateBalance();
         fetchOrderHistory();
@@ -780,7 +787,7 @@ tr th:last-child {
     }
 }
 
-.clickable-row[aria-expanded="true"] {
+.clickable-row[aria-expanded="true"], .history-collapse.show {
     background-color:#212529;
 }
 </style>
