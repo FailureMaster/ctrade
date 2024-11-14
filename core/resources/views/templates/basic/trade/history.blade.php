@@ -366,7 +366,7 @@
                             });
                         } else {
                             html =
-                                `<tr class="text-center text-white px-4"><td colspan="9">@lang('No order found')</td></tr>`;
+                                `<tr class="text-center px-4"><td class="no-order-label" colspan="9">@lang('No order found')</td></tr>`;
                         }
                         $('.history-body').html(html);
 

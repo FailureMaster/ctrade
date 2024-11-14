@@ -633,7 +633,7 @@
                 border-color: #000000;
             }
 
-            [data-theme=light] h5, [data-theme=light] .ellipsis-menu {
+            [data-theme=light] h5, [data-theme=light] .ellipsis-menu, [data-theme=light] .no-order-label {
                 color: #000000 !important;
             }
 
@@ -645,6 +645,18 @@
                 height: 30px !important;
                 padding: 0;
             }
+
+            [data-theme=light] #mobileDateFilterDropdown {
+                background-color: #ffffff;
+                color: #000000;
+                border: 1px solid #000000;
+            }
+
+            [data-theme=light] #mobileCustomDateFilterModal .modal-content {
+                background-color: #ffffff !important;
+            }
+
+            
         </style>
     @endpush
 @else

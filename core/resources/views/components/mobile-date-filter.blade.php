@@ -1,7 +1,7 @@
 <div class="dropdown">
     <label class="ellipsis-menu" class="btn btn-secondary dropdown-toggle text-white btn-sm" type="button"
     id="dateFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">•••</label>
-    <ul class="dropdown-menu" aria-labelledby="dateFilterDropdown">
+    <ul class="dropdown-menu" aria-labelledby="dateFilterDropdown" id="mobileDateFilterDropdown">
         <li>
             <a class="dropdown-item" href="#" data-value="today">
                 <div class="d-flex">
