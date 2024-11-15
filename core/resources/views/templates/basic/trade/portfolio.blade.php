@@ -111,7 +111,7 @@
     </div> --}}
 
     <div class="summary-container pb-0">
-        <h2 class="h-title p-0 mb-0 border-0">My Dashboard</h2>
+        <h2 class="h-title p-0 mb-0 border-0">@lang('My Dashboard')</h2>
         <h2 class="p-0 ch5"></h2>
         <div class="portfolio-item">
             <div class="label p-0">@lang('Open Orders')</div>

@@ -69,7 +69,7 @@
         <div class="tab-pane fade" id="menu-sm" role="tabpanel">
             <div class="summary-container">
                 <div class="d-flex justify-content-between" id="menuHeaderContainer">
-                    <h2 class="h-title p-0 mb-0 border-0">Menu</h2>
+                    <h2 class="h-title p-0 mb-0 border-0">{{ __(gs()->site_name) }}</h2>
                     @if (Auth::check())
                         <span class="text-white">
                             <i class="fas fa-user me-2"></i> {{ __(auth()->user()->fullname) }}
@@ -78,27 +78,27 @@
                 </div>
                 <ul class="list-unstyled menu-list">
                     @if (Auth::check())
-                        <li class="menu-item text-white">
+                        <li class="menu-item text-white @if(App::getLocale() == 'ar') justify-content-end @endif">
                             {{-- <a href="{{ route('user.profile.setting') }}" class="text-white"> --}}
-                                <a href="#" class="text-white myprofile-btn">
+                                <a href="#" class="text-white myprofile-btn @if(App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
                                 <i class="fas fa-undo-alt"></i>
                                 <span>@lang('My Profile')</span>
                             </a>
                         </li>
                     @endif
                     @if (Auth::check())
-                        <li class="menu-item">
+                        <li class="menu-item @if(App::getLocale() == 'ar') justify-content-end @endif">
                             <!-- <a href="{{ route('user.home') }}?d=1" class="text-white "> -->
-                            <a class="text-white new--deposit" data-currency="{{ @$pair->market->currency->symbol }}">
+                            <a class="text-white new--deposit @if(App::getLocale() == 'ar') d-flex flex-row-reverse @endif" data-currency="{{ @$pair->market->currency->symbol }}">
                                 <i class="fas fa-money-bill-wave"></i>
                                 <span>@lang('Deposit')</span>
                             </a>
                         </li>
                     @endif
                     @if (Auth::check())
-                        <li class="menu-item">
+                        <li class="menu-item @if(App::getLocale() == 'ar') justify-content-end @endif">
                             {{-- <a href="{{ route('user.change.password') }}" class="text-white"> --}}
-                            <a href="#" class="text-white changepass-btn">
+                            <a href="#" class="text-white changepass-btn @if(App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
                                 <i class="fas fa-key"></i>
                                 <span>@lang('Change Password')</span>
                             </a>
@@ -106,8 +106,8 @@
                     @endif
 
                     @if (Auth::check())
-                        <li class="menu-item">
-                            <a href="{{ route('user.logout') }}" class="text-white">
+                        <li class="menu-item @if(App::getLocale() == 'ar') justify-content-end @endif">
+                            <a href="{{ route('user.logout') }}" class="text-white @if(App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
                                 <i class="far fa-user-circle"></i>
                                 <span>@lang('Logout')</span>
                             </a>
@@ -118,19 +118,20 @@
                         $langDetails = $languages->where('code', config('app.locale'))->first();
                     @endphp
 
-                    <li class="menu-item">
+                    <li class="menu-item @if(App::getLocale() == 'ar') justify-content-end @endif">
                         <div class="custom--dropdown lang-dropdown">
-                            <div class="custom--dropdown__selected dropdown-list__item lang-dropdown-list">
+                            <div class="custom--dropdown__selected dropdown-list__item lang-dropdown-list @if(App::getLocale() == 'ar') d-flex flex-row-reverse text-end @endif">
                                 <span>@lang('Language'):</span>
-                                <div class="thumb">
-                                    <img
-                                        src="{{ getImage(getFilePath('language') . '/' . @$langDetails->flag, getFileSize('language')) }}">
-                                </div>
-                                <span class="text text-uppercase">{{ __(@$langDetails->code) }}</span>
+                                <div class="@if(App::getLocale() == 'ar') d-flex @endif">
+                                    <div class="thumb">
+                                        <img src="{{ getImage(getFilePath('language') . '/' . @$langDetails->flag, getFileSize('language')) }}">
+                                    </div>
+                                    <span class="text text-uppercase @if(App::getLocale() == 'ar') a-label @endif">{{ __(@$langDetails->code) }}</span>
+                                </div> 
                             </div>
                             <ul class="dropdown-list">
                                 @foreach ($languages as $language)
-                                    <li class="dropdown-list__item change-lang " data-code="{{ @$language->code }}">
+                                    <li class="dropdown-list__item change-lang @if(App::getLocale() == 'ar') d-flex flex-row-reverse text-end @endif" data-code="{{ @$language->code }}">
                                         <div class="thumb">
                                             <img
                                                 src="{{ getImage(getFilePath('language') . '/' . @$language->flag, getFileSize('language')) }}">
@@ -141,12 +142,12 @@
                             </ul>
                         </div>
                     </li>
-                    <li>
+                    <li class="@if(App::getLocale() == 'ar') d-flex justify-content-end @endif">
                         <div class="theme-switch-wrapper">
                             <label class="theme-switch" for="checkbox">
                                 <input type="checkbox" class="d-none" id="checkbox">
                                 <span class="slider">
-                                    <i class="las la-sun"></i>
+                                    <i class="las la-sun m-0"></i>
                                 </span>
                             </label>
                         </div>
@@ -318,9 +319,38 @@
                     margin-right:5px;
                 }
 
-                .lang-dropdown-list .thumb{
-                    width:80px !important;
+                .lang-dropdown-list div .thumb{
+                    width:50px !important;
                 }
             </style>
+        @endif
+
+        @if(App::getLocale() == 'ar')
+
+            <style>
+                .menu-item i{
+                    margin-right:0;
+                    margin-left:.5rem;
+                }
+            </style>
+
+            @if( is_mobile() )
+                <style>
+                    .offcanvas-header{
+                        flex-flow: row-reverse;
+                    }
+
+                    #myprofile-canvas .register, .register input,
+                    #deposit-canvas form, #deposit-canvas form input,
+                    #changepassword-canvas form, #changepassword-canvas form input {
+                        text-align:right;
+                    }
+
+                    .a-label{
+                        padding:0;
+                        width:unset !important;
+                    }
+                </style>
+            @endif
         @endif
     @endpush

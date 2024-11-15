@@ -4,7 +4,7 @@
     'class'     => 'form-control',
     'id'        => 'currency_list',
     'parent'    => 'currency_list_wrapper',
-    'text'      => 'Select Currency',
+    'text'      => 'Select currency',
     'action'    => route('admin.currency.all'),
     'type'      => 'all',
     'valueType' => 1, //1=id,other=symbol

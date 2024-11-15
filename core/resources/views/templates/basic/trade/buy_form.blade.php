@@ -139,10 +139,10 @@
 
         @if( $view_portfolio )          
            <div class="summary-container pb-0">
-                <h2 class="h-title p-0 mb-0 border-0">Portfolio</h2>
+                <h2 class="h-title p-0 mb-0 border-0">@lang('Portfolio')</h2>
                 <h2 class="p-0 ch5"></h2>
                 <div class="portfolio-item">
-                    <div class="label p-0">Balance</div>
+                    <div class="label p-0">@lang('Balance')</div>
                     <div class="dots"></div>
                     @auth
                         <div class="value-box">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
@@ -152,7 +152,7 @@
                 </div>
             
                 <div class="portfolio-item">
-                    <div class="label">Equity</div>
+                    <div class="label">@lang('Equity')</div>
                     <div class="dots"></div>
                     @auth
                         <div class="value-box" id="equity-span"></div>
@@ -162,7 +162,7 @@
                 </div>
             
                 <div class="portfolio-item">
-                    <div class="label">P/L</div>
+                    <div class="label">@lang('P/L')</div>
                     <div class="dots"></div>
                     @auth
                         <div class="value-box" id="pl-span"></div>
@@ -172,7 +172,7 @@
                 </div>    
             
                 <div class="portfolio-item">
-                    <div class="label">Free Margin</div>
+                    <div class="label">@lang('Free Margin')</div>
                     <div class="dots"></div>
                     @auth
                         <div class="value-box" id="free-margin-span">0</div>
@@ -196,7 +196,7 @@
                 </div>
             
                 <div class="portfolio-item p-0 m-0">
-                    <div class="label">Margin Level</div>
+                    <div class="label">@lang('Margin Level')</div>
                     <div class="dots"></div>
                     @auth
                         <div class="value-box" id="margin_level_span"></div>
@@ -212,7 +212,7 @@
             <div class="trading-table__mobile pt-0" style="margin-top: 0px;margin-bottom:80px;">
                 <div class="summary-container pt-0">
                     <div class="positions-header p-0 m-0 align-items-end">
-                        <h2 class="border-0 p-0 mb-0 h-title">Positions</h2>
+                        <h2 class="border-0 p-0 mb-0 h-title">@lang('Positions')</h2>
                         <label class="ellipsis-menu">•••</label>
                     </div>
 
