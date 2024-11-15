@@ -322,18 +322,20 @@ $(document).ready(function() {
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex flex-column">
                                     <div>
-                                        <span>${order.pair.symbol.replace('_', '/')},</span>
+                                        <span class="h-label">${order.pair.symbol.replace('_', '/')},</span>
                                         <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${order.custom_order_side_badge}</span>
-                                        <span>${removeTrailingZeros(order.no_of_lot)}</span>
+                                        <span class="h-label">${removeTrailingZeros(order.no_of_lot)}</span>
                                     </div>
                                     <div>
-                                        <span>${parseFloat(order.rate).toFixed(decimalCount)}</span>
-                                        <span>&rarr;</span>
-                                        <span >${current_price}</span>
+                                        <span class="h-label">${parseFloat(order.rate).toFixed(decimalCount)}</span>
+                                        <span class="h-label">&rarr;</span>
+                                        <span class="h-label" >${current_price}</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</span>
+                                    <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">
+                                        <label class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</label>
+                                    </span>
                                 </div>
                             </div>     
                             <div id="collapse${order.id}" class="collapse order-collapse ${ is_collapsed ? 'show' : '' } py-2" aria-labelledby="heading${order.id}">
@@ -474,13 +476,6 @@ $(document).ready(function() {
 
 
     setInterval(function() {
-
-        // openRows = [];
-
-        // // Collect IDs of open rows, To retain open state of accordion
-        // document.querySelectorAll('.collapse.show').forEach(row => {
-        //     openRows.push(row.id);
-        // });
 
         updateBalance();
         fetchOrderHistory();
@@ -789,6 +784,10 @@ tr th:last-child {
 
 .clickable-row[aria-expanded="true"], .history-collapse.show {
     background-color:#212529;
+}
+
+.clickable-row[aria-expanded="true"] .h-label{
+    color: #ffffff !important;
 }
 </style>
 @endpush

@@ -273,18 +273,18 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex flex-column">
                                     <div>
-                                        <span>${order.pair.symbol.replace('_', '/')},</span>
+                                        <span class="h-label">${order.pair.symbol.replace('_', '/')},</span>
                                         <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${order.custom_order_side_badge}</span>
-                                        <span>${removeTrailingZeros(order.no_of_lot)}</span>
+                                        <span class="h-label">${removeTrailingZeros(order.no_of_lot)}</span>
                                     </div>
                                     <div>
-                                        <span>${parseFloat(order.rate).toFixed(decimalCount)}</span>
-                                        <span>&rarr;</span>
-                                        <span >${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span>
+                                        <span class="h-label">${parseFloat(order.rate).toFixed(decimalCount)}</span>
+                                        <span class="h-label">&rarr;</span>
+                                        <span class="h-label" >${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(customOrderProfit).toFixed(2) || 0}</span>
+                                    <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(customOrderProfit).toFixed(2) || 0}</label>
                                 </div>
                             </div>     
                         </td>
@@ -294,11 +294,11 @@
                         <td colspan="6">
                             <strong>Date:</strong> ${order.formatted_date}<br>
                             <strong>Open Price:</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br>
-                            <strong>Closed Price:</strong> <span>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span><br>
+                            <strong>Closed Price:</strong>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}<br>
                             <strong>Stop Loss:</strong> ${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}<br>
                             <strong>Take Profit:</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}<br>
                             <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br>
-                            <strong>Profit:</strong> <span class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</span><br>
+                            <strong>Profit:</strong> <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label><br>
                             <strong>Status:</strong> ${order.status_badge}<br>
                         </td>
                     </tr>
@@ -397,10 +397,10 @@
                 // })
 
                 fetchHistory();
-            }, 3000);
-            setInterval(function func() {
-                return func;
-            }(), 10000);
+            }, 10000);
+            // setInterval(function func() {
+            //     return func;
+            // }(), 10000);
 
             $(document).on('click', '.dropdown-item', function() {
                 $('.dropdown-item').removeClass('active');

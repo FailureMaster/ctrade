@@ -656,6 +656,11 @@
                 background-color: #ffffff !important;
             }
 
+            [data-theme=light] .custom--modal .modal-content{
+                background-color:#ffffff !important;
+                color: #000000;
+            }
+
             
         </style>
     @endpush
