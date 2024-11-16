@@ -68,9 +68,41 @@
             align-items: center;
             justify-content: center;
         }
+
+        .landscape-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            z-index: 9999;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        @media only screen and (orientation:landscape) and (max-width: 768px) {
+
+            .landscape-warning {
+                display: flex;
+            }
+
+            body {
+                /* height: 100vw; */
+                /* transform: rotate(270deg); */
+                overflow: hidden;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="landscape-warning">
+        This version is not available on landscape. Please rotate the device.
+    </div>
     <div class="progress-cricle">
         <h4 class="progress-cricle__number"></h4>
     </div>
