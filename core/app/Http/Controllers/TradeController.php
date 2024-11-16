@@ -207,7 +207,11 @@ class TradeController extends Controller
         // User
         $user = auth()->user();
 
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user'));
+        $clientGroupID = isset($user->userGroups->client_group_id) ? $user->userGroups->client_group_id : 0 ;
+
+        $userGroup = ClientGroups::find($clientGroupID);
+
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup'));
     }
 
     public function fetchUserBalance()

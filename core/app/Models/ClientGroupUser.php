@@ -13,4 +13,8 @@ class ClientGroupUser extends Model
     public function user(){
         return $this->hasOne(User::class, 'id', 'user_id');
     }
+
+    public function group(){
+        return $this->hasOne(ClientGroups::class, 'id', 'client_group_id');
+    }
 }

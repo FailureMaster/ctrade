@@ -198,4 +198,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'user_id');
     }
+
+    public function userGroups()
+    {
+        return $this->hasOne(ClientGroupUser::class, 'user_id');
+    }
 }

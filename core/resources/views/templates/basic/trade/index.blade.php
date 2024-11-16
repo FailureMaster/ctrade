@@ -88,6 +88,7 @@
                 'pl' => $pl,
                 'total_profit' => $total_profit,
                 'total_loss' => $total_loss,
+                'userGroup'  => $userGroup
             ]" />
         </div>
     @endif
@@ -108,7 +109,7 @@
             </button>
         </div>
         <div class="offcanvas-body">
-            <form action="{{ route('user.deposit.insert') }}" method="post"
+            <form action="{{ route('user.deposit.insert') }}" method="post" id="depositFrm"
                 class="@if ($gateways->count() <= 0) d-none @endif">
                 @csrf
                 <input type="hidden" name="currency" value="{{ $currency->symbol }}">
@@ -661,7 +662,9 @@
                 color: #000000;
             }
 
-            
+            [data-theme=light] #depositFrm input, [data-theme=light] #depositFrm select{
+                color: #000000 !important;
+            }
         </style>
     @endpush
 @else
