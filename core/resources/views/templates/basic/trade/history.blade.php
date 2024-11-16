@@ -153,7 +153,7 @@
 
     <h2 class="p-0 ch5"></h2>
     <div class="summary-container pt-0">
-        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center justify-content-between @if (App::getLocale() == 'ar') flex-row-reverse @endif">
             <h2 class="h-title p-0 mb-0 border-0">@lang('Closed Orders')</h2>
             <x-mobile-date-filter/>
         </div>

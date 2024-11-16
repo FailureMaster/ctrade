@@ -34,7 +34,7 @@
                     <div class="buy-sell__price pt-1 pb-1">
                         <div class="input--group group-two @if(App::getLocale() == 'ar') text-end @endif">
                             <!--<span class="buy-sell__price-title fs-12">@lang('Lots')</span>-->
-                            <label for="id_label_single" class="@if(is_mobile()) d-flex justify-content-between @endif">
+                            <label for="id_label_single" class="@if(is_mobile()) d-flex justify-content-between @endif @if(App::getLocale() == 'ar') flex-row-reverse @endif">
                                 <span class="text-themed mb-1" style="@if(is_mobile()) margin-right: 4px @endif">
                                     @lang('Volume in Lots')
                                 </span>
@@ -81,19 +81,19 @@
                     <div class="mx-4 mb-3">
                         <ul class="p-0 m-0">
                             <li class="mt-1 pt-1 d-flex flex-column gap-2">
-                                <div class="d-flex justify-content-between align-items-center gap-2">
+                                <div class="d-flex justify-content-between align-items-center gap-2 @if(App::getLocale() == 'ar') flex-row-reverse @endif">
                                     <small class="text-themed d-block mb-1 pip-label">
-                                        <span class="{{ App::getLocale() == 'ar' ? '' : 'd-none' }}">:</span>
+                                        <span class="{{ App::getLocale() == 'ar' ? '' : 'd-none' }}"> @if(App::getLocale() != 'ar') : @endif</span>
                                         @lang('Pips Value')
-                                        <span class="{{ App::getLocale() == 'ar' ? 'd-none' : '' }}">:</span>
+                                        <span class="{{ App::getLocale() == 'ar' ? 'd-none' : '' }}"> @if(App::getLocale() != 'ar') : @endif</span>
                                     </small>
                                     <small class="text-themed d-block mb-1 pip-value">$0.00</small>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center gap-2">
+                                <div class="d-flex justify-content-between align-items-center gap-2 @if(App::getLocale() == 'ar') flex-row-reverse @endif">
                                     <small class="text-themed d-block mb-1 required-margin-label">
-                                        <span class="{{ App::getLocale() == 'ar' ? '' : 'd-none' }}">:</span>
+                                        <span class="{{ App::getLocale() == 'ar' ? '' : 'd-none' }}">@if(App::getLocale() != 'ar') : @endif</span>
                                         @lang('Required Margin')
-                                        <span class="{{ App::getLocale() == 'ar' ? 'd-none' : '' }}">:</span>
+                                        <span class="{{ App::getLocale() == 'ar' ? 'd-none' : '' }}">@if(App::getLocale() != 'ar') : @endif</span>
                                     </small>
                                     <small class="text-themed d-block mb-1 required-margin-value">$0.00</small>
                                 </div>
@@ -211,7 +211,7 @@
             
             <div class="trading-table__mobile pt-0" style="margin-top: 0px;margin-bottom:80px;">
                 <div class="summary-container pt-0">
-                    <div class="positions-header p-0 m-0 align-items-end">
+                    <div class="positions-header p-0 m-0 align-items-end @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <h2 class="border-0 p-0 mb-0 h-title">@lang('Positions')</h2>
                         <label class="ellipsis-menu">•••</label>
                     </div>

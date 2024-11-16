@@ -2,7 +2,7 @@
     <div class="trading-right__top @if (is_mobile()) pb-0 @endif">
         @if (is_mobile())
             <div class="summary-container c-summary">
-                <h2 class="border-0 p-0 mb-0 h-title">@lang('Markets')</h2>
+                <h2 class="border-0 p-0 mb-0 h-title @if(App::getLocale() == 'ar') text-end @endif">@lang('Markets')</h2>
             </div>
             <h2 class="p-0 ch5 ch5-history"></h2>
         @endif
