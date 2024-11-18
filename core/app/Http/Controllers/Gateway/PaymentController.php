@@ -13,6 +13,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class PaymentController extends Controller
 {
@@ -233,5 +234,138 @@ class PaymentController extends Controller
 
         $notify[] = ['success', 'You have deposit request has been taken'];
         return to_route('user.deposit.history')->withNotify($notify);
+    }
+
+    public function newDepositInsert(Request $request)
+    {
+        if( $request->ajax() ){
+
+            $walletTypes = gs('wallet_types');
+        
+            $request->validate([
+                'amount'      => 'required|numeric|gt:0',
+                'gateway'     => 'required',
+                'currency'    => 'required',
+                'wallet_type' => 'required|in:' . implode(',', array_keys((array) $walletTypes)),
+            ]);
+
+            $currency   = Currency::active()->where('symbol', $request->currency)->first();
+
+            if (!$currency) {
+                return response()->json(['success' => 0, 'message' => 'The requested deposit currency not found' ], 200);
+            }
+
+            $walletType = $request->wallet_type;
+
+            if (!checkWalletConfiguration($walletType, 'deposit', $walletTypes)) {
+                return response()->json(['success' => 0, 'message' => "Deposit to $walletType wallet currently disabled." ], 200);
+            }
+
+            $gate = GatewayCurrency::where('currency', $currency->symbol)->whereHas('method', function ($gate) {
+                $gate->active();
+            })->where('method_code', $request->gateway)->first();
+
+            if (!$gate) {
+                return response()->json(['success' => 0, 'message' => "Invalid gateway" ], 200);
+            }
+
+            if ($gate->min_amount > $request->amount || $gate->max_amount < $request->amount) {
+                return response()->json(['success' => 0, 'message' => "Please follow deposit limit" ], 200);
+            }
+
+            $charge    = $gate->fixed_charge + ($request->amount * $gate->percent_charge / 100);
+            $payable   = $request->amount + $charge;
+            $final_amo = $payable;
+            $user      = auth()->user();
+            $wallet    = Wallet::where('currency_id', $currency->id)->where('user_id', $user->id)->$walletType()->first();
+
+            if (!$wallet) {
+                $wallet              = new Wallet();
+                $wallet->user_id     = $user->id;
+                $wallet->currency_id = $currency->id;
+                $wallet->wallet_type = $walletTypes->$walletType->type_value;
+                $wallet->save();
+            }
+
+            $data                  = new Deposit();
+            $data->wallet_id       = $wallet->id;
+            $data->currency_id     = $wallet->currency_id;
+            $data->user_id         = $user->id;
+            $data->method_code     = $gate->method_code;
+            $data->method_currency = strtoupper($gate->currency);
+            $data->amount          = $request->amount;
+            $data->charge          = $charge;
+            $data->rate            = 1;
+            $data->final_amo       = $final_amo;
+            $data->btc_amo         = 0;
+            $data->btc_wallet      = "";
+            $data->trx             = getTrx();
+
+            if( $data->save() ) {
+
+                $newDeposit = $data->fresh();
+
+                session()->put('Track', $newDeposit->trx);
+                session()->save();
+                $trx = Crypt::encrypt($newDeposit->trx);
+                
+                $deposit = Deposit::where('trx', $newDeposit->trx)->where('status', Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
+
+                if ($deposit->method_code >= 1000) {
+
+                    $method    = $data->gatewayCurrency();
+
+                    $gateway   = $method->method;
+
+                    $data      = $deposit;
+
+                    $html = view('components.deposit-confirm', compact('data', 'gateway', 'method', 'trx'))->render();
+
+                    return response()->json(['success' => 1, 'html' => $html ], 200);
+                }
+            }
+        }
+
+        return abort(403, 'Unauthorized.');
+    }
+
+    public function customManualDepositUpdate(Request $request)
+    {
+        // $track = session()->get('Track');
+        $track = Crypt::decrypt($request->trx);
+        
+        $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+        
+        if (!$data) {
+            return response()->json(['success' => 0, 'message' => 'Failed! Transaction not found.', 'trx' => $track], 200);
+        }
+
+        $gatewayCurrency = $data->gatewayCurrency();
+        $gateway         = $gatewayCurrency->method;
+        $formData        = $gateway->form->form_data;
+
+        $formProcessor  = new FormProcessor();
+        $validationRule = $formProcessor->valueValidation($formData);
+        $request->validate($validationRule);
+        $userData = $formProcessor->processFormData($request, $formData);
+
+        $data->detail = $userData;
+        $data->status = Status::PAYMENT_PENDING;
+        $data->save();
+
+        $walletName = @$data->wallet->currency->symbol;
+
+        $adminNotification            = new AdminNotification();
+        $adminNotification->user_id   = $data->user->id;
+        $adminNotification->title     = 'Deposit request from ' . $data->user->username . " to wallet name " . $walletName;
+        $adminNotification->click_url = urlPath('admin.deposit.details', $data->id);
+        $adminNotification->save();
+
+        if( $request->ajax() ){
+
+            return response()->json(['success' => 1, 'message' => 'You have deposit request has been taken' ], 200);
+        }
+
+        return response()->json(['success' => 0, 'message' => 'Failed!' ], 200);
     }
 }

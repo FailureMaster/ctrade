@@ -109,7 +109,7 @@
             </button>
         </div>
         <div class="offcanvas-body">
-            <form action="{{ route('user.deposit.insert') }}" method="post" id="depositFrm"
+            <form action="" method="post" id="depositFrm"
                 class="@if ($gateways->count() <= 0) d-none @endif">
                 @csrf
                 <input type="hidden" name="currency" value="{{ $currency->symbol }}">
@@ -122,7 +122,6 @@
                     <div class="input-group">
                         <input type="number" step="any" class="form--control form-control text-white" name="amount"
                             required style="border: 1px solid #7c666675">
-                        <!-- <span class="input-group-text text-white deposit-currency-symbol">{{ __($currency->symbol) }}</span> -->
                     </div>
                 </div>
                 <div class="form-group">
@@ -275,6 +274,19 @@
             </form>
         </div>
     </div>
+
+    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="deposit-confirmation-canvas" aria-labelledby="offcanvasLabel">
+        <div class="offcanvas-header">
+            <h4 class="mb-0 fs-18 offcanvas-title text-white">
+                @lang('Deposit Confirmation')
+            </h4>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+        </div>
+    </div>
 @endsection
 @push('script-lib')
     <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
@@ -421,6 +433,73 @@
 
                         $.each(errors, function(i, e) {
                             $('[name="' + i + '"]').parent().find('span.error').html(`*${e}`);
+                            notify('error', e);
+                        });
+                    }
+                },
+                complete: function(response) {}
+            });
+        });
+
+        $(document).on('submit', '#depositFrm', function(e) {
+            e.preventDefault();
+
+            let frm = $(this).serialize();
+
+            $.ajax({
+                method: 'POST',
+                data: frm,
+                dataType: 'json',
+                url: "{{ route('user.deposit.newInsert') }}",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function(response) {
+                    if( response.success == 1 ){
+                        $('#deposit-confirmation-canvas .offcanvas-body').html(response.html);
+                        var myOffcanvas = document.getElementById('deposit-confirmation-canvas');
+                        var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                },
+                complete: function(response) {}
+            });
+        });
+
+        $(document).on('submit', '#customDepositConfirmForm', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                contentType: false, 
+                processData: false,
+                url: "{{ route('user.deposit.new.manual.update') }}",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function(response) {
+                    if( response.success == 1 ){
+                        notify('success', response.message);
+                        $('.text-reset').trigger('click');
+                        // setTimeout(() => {
+                        //     location.reload();
+                        // }, 2000);
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest.status == 422) {
+                        var errors = XMLHttpRequest.responseJSON.errors;
+
+                        $.each(errors, function(i, e) {
                             notify('error', e);
                         });
                     }
@@ -596,7 +675,8 @@
 
             [data-theme=light] #deposit-canvas,
             [data-theme=light] #myprofile-canvas,
-            [data-theme=light] #changepassword-canvas{
+            [data-theme=light] #changepassword-canvas,
+            [data-theme=light] #deposit-confirmation-canvas{
                 background-color: #ffffff;
                 color: #000000 !important;
             }
@@ -604,7 +684,8 @@
             [data-theme=light] #deposit-canvas label,
             [data-theme=light] #myprofile-canvas label,
             [data-theme=light] #changepassword-canvas label,
-            [data-theme=light] .offcanvas-title{
+            [data-theme=light] .offcanvas-title,
+            [data-theme=light] #deposit-confirmation-canvas label{
                 font-weight: bold;
                 color: #000000 !important;
             }
@@ -629,9 +710,11 @@
             }
 
             [data-theme=light] .register input,
-            [data-theme=light] .cpass input {
+            [data-theme=light] .cpass input,
+            [data-theme=light] #customDepositConfirmForm input,
+            [data-theme=light] #customDepositConfirmForm select {
                 color: #000000 !important;
-                border-color: #000000;
+                border-color: #000000 !important;
             }
 
             [data-theme=light] h5, [data-theme=light] .ellipsis-menu, [data-theme=light] .no-order-label {
@@ -662,10 +745,32 @@
                 color: #000000;
             }
 
-            [data-theme=light] #depositFrm input, [data-theme=light] #depositFrm select{
+            [data-theme=light] #depositFrm input, [data-theme=light] #depositFrm select, 
+            [data-theme=light] #customDepositConfirmForm input,
+            [data-theme=light] #customDepositConfirmForm select,
+            #customDepositConfirmForm h4{
                 color: #000000 !important;
             }
+
+            [data-theme=dark] #customDepositConfirmForm input,
+            [data-theme=dark] #customDepositConfirmForm select{
+                color: #ffffff;
+                border: 1px solid #ffffff;
+            }
+
+            [data-theme=dark] #customDepositConfirmForm h4{
+                color: #ffffff !important;
+            }
         </style>
+        @if (App::getLocale() == 'ar')
+            <style>
+                #deposit-confirmation-canvas .offcanvas-body,
+                #deposit-confirmation-canvas .offcanvas-body form input, 
+                #deposit-confirmation-canvas .offcanvas-body form select{
+                    text-align: right !important;
+                }
+            </style>
+        @endif
     @endpush
 @else
     @push('style')

@@ -378,7 +378,11 @@
                     #deposit-canvas form,
                     #deposit-canvas form input,
                     #changepassword-canvas form,
-                    #changepassword-canvas form input {
+                    #changepassword-canvas form input,
+                    #customDepositConfirmForm form,
+                    #customDepositConfirmForm input,
+                    #customDepositConfirmForm select,
+                    #customDepositConfirmForm .form-group, {
                         text-align: right;
                     }
 
