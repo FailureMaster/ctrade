@@ -887,7 +887,9 @@
             [data-theme=light] #deposit-canvas,
             [data-theme=light] #myprofile-canvas,
             [data-theme=light] #changepassword-canvas,
-            [data-theme=light] #deposit-confirmation-canvas{
+            [data-theme=light] #deposit-confirmation-canvas,
+            [data-theme=light] #withdraw-offcanvas,
+            [data-theme=light] #withdraw-confirmation-canvas{
                 background-color: #ffffff;
                 color: #000000 !important;
             }
@@ -923,7 +925,12 @@
             [data-theme=light] .register input,
             [data-theme=light] .cpass input,
             [data-theme=light] #customDepositConfirmForm input,
-            [data-theme=light] #customDepositConfirmForm select {
+            [data-theme=light] #customDepositConfirmForm ,
+            [data-theme=light] #frmWithdrawMoney input,
+            [data-theme=light] #frmWithdrawMoney select,
+            [data-theme=light] #frmWithdrawMoney,
+            [data-theme=light] #frmConfirmWithdraw,
+            [data-theme=light] #frmConfirmWithdraw input{
                 color: #000000 !important;
                 border-color: #000000 !important;
             }
@@ -995,7 +1002,11 @@
                 #withdraw-confirmation-canvas .offcanvas-body h5, 
                 #withdraw-confirmation-canvas .offcanvas-body form,
                 #withdraw-confirmation-canvas .offcanvas-body form input,
-                #deposit-canvas .offcanvas-body #depositFrm div{
+                #deposit-canvas .offcanvas-body #depositFrm div, 
+                .register,
+                .register input,
+                .cpass,
+                .cpass input {
                     text-align: right !important;
                 }
             </style>

@@ -240,7 +240,7 @@
                     $('.buy-sell-form').append('<input type="hidden" name="orderside" value="' + buttonValue + '">');
                 });
 
-                $('.buy-sell-form').on('submit', function(e) {
+                $(document).on('submit', '.buy-sell-form', function(e) {
                     e.preventDefault();
                     let formData      = new FormData($(this)[0]);
                     let action        = "{{ route('user.order.save', ':symbol') }}";

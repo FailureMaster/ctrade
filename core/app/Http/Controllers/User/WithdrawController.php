@@ -352,7 +352,7 @@ class WithdrawController extends Controller
                 $user = auth()->user();
 
                 if ($withdraw->amount > $wallet->balance) {
-                    return response()->json(['success' => 0, 'message' => "You do not have sufficient wallet balance for withdraw."],200);
+                    return response()->json(['success' => 0, 'message' => __("You do not have sufficient wallet balance for withdraw.")],200);
                 }
 
                 $withdraw->status               = Status::PAYMENT_PENDING;
@@ -379,8 +379,11 @@ class WithdrawController extends Controller
                 $adminNotification->title     = 'New withdraw request from ' . $user->username;
                 $adminNotification->click_url = urlPath('admin.withdraw.details', $withdraw->id);
                 
-                if( $adminNotification->save() )
-                    return response()->json(['success' => 1 , 'message' => 'Withdraw request sent successfully' ], 200);
+                if( $adminNotification->save() ){
+                    $lang = __('Withdraw request sent successfully');
+                    return response()->json(['success' => 1 , 'message' =>  $lang], 200);
+                }
+                   
 
                 return response()->json(['success' => 0 , 'message' => 'Failed!' ], 200);
             }

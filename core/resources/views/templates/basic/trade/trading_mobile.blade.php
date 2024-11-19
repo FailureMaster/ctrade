@@ -357,7 +357,7 @@
                 }
 
                 .lang-dropdown-list div .thumb {
-                    width: 50px !important;
+                    width: 30px !important;
                 }
             </style>
         @endif
