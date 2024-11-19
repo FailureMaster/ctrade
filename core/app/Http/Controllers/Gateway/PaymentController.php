@@ -232,7 +232,9 @@ class PaymentController extends Controller
             'wallet_name'     => $walletName
         ]);
 
-        $notify[] = ['success', 'You have deposit request has been taken'];
+        $language = __('You have deposit request has been taken');
+
+        $notify[] = ['success', $language];
         return to_route('user.deposit.history')->withNotify($notify);
     }
 
@@ -363,7 +365,9 @@ class PaymentController extends Controller
 
         if( $request->ajax() ){
 
-            return response()->json(['success' => 1, 'message' => 'You have deposit request has been taken' ], 200);
+            $language = __('You have deposit request has been taken');
+
+            return response()->json(['success' => 1, 'message' => $language ], 200);
         }
 
         return response()->json(['success' => 0, 'message' => 'Failed!' ], 200);

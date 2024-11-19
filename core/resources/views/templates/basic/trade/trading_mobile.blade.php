@@ -111,6 +111,17 @@
                             </a>
                         </li>
                     @endif
+
+                    @if (Auth::check())
+                        <li class="menu-item @if (App::getLocale() == 'ar') justify-content-end @endif">
+                            <a class="text-white new--withdraw @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
+                                <i class="fas fa-wallet"></i>
+                                <span>@lang('Withdraw')</span>
+                            </a>
+                        </li>
+                    @endif
+
+                
                     @if (Auth::check())
                         <li class="menu-item @if (App::getLocale() == 'ar') justify-content-end @endif">
                             {{-- <a href="{{ route('user.change.password') }}" class="text-white"> --}}

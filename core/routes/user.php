@@ -136,6 +136,8 @@ Route::middleware('auth')->name('user.')->group(function () {
                     Route::post('/store', 'withdrawStore')->name('.money');
                     Route::get('preview', 'withdrawPreview')->name('.preview');
                     Route::post('preview', 'withdrawSubmit')->name('.submit');
+                    Route::post('/new-store', 'newWithdrawStore')->name('.new-money');
+                    Route::post('/new-submit', 'newWithdrawSubmit')->name('.new-submit');
                 });
                 Route::get('history', 'withdrawLog')->name('.history');
             });

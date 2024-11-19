@@ -25,6 +25,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Deposit;
 use App\Models\SupportTicket;
 use App\Models\Withdrawal;
+use App\Models\WithdrawMethod;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -211,7 +212,9 @@ class TradeController extends Controller
 
         $userGroup = ClientGroups::find($clientGroupID);
 
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup'));
+        $withdrawMethods = WithdrawMethod::active()->get();
+
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup', 'withdrawMethods'));
     }
 
     public function fetchUserBalance()

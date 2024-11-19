@@ -287,6 +287,96 @@
         <div class="offcanvas-body">
         </div>
     </div>
+
+    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="withdraw-offcanvas" aria-labelledby="offcanvasLabel">
+        <div class="offcanvas-header">
+            <h4 class="mb-0 fs-18 offcanvas-title text-white">
+                @lang('Withdraw')
+            </h4>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            <form action="#" method="post" class="@if($withdrawMethods->count() <=0 ) d-none @endif" id="frmWithdrawMoney">
+                @csrf
+                <input type="hidden" name="currency" value="{{ $currency->symbol }}">
+                <div class="form-group">
+                    <label class="form-label">@lang('Amount')</label>
+                    <div class="input-group">
+                        <input type="number" step="any" name="amount" value="{{ old('amount') }}" id="amount-withdraw" class="form-control form--control" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">@lang('Method')</label>
+                    <select class="form-control form--control form-select" name="method_code" required>
+                        <option selected disabled>@lang('Select Withdraw Method')</option>
+                        @foreach ($withdrawMethods as $method)
+                            <option value="{{ $method->id }}" data-resource='@json($method)'>
+                                {{ __($method->name) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <input type="hidden" name="wallet_type" value="spot" for_fiat="1" for_crypto="1">
+                {{-- <div class="form-group">
+                    <label class="form-label">@lang('Type')</label>
+                    <select class="form-control form--control form-select" name="wallet_type" required>
+                        <option value="spot" for_fiat="1" for_crypto="1" selected>@lang('Balance')</option>
+                    </select>
+                </div> --}}
+                <div class="mt-3 preview-details d-none">
+                    <ul class="list-group text-center list-group-flush">
+                        <li class="list-group-item d-flex flex-wrap justify-content-between">
+                            <span>@lang('Limit')</span>
+                            <span>
+                                <span class="min fw-bold">0</span>
+                                <span class="withdraw-cur-sym">{{ __(@$singleCurrency->symbol) }}</span> -
+                                 <span class="max fw-bold">0</span>
+                                 <span class="withdraw-cur-sym">{{ __(@$singleCurrency->symbol) }}</span>
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex flex-wrap justify-content-between">
+                            <span>@lang('Charge')</span>
+                            <span>
+                                <span class="charge fw-bold">0</span>
+                                <span class="withdraw-cur-sym">{{ __(@$singleCurrency->symbol) }}</span>
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex flex-wrap justify-content-between">
+                            <span>@lang('Receivable')</span>
+                            <span>
+                                <span class="receivable fw-bold"> 0</span>
+                                <span class="withdraw-cur-sym">{{ __(@$singleCurrency->symbol) }}</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <button type="submit" class="btn btn--base w-100 mt-3">@lang('Submit')</button>
+            </form>
+            <div class="p-5 text-center empty-gateway @if($withdrawMethods->count() > 0 ) d-none @endif">
+                <img src="{{ asset('assets/images/extra_images/no_money.png') }}" alt="">
+                <h6 class="mt-3">
+                    @lang('No withdraw method available for ')
+                    <span class="text--base withdraw-cur-sym">{{ __(@$singleCurrency->symbol) }}</span>
+                    @lang('Currency')
+                </h6>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="withdraw-confirmation-canvas" aria-labelledby="offcanvasLabel">
+        <div class="offcanvas-header">
+            <h4 class="mb-0 fs-18 offcanvas-title text-white">
+                @lang('Withdraw Confirmation')
+            </h4>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+        </div>
+    </div>
 @endsection
 @push('script-lib')
     <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
@@ -373,6 +463,11 @@
 
         $('.changepass-btn').on('click', function(e) {
             var myOffcanvas = document.getElementById('changepassword-canvas');
+            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+        });
+
+        $('.new--withdraw').on('click', function(e) {
+            var myOffcanvas = document.getElementById('withdraw-offcanvas');
             var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
         });
 
@@ -488,9 +583,6 @@
                     if( response.success == 1 ){
                         notify('success', response.message);
                         $('.text-reset').trigger('click');
-                        // setTimeout(() => {
-                        //     location.reload();
-                        // }, 2000);
                     }
                     else
                         notify('error', response.message);
@@ -506,6 +598,125 @@
                 },
                 complete: function(response) {}
             });
+        });
+
+        $(document).on('submit', '#frmWithdrawMoney', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                url: "{{ route('user.withdraw.new-money') }}",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function(response) {
+                    if( response.success == 1 ){
+                        $('#withdraw-confirmation-canvas .offcanvas-body').html( response.html );
+                        var myOffcanvas = document.getElementById('withdraw-confirmation-canvas');
+                        var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest.status == 422) {
+                        var errors = XMLHttpRequest.responseJSON.errors;
+
+                        $.each(errors, function(i, e) {
+                            notify('error', e);
+                        });
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                complete: function(response) {}
+            });
+        });
+
+        $(document).on('submit', '#frmConfirmWithdraw', function(e) {
+            e.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                method: 'POST',
+                data: formData,
+                dataType: 'json',
+                url: "{{ route('user.withdraw.new-submit') }}",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function(response) {
+                    if( response.success == 1 ){
+                        notify('success', response.message);
+                        $('.text-reset').trigger('click');
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    if (XMLHttpRequest.status == 422) {
+                        var errors = XMLHttpRequest.responseJSON.errors;
+
+                        $.each(errors, function(i, e) {
+                            notify('error', e);
+                        });
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                complete: function(response) {}
+            });
+        });
+
+        $('#withdraw-offcanvas').on('change', 'select[name=method_code]', function() {
+            if (!$(this).val()) {
+                $('#withdraw-offcanvas .preview-details').addClass('d-none');
+                return false;
+            }
+
+            var resource       = $('select[name=method_code] option:selected').data('resource');
+            var fixed_charge   = parseFloat(resource.fixed_charge);
+            var percent_charge = parseFloat(resource.percent_charge);
+
+            $('#withdraw-offcanvas  .min').text(getAmount(resource.min_limit));
+            $('#withdraw-offcanvas  .max').text(getAmount(resource.max_limit));
+
+            var amount = parseFloat($('#withdraw-offcanvas input[name=amount]').val());
+
+            if (!amount) {
+                $('#withdraw-offcanvas .preview-details').addClass('d-none');
+                return false;
+            }
+
+            $('#withdraw-offcanvas .preview-details').removeClass('d-none');
+
+            var charge = parseFloat(fixed_charge + (amount * percent_charge / 100));
+            $('#withdraw-offcanvas  .charge').text(getAmount(charge));
+
+            var receivable = parseFloat((parseFloat(amount) - parseFloat(charge)));
+
+            $('#withdraw-offcanvas .receivable').text(getAmount(receivable));
+            var final_amo = parseFloat(parseFloat(receivable));
+
+            $('#withdraw-offcanvas .final_amo').text(getAmount(final_amo));
+            $('#withdraw-offcanvas .base-currency').text(resource.currency);
+            $('#withdraw-offcanvas .method_currency').text(resource.currency);
+            $('#withdraw-offcanvas input[name=amount]').on('input');
+        });
+
+        $('#withdraw-offcanvas input[name=amount]').on('input', function() {
+            var data = $('select[name=method_code]').change();
+            $('#withdraw-offcanvas .amount').text(parseFloat($(this).val()).toFixed(2));
+        });
+
+        $(document).on('click', '.clickable-row', function(){
+            $('.collapse').removeClass('show');
+            $('.clickable-row[aria-expanded="true"]').css('background-color', '#0F1821');
         });
 
         @auth
@@ -753,7 +964,9 @@
             }
 
             [data-theme=dark] #customDepositConfirmForm input,
-            [data-theme=dark] #customDepositConfirmForm select{
+            [data-theme=dark] #customDepositConfirmForm select,
+            [data-theme=dark] #frmWithdrawMoney input,
+            [data-theme=dark] #frmWithdrawMoney select{
                 color: #ffffff;
                 border: 1px solid #ffffff;
             }
@@ -761,12 +974,28 @@
             [data-theme=dark] #customDepositConfirmForm h4{
                 color: #ffffff !important;
             }
+
+            [data-theme=dark] .confirm-withdraw-content h5{
+                color: #ffffff !important;
+            }
+
+            [data-theme=dark] .confirm-withdraw-content form input{
+                border-color: #ffffff !important;
+                color: #ffffff !important;
+            }
         </style>
         @if (App::getLocale() == 'ar')
             <style>
                 #deposit-confirmation-canvas .offcanvas-body,
                 #deposit-confirmation-canvas .offcanvas-body form input, 
-                #deposit-confirmation-canvas .offcanvas-body form select{
+                #deposit-confirmation-canvas .offcanvas-body form select,
+                #frmWithdrawMoney input, 
+                #frmWithdrawMoney, select,
+                #frmWithdrawMoney label,
+                #withdraw-confirmation-canvas .offcanvas-body h5, 
+                #withdraw-confirmation-canvas .offcanvas-body form,
+                #withdraw-confirmation-canvas .offcanvas-body form input,
+                #deposit-canvas .offcanvas-body #depositFrm div{
                     text-align: right !important;
                 }
             </style>
