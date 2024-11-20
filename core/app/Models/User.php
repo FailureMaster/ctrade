@@ -203,4 +203,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(ClientGroupUser::class, 'user_id');
     }
+
+    public function approvedWithdrawals()
+    {
+        return $this->hasMany(Withdrawal::class)->where('status', Status::PAYMENT_SUCCESS);
+    }
+
+    public function approvedDeposits()
+    {
+        return $this->hasMany(Deposit::class)->where('status', Status::PAYMENT_SUCCESS);
+    }
 }

@@ -246,7 +246,7 @@ class OrderController extends Controller
         ->leftJoin('comments', 'latest_comments.latest_comment_id', '=', 'comments.id');
 
         return $users->with('owner')
-            ->with('comments.commentor')->whereHas('wallets', function ($query) {
+            ->with('comments.commentor', 'wallets', 'openOrders', 'approvedWithdrawals', 'approvedDeposits', 'loginLogs')->whereHas('wallets', function ($query) {
                 $query->where('balance', '!=', 0);
                    
             })

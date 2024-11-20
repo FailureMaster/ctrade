@@ -144,12 +144,21 @@
                         
                                 <th>@lang('First Name')</th>
                                 <th>@lang('Last Name')</th>
-                                <th>@lang('Phone')</th>
-                                <th>@lang('Email')</th>
-                                <th>@lang('Country')</th>
-                                <th>@lang('Registered')</th>
+                                <th>@lang('Balance')</th>
+                                {{-- <th>@lang('Phone')</th> --}}
+                                {{-- <th>@lang('Email')</th> --}}
+                                {{-- <th>@lang('Country')</th> --}}
+                                {{-- <th>@lang('Registered')</th> --}}
                                 <th>@lang('Equity')</th>
+                                <th>@lang('P/L')</th>
                                 <th class="text-center">@lang('Margin Level')</th>
+                                <th class="text-center">@lang('Used Margin')</th>
+                                <th class="text-center">@lang('Free Margin')</th>
+                                <th class="text-center">@lang('Credit')</th>
+                                <th class="text-center">@lang('Bonus')</th> 
+                                <th class="text-center">@lang('Deposit Amount')</th>
+                                <th class="text-center">@lang('Withdraw Amount')</th>
+                                <th class="text-center">@lang('Last login')</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -179,7 +188,14 @@
                                     <td>
                                         <span class="fw-bold">{{$user->lastname}}</span>
                                     </td>
+                                    @php
+                                        $balance = $user->wallets->where('currency_id', \App\Constants\Defaults::DEF_WALLET_CURRENCY_ID)->where('wallet_type', Status::WALLET_TYPE_SPOT)->first();
+                                        $loginLog = $user->loginLogs->sortByDesc('id')->first();
+                                    @endphp
                                     <td>
+                                        <span class="fw-bold">{{getAmount($balance->balance ?? 0)}}</span>
+                                    </td>
+                                    {{-- <td>
                                         <span class="d-block"></span>
                                         {{ $user->mobile }}
                                     </td>
@@ -199,15 +215,38 @@
                                         {{ \Carbon\Carbon::parse($user->created_at)->format('d-m-y - H:i')}}
 
                                             {{-- showDateTime($user->created_at, 'd-m-y - H:i') }}  --}}
-                                    </td>
+                                    {{-- </td> --}}
     
                                     <td class="text-center equity{{$user->id}}" >
+                                        0.0000
+                                    </td>
+                                    <td class="text-center pl{{$user->id}}" >
                                         0.0000
                                     </td>
                                     <td class="text-center margin-level{{$user->id}}" >
                                         0.0000
                                     </td>
-                                
+                                    <td class="text-center used-margin{{$user->id}}" >
+                                        {{ getAmount($user->openOrders->sum('required_margin')) }}
+                                    </td>
+                                    <td class="text-center free-margin{{$user->id}}" >
+                                        0.0000
+                                    </td>
+                                    <td class="text-center credit{{$user->id}}" >
+                                       {{ getAmount($balance->credit) }}
+                                    </td>
+                                    <td class="text-center bonus{{$user->id}}" >
+                                        {{ getAmount($balance->bonus) }}
+                                    </td>
+                                    <td class="text-center deposit-amount{{$user->id}}" >
+                                        {{ getAmount($user->approvedWithdrawals->sum('amount')) }}
+                                    </td>
+                                    <td class="text-center withdraw-amount{{$user->id}}" >
+                                        {{ getAmount($user->approvedDeposits->sum('amount')) }}
+                                    </td>
+                                    <td class="text-center last-login{{$user->id}}" >
+                                        {{ $loginLog->created_at }}
+                                    </td>
                                 </tr>
                               
                             @empty
@@ -377,8 +416,11 @@
                             let bonus = parseFloat(user.custom_wallets.bonus) || 0;
                             let credit = parseFloat(user.custom_wallets.credit) || 0;
 
+                            free_margin = equity - user.totalRequiredMargin;
                             // $(`.equity${user.id}`).html(`${equity}`);
                             $(`.equity${user.id}`).html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
+                            $(`.free-margin${user.id}`).html(`${formatWithPrecision1(free_margin)} USD`);
+                            $(`.pl${user.id}`).html(`<span class="${(pl < 0 ? 'text-danger' : 'text-success')}">${formatWithPrecision1(pl)}</span> USD`);
                             $(`.margin-level${user.id}`).html(`${formatWithPrecision1(margin_level)} %`);
 
                         });
