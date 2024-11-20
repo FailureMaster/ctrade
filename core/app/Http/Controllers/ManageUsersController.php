@@ -165,7 +165,7 @@ class ManageUsersController extends Controller
             'mobile' => 'required|string|max:40|unique:users,mobile,' . $user->id,
             'country' => 'required|in:' . $countries,
         ]);
-        $user->mobile = $dialCode . $request->mobile;
+        $user->mobile = $request->mobile;
         $user->country_code = $countryCode;
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;

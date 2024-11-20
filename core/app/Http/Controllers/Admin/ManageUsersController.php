@@ -442,7 +442,7 @@ class ManageUsersController extends Controller
 
         // $user->comment = $request->comment;
         $user->sales_status = $request->status;
-        $user->mobile = $dialCode . $request->mobile;
+        $user->mobile = $request->mobile;
         $user->country_code = $countryCode;
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
