@@ -199,53 +199,41 @@
             <div>
                 <ul class="d-flex justify-content-around nav nav-pills" id="pills-sm-tab-list" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link d-flex flex-column {{ !$isCategory ? 'active' : '' }}" data-bs-toggle="pill"
+                        <a class="nav-link m-markets d-flex flex-column {{ !$isCategory ? 'active' : '' }}" data-type="m-markets" data-bs-toggle="pill"
                             data-bs-target="#market-list-sm" role="tab" aria-controls="pills-markettwentyfive"
                             aria-selected="false">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="fas fa-chart-line" id="m-markets"></i>
                             <label>@lang('Markets')</label>
                         </a>
                     </li>
                     <li class="nav-item" role="presentation" data-status="0">
-                        <a class="nav-link m-portfolio d-flex flex-column" data-bs-toggle="pill"
+                        <a class="nav-link m-portfolio d-flex flex-column" data-type="trade-btn-pill" data-bs-toggle="pill"
                             data-bs-target="#portfolio-sm" role="tab" aria-controls="pills-chartthree"
                             aria-selected="true">
                             <i class="fas fa-briefcase" id="trade-btn-pill"></i>
                             @lang('Trade')
                         </a>
                     </li>
-                    {{-- <li class="nav-item" role="presentation">
-                    <a class="nav-link d-flex flex-column"
-                        data-bs-toggle="pill"
-                        data-bs-target="#order-book-sm"
-                        role="tab"
-                        aria-controls="pills-orderbookthree"
-                        aria-selected="false"
-                        >
-                        <i class="fas fa-users"></i>
-                        @lang('Orders')
-                    </a>
-                </li> --}}
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link d-flex flex-column" data-bs-toggle="pill"
-                            data-bs-target="#trade-history-sm" role="tab" aria-controls="pills-historytwentyfive"
+                        <a class="nav-link m-closed d-flex flex-column" data-bs-toggle="pill"
+                            data-bs-target="#trade-history-sm" role="tab" data-type="m-closed" aria-controls="pills-historytwentyfive"
                             aria-selected="false">
-                            <i class="fas fa-history"></i>
+                            <i class="fas fa-history" id="m-closed"></i>
                             @lang('Closed Orders')
                         </a>
                     </li>
                     <li class="nav-item" role="presentation" data-status="0">
-                        <a class="nav-link m-portfolio d-flex flex-column" data-bs-toggle="pill"
+                        <a class="nav-link m-portfolio d-flex flex-column" data-type="m-portfolio" data-bs-toggle="pill"
                             data-bs-target="#wallet-sm" role="tab" aria-controls="pills-orderbookthree"
                             aria-selected="false">
-                            <i class="fas fa-briefcase" id=""></i>
+                            <i class="fas fa-briefcase" id="m-portfolio"></i>
                             @lang('Dashboard')
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link d-flex flex-column" data-bs-toggle="pill" data-bs-target="#menu-sm"
+                        <a class="nav-link d-flex flex-column" data-type="m-menu" data-bs-toggle="pill" data-bs-target="#menu-sm"
                             role="tab" aria-controls="pills-historytwentyfive" aria-selected="false">
-                            <i class="fas fa-bars"></i>
+                            <i class="fas fa-bars" id="m-menu"></i>
                             @lang('Menu')
                         </a>
                     </li>
@@ -267,6 +255,27 @@
                         $('#portfolio-content-2').addClass('d-none');
                     }
                 }
+
+                $(document).on('click', '.nav-link', function(){
+                    let type = $(this).attr('data-type');
+                    sessionStorage.setItem("activeTab", type);
+                });
+
+                let isSwitching = false;
+
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', function (e) {
+                        if (isSwitching) {
+                            e.preventDefault();
+                            return;
+                        }
+                        isSwitching = true;
+
+                        setTimeout(() => {
+                            isSwitching = false;
+                        }, 5000); 
+                    });
+                });
             });
         </script>
     @endpush
