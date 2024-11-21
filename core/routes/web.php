@@ -32,7 +32,7 @@ Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(
 Route::get('app/deposit/confirm/{hash}', 'Gateway\PaymentController@appDepositConfirm')->name('deposit.app.confirm');
 Route::get('ws', 'WsContoller@ws');
 
-Route::controller("TradeController")->prefix('trade')->group(function () {
+Route::middleware('auth')->controller("TradeController")->prefix('trade')->group(function () {
     Route::get('/order/book/{symbol}', 'orderBook')->name('trade.order.book');
     Route::get('pairs', 'pairs')->name('trade.pairs');
     Route::get('history/{symbol}', 'history')->name('trade.history');
