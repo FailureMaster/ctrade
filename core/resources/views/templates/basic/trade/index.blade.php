@@ -417,10 +417,22 @@
                 sessionStorage.removeItem("confirmClose");
                 $("#trade-btn-pill").trigger("click");
             }
+            else{
+                const activeTab = sessionStorage.getItem("activeTab");
+                
+                if( activeTab != "" ){
+                    $('#'+activeTab).trigger('click');
+                }
+            }
         }
 
         $(document).ready(function() {
             ConfirmCloseOnMobile(); // this function is to keep trade tab open after closing the order
+
+            // Removing active tab when seleting market item
+            $(document).on('click', '.market-coin-item', function(){
+                sessionStorage.removeItem("activeTab");
+            })
         });
     </script>
 @endpush
@@ -716,7 +728,11 @@
 
         $(document).on('click', '.clickable-row', function(){
             $('.collapse').removeClass('show');
-            $('.clickable-row[aria-expanded="true"]').css('background-color', '#0F1821');
+
+            if( $('[data-theme=light]').length > 0 ) 
+                $('.clickable-row[aria-expanded="true"]').css('background-color', '#ffffff');
+            else
+                $('.clickable-row[aria-expanded="true"]').css('background-color', '#0F1821');
         });
 
         @auth
@@ -925,7 +941,8 @@
             [data-theme=light] .register input,
             [data-theme=light] .cpass input,
             [data-theme=light] #customDepositConfirmForm input,
-            [data-theme=light] #customDepositConfirmForm ,
+            [data-theme=light] #customDepositConfirmForm,
+            [data-theme=light] #customDepositConfirmForm select ,
             [data-theme=light] #frmWithdrawMoney input,
             [data-theme=light] #frmWithdrawMoney select,
             [data-theme=light] #frmWithdrawMoney,

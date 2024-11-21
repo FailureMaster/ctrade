@@ -339,7 +339,9 @@ $(document).ready(function() {
                                 </div>
                             </div>     
                             <div id="collapse${order.id}" class="collapse order-collapse ${ is_collapsed ? 'show' : '' } py-2" aria-labelledby="heading${order.id}">
-                                <strong>Actions:</strong> ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
+                                <div class="@if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
+                                     <strong>@lang('Actions') @if (App::getLocale() != 'ar') : @endif </strong> &nbsp&nbsp ${buttonStopLoss} &nbsp&nbsp ${buttonTakeProfit} &nbsp&nbsp ${button}
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -782,12 +784,14 @@ tr th:last-child {
     }
 }
 
-.clickable-row[aria-expanded="true"], .history-collapse.show {
-    background-color:#212529;
+[data-theme=light] .clickable-row[aria-expanded="true"], [data-theme=light].history-collapse.show {
+    background-color:#ffffff;
 }
 
-.clickable-row[aria-expanded="true"] .h-label{
-    color: #ffffff !important;
+[data-theme=light] .clickable-row[aria-expanded="true"] .h-label, [data-theme=light] .clickable-row[aria-expanded="true"] strong,
+[data-theme=light] .history-collapse.show strong, 
+[data-theme=light] .history-collapse.show td{
+    color: #000000 !important;
 }
 </style>
 @endpush
