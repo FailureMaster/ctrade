@@ -54,7 +54,7 @@
 
     @media screen and (min-width: 360px) and (max-height: 780px){
         .trading-chart iframe {
-            height: 75vh;
+            height: 80vh;
         }
     }
 
@@ -66,10 +66,15 @@
 
     @media screen and (min-width: 384px) and (max-height: 832px){
         .trading-chart iframe {
-            height: 75vh;
+            height: 80vh;
         }
     }
 
+    @media screen and (min-width: 390px) and (max-height: 884px){
+        .trading-chart iframe {
+            height: 77vh;
+        }
+    }
     
     @media screen and (min-width: 412px) and (max-height: 916px){
         .trading-chart iframe {

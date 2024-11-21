@@ -76,7 +76,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
+            background-color: #000000;
             color: #fff;
             z-index: 9999;
             text-align: center;
@@ -85,19 +85,22 @@
             font-size: 1.5rem;
         }
 
-        @media only screen and (orientation:landscape) and (max-width: 768px) {
+        </style>
 
-            .landscape-warning {
-                display: flex;
-            }
+        @if( is_mobile() ) 
+            <style>
+                @media only screen and (orientation:landscape) and (max-width: 932px) {
 
-            body {
-                /* height: 100vw; */
-                /* transform: rotate(270deg); */
-                overflow: hidden;
-            }
-        }
-    </style>
+                    .landscape-warning {
+                        display: flex;
+                    }
+
+                    body {
+                        overflow: hidden;
+                    }
+                }
+            </style>
+        @endif
 </head>
 <body>
     <div class="landscape-warning">
