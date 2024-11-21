@@ -14,6 +14,8 @@
     $total_profit = @$meta->total_profit;
     $total_loss = @$meta->total_loss;
     $userGroup = @$meta->userGroup;
+    $deposits = @$meta->deposits;
+    $withdraws = @$meta->withdraws;
 @endphp
 
 <div class="tab-inner-wrapper" style="background-color: var(--pane-bg); {{ is_mobile() ? 'margin: 0' : '' }}">
@@ -49,6 +51,9 @@
                     'lots' => $lots,
                     'fee_status' => $fee_status,
                     'view_portfolio' => true,
+                    'marketCurrencyWallet' => $marketCurrencyWallet,
+                    'deposits' => $deposits,
+                    'withdraws' => $withdraws
                 ]" />
             </div>
         </div>
@@ -65,7 +70,12 @@
             ]" />
         </div>
         <div class="tab-pane fade" id="wallet-sm" role="tabpanel">
-            <x-flexible-view :view="$activeTemplate . 'trade.portfolio'" :meta="['widget' => $widget]" />
+            <x-flexible-view :view="$activeTemplate . 'trade.portfolio'" :meta="[
+                'widget' => $widget,
+                'marketCurrencyWallet' => $marketCurrencyWallet,
+                'deposits' => $deposits ,
+                'withdraws' => $withdraws
+            ]" />
         </div>
         <div class="tab-pane fade" id="menu-sm" role="tabpanel">
             <div class="summary-container">

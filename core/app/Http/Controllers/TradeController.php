@@ -214,7 +214,11 @@ class TradeController extends Controller
 
         $withdrawMethods = WithdrawMethod::active()->get();
 
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup', 'withdrawMethods'));
+        $deposits  = auth()->user()->deposits()->orderBy('id', 'desc');
+
+        $withdraws = Withdrawal::where('user_id', auth()->id())->where('status', '!=', Status::PAYMENT_INITIATE)->orderBy('id', 'desc');
+
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup', 'withdrawMethods', 'deposits', 'withdraws'));
     }
 
     public function fetchUserBalance()

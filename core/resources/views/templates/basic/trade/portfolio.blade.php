@@ -1,6 +1,9 @@
 @php
     $meta           = (object) $meta;
     $widget         = @$meta->widget;
+    $marketCurrencyWallet = @$meta->marketCurrencyWallet;
+    $depositsData         = (clone @$meta->deposits)->get();
+    $withdrawsData            = (clone @$meta->withdraws)->get();
 @endphp
 
 @push('style')
@@ -73,46 +76,19 @@
 @endpush
 
 <div class="trading-table__mobile" style="margin-top: 0px;margin-bottom:80px;">
-    {{-- <div class="summary-container">
-        <div class="d-flex justify-content-between">
-            <h2 class="h-title p-0 mb-0 border-0">My Dashboard</h2>
-        </div>
-
-        <h2 class="p-0 ch5 ch5-portfolio"></h2>
-
-        <table id="tblPortfolio" style="display: inline-table;">
-            <tbody class="portf-body">
-                <tr class="clickable-row">
-                    <td>@lang('Open Orders')</td>
-                    <td>{{ getAmount($widget['open_order']) }}</td>
-                </tr>
-                <tr class="clickable-row">
-                    <td>@lang('Closed Orders')</td>
-                    <td>{{ getAmount($widget['closed_orders']) }}</td>
-                </tr>
-                <tr class="clickable-row">
-                    <td>@lang('P & L')</td>
-                    <td class="{{ getAmount($widget['pl']) >= 0 ? 'text-success' : 'text-danger' }}">{{ getAmount($widget['pl']) }} $ </td>
-                </tr>
-                <tr class="clickable-row">
-                    <td>@lang('Total Deposit')</td>
-                    <td>{{ getAmount($widget['total_deposit']) }}</td>
-                </tr>
-                <tr class="clickable-row">
-                    <td>@lang('Total withdraw')</td>
-                    <td>{{ getAmount($widget['total_withdraw']) }}</td>
-                </tr>
-                <tr class="clickable-row">
-                    <td>@lang('Pending Tickets')</td>
-                    <td>{{ getAmount($widget['open_tickets']) }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div> --}}
 
     <div class="summary-container pb-0">
         <h2 class="h-title p-0 mb-0 border-0">@lang('My Dashboard')</h2>
         <h2 class="p-0 ch5"></h2>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Balance')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
+            @else
+                <div class="value-box">00000</div>
+            @endauth
+        </div>
         <div class="portfolio-item">
             <div class="label p-0">@lang('Open Orders')</div>
             <div class="dots"></div>
@@ -141,7 +117,7 @@
             @endauth
         </div>
         <div class="portfolio-item">
-            <div class="label p-0">@lang('Total Deposit')</div>
+            <div class="label p-0">@lang('Total Deposit Amount')</div>
             <div class="dots"></div>
             @auth
                 <div class="value-box">{{ getAmount($widget['total_deposit']) }} $</div>
@@ -149,8 +125,46 @@
                 <div class="value-box"></div>
             @endauth
         </div>
+        
         <div class="portfolio-item">
-            <div class="label p-0">@lang('Total withdraw')</div>
+            <div class="label p-0">@lang('Total Deposits')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $depositsData->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Approved Deposits')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $depositsData->where('status', 1)->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Pending Deposits')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $depositsData->where('status', 2)->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Canceled Deposits')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $depositsData->where('status', 3)->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Total withdraw Amount')</div>
             <div class="dots"></div>
             @auth
                 <div class="value-box">{{ getAmount($widget['total_withdraw']) }} $</div>
@@ -158,6 +172,44 @@
                 <div class="value-box"></div>
             @endauth
         </div>
+
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Total Withdraw')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $withdrawsData->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Approved withdraw')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $withdrawsData->where('status', 1)->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Pending withdraw')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $withdrawsData->where('status', 2)->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+        <div class="portfolio-item">
+            <div class="label p-0">@lang('Canceled withdraw')</div>
+            <div class="dots"></div>
+            @auth
+                <div class="value-box">{{ $withdrawsData->where('status', 3)->count() }}</div>
+            @else
+                <div class="value-box"></div>
+            @endauth
+        </div>
+
         <div class="portfolio-item">
             <div class="label p-0">@lang('Pending Tickets')</div>
             <div class="dots"></div>

@@ -88,7 +88,9 @@
                 'pl' => $pl,
                 'total_profit' => $total_profit,
                 'total_loss' => $total_loss,
-                'userGroup'  => $userGroup
+                'userGroup'  => $userGroup,
+                'deposits'   => $deposits,
+                'withdraws' => $withdraws
             ]" />
         </div>
     @endif
