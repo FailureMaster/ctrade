@@ -83,7 +83,7 @@
                             <div class="label mb-2 @if(App::getLocale() == 'ar') text-end @endif">@lang('P&L Value')</div>
                             <div class="value-container w-100">
                                 <span>-$</span>
-                                <span class="plvalue"></span>
+                                <span class="plvalue" data-dcount=""></span>
                             </div>
                         </div>
                     </div>
@@ -191,8 +191,10 @@
                 let value           = parseFloat($('.slprice').val());
     
                 let plValue         = Math.abs(calculatePLValue(order, lot_equivalent, open_price, value)) + parseInt($('.slpipsequivalent').text())
+
+                let dcount          =  $('.plvalue').attr('data-dcount');
     
-                $('.plvalue').text(`${plValue}`);
+                $('.plvalue').text(`${plValue.toFixed(dcount)}`);
             }
     
             $('.saveStopLoss').on('click', function() {
@@ -263,7 +265,11 @@
             if (isSLUpdateModalContent) {
                 $('#stopLossModal .stop-loss-current-price-modal').text(`${current_price}`);
                 $('.slprice').val(`${current_price}`);
-                $('.plvalue').text(`${parseInt($('.slpipsequivalent').text()) + Math.abs(total_price)}`);
+
+                let plValue = parseInt($('.slpipsequivalent').text()) + Math.abs(total_price);
+                let dcount  =  $('.plvalue').attr('data-dcount');
+                $('.plvalue').text(`${plValue.toFixed(dcount)}`);
+               
             }
         }
     
@@ -290,7 +296,9 @@
     
             let plValue = parseInt(100) + parseFloat(Math.abs(calculatePLValue(data.order, data.equivalent, data.open, data.curr)))
     
-            modal.find('.plvalue').text(`${plValue}`)
+            modal.find('.plvalue').text(`${plValue}`);
+            modal.find('.plvalue').attr('data-dcount', countDecimalPlaces(plValue));
+            
     
             // Start interval to update modal content
             intervalIdSL = setInterval(function () {

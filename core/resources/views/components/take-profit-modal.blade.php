@@ -83,7 +83,7 @@
                             <div class="label mb-2 @if(App::getLocale() == 'ar') text-end @endif">@lang('P&L Value')</div>
                             <div class="value-container w-100">
                                 <span>$</span>
-                                <span class="tpplvalue">
+                                <span class="tpplvalue" data-dcount="">
                                 </span>
                             </div>
                         </div>
@@ -174,9 +174,11 @@
                 let open_price = parseFloat($('.open-price-modal').text());
                 let value = parseFloat($('.tpprice').val());
     
-                let plValue = Math.abs(calculatePLValue(order, lot_equivalent, open_price, value)) + parseInt($('.tppipsequivalent').text())
+                let plValue = Math.abs(calculatePLValue(order, lot_equivalent, open_price, value)) + parseInt($('.tppipsequivalent').text());
+
+                let dcount  =  $('.tpplvalue').attr('data-dcount');
     
-                $('.tpplvalue').text(`${plValue}`);
+                $('.tpplvalue').text(`${plValue.toFixed(dcount)}`);
             }
     
             $('.saveTakeProfit').on('click', function() {
@@ -251,8 +253,11 @@
             if (isTPUpdateModalContent) {
                 $('.current-price-modal').text(`${current_price}`);
                 $('.tpprice').val(`${current_price}`);
+
+                let tplVal  = parseInt($('.tppipsequivalent').text()) + Math.abs(total_price);
+                let dcount  =  $('.tpplvalue').attr('data-dcount');
     
-                $('.tpplvalue').text(`${parseInt($('.tppipsequivalent').text()) + Math.abs(total_price)}`);
+                $('.tpplvalue').text(`${tplVal.toFixed(dcount)}`);
             }
         }
     
@@ -280,6 +285,7 @@
             let plValue = parseInt(100) + parseFloat(Math.abs(calculatePLValue(data.side, data.equivalent, data.open, data.curr)))
     
             modal.find('.tpplvalue').text(`${plValue}`)
+            modal.find('.tpplvalue').attr('data-dcount', countDecimalPlaces(plValue));
     
             // Start interval to update modal content
             intervalId = setInterval(function () {
