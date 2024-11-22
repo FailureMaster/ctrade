@@ -116,8 +116,15 @@
                 @csrf
                 <input type="hidden" name="currency" value="{{ $currency->symbol }}">
                 <input type="hidden" name="wallet_type" value="spot">
-                <div class="form-group position-relative" id="currency_list_wrapper">
+                {{-- <div class="form-group position-relative" id="currency_list_wrapper">
                     <x-currency-list :action="route('user.currency.all')" valueType="2" logCurrency="true" />
+                </div> --}}
+                <div class="form-group">
+                    <select class="form-control form--control form-select text-white" name="gateway" required
+                    style="border: 1px solid #7c666675">
+                        <option value="" selected="" disabled="">@lang('Select currency')</option>
+                        <option value="USD" >United States Dollar-USD</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="form-label text-white">@lang('Amount')</label>
