@@ -145,7 +145,7 @@
                     <div class="label p-0">@lang('Balance')</div>
                     <div class="dots"></div>
                     @auth
-                        <div class="value-box">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
+                        <div class="value-box {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
                     @else
                         <div class="value-box">00000</div>
                     @endauth
@@ -1104,14 +1104,18 @@
 
     /* This css is for displaying dotted lines */
 
-.dots {
-    flex-grow: 1;
-    height: 8px;
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 4px); /* Tiny 1px circles with 4px padding */
-    background-size: 10px; /* 5px horizontal spacing between circles */
-    opacity: 0.2;
-    margin: 0 20px; /* Space around the entire .dots element */
-}
+    .dots {
+        flex-grow: 1;
+        height: 8px;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 4px); 
+        background-size: 10px;
+        opacity: 0.2;
+        margin: 0 20px; 
+    }
+
+    [data-theme=light] .dots {
+        background-image: radial-gradient(circle, rgb(0 0 0 / 20%) 1px, transparent 4px); 
+    }
 
 
 .positions-header {

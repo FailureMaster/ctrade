@@ -268,6 +268,9 @@
 
                 $(document).on('click', '.nav-link', function(){
                     let type = $(this).attr('data-type');
+                    if( type === "m-closed" ){
+                        fetchHistory();
+                    }
                     sessionStorage.setItem("activeTab", type);
                 });
 
@@ -285,6 +288,10 @@
                             isSwitching = false;
                         }, 5000); 
                     });
+                });
+
+                $(document).on('click', '.theme-switch', function(){
+                    $('.history-body .clickable-row').css('background-color', 'unset');
                 });
             });
         </script>

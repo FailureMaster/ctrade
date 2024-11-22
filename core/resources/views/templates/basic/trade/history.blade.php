@@ -152,7 +152,7 @@
     </div>
 
     <h2 class="p-0 ch5"></h2>
-    <div class="summary-container pt-0">
+    <div class="summary-container pt-0" id="history-sc">
         <div class="d-flex align-items-center justify-content-between @if (App::getLocale() == 'ar') flex-row-reverse @endif">
             <h2 class="h-title p-0 mb-0 border-0">@lang('Closed Orders')</h2>
             <x-mobile-date-filter/>
@@ -292,14 +292,25 @@
                     
                     <tr id="collapse${order.id}" class="history-collapse collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
                         <td colspan="6">
-                            <strong>Date:</strong> ${order.formatted_date}<br>
-                            <strong>Open Price:</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br>
-                            <strong>Closed Price:</strong>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}<br>
-                            <strong>Stop Loss:</strong> ${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}<br>
-                            <strong>Take Profit:</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}<br>
-                            <strong>Volume:</strong> ${removeTrailingZeros(order.no_of_lot)}<br>
-                            <strong>Profit:</strong> <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label><br>
-                            <strong>Status:</strong> ${order.status_badge}<br>
+                            <div class="@if (App::getLocale() == 'ar') text-end @endif">
+                                <strong>@lang('Date'):</strong> ${order.formatted_date}<br>
+                                <strong>@lang('Open Price'):</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br>
+                                <strong>@lang('Closed Price'):</strong>${parseFloat(order.closed_price).toFixed(decimalCount) || 0}<br>
+                                <strong>@lang('Stop Loss'):</strong> ${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '0'}<br>
+                                <strong>@lang('Take Profit'):</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '0'}<br>
+                                <strong>@lang('Volume'):</strong> ${removeTrailingZeros(order.no_of_lot)}<br>
+                                @if (App::getLocale() != 'ar')
+                                <strong>@lang('Profit'):</strong> <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label><br>
+                                @else
+                                    <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label>:<strong>@lang('Profit')</strong><br>
+                                @endif
+
+                                @if (App::getLocale() != 'ar')
+                                <strong>@lang('Status'):</strong> ${order.status_badge}<br>
+                                @else
+                                ${order.status_badge}:<strong>@lang('Status')</strong><br>
+                                @endif
+                            </div> 
                         </td>
                     </tr>
             `;
@@ -396,15 +407,24 @@
                 //     openRowsHistory.push(row.id);
                 // })
 
-                fetchHistory();
+                // fetchHistory();
             }, 10000);
             // setInterval(function func() {
             //     return func;
             // }(), 10000);
 
-            $(document).on('click', '.dropdown-item', function() {
+            $(document).off('click', '#mobileDateFilterDropdown .dropdown-item').on('click', '#mobileDateFilterDropdown .dropdown-item', function(e) {
+                
                 $('.dropdown-item').removeClass('active');
+                
                 $(this).addClass('active');
+
+                let loadhistory = 0;
+
+                if( loadhistory == 0 ){
+                    fetchHistory();
+                    loadhistory = 1;
+                }
             })
         });
     </script>
@@ -498,6 +518,10 @@
             color: white;
             cursor: pointer;
             padding-right: 10px; /* Adjust as needed for spacing */
+        }
+
+        #history-sc{
+            margin-bottom:5rem;
         }
     </style>
 @endpush
