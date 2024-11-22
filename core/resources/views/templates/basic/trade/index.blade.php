@@ -447,15 +447,16 @@
             let currency = $(this).data('currency');
             let gateways = @json($gateways);
             let currencyGateways = gateways.filter(ele => ele.currency == currency);
-
-            if (currencyGateways && currencyGateways.length > 0) {
-                let gatewaysOption = "<option selected disabled> @lang('Select Payment Gateway')</option>";
-                $.each(currencyGateways, function(i, currencyGateway) {
-                    gatewaysOption += `<option value="${currencyGateway.method_code}"  data-gateway='${JSON.stringify(currencyGateway)}'>
-                                ${currencyGateway.name}
-                            </option>`;
-                });
-                $("#deposit-canvas").find('select[name=gateway]').html(gatewaysOption);
+ 
+            // if (currencyGateways && currencyGateways.length > 0) {
+            if (currencyGateways) {
+                // let gatewaysOption = "<option selected disabled> @lang('Select Payment Gateway')</option>";
+                // $.each(currencyGateways, function(i, currencyGateway) {
+                //     gatewaysOption += `<option value="${currencyGateway.method_code}"  data-gateway='${JSON.stringify(currencyGateway)}'>
+                //                 ${currencyGateway.name}
+                //             </option>`;
+                // });
+                // $("#deposit-canvas").find('select[name=gateway]').html(gatewaysOption);
                 $("#deposit-canvas").find('.deposit-currency-symbol').val(currency);
 
                 $("#deposit-canvas").find(".empty-gateway").addClass('d-none');
@@ -954,7 +955,7 @@
                 border-color: #000000 !important;
             }
 
-            [data-theme=light] h5, [data-theme=light] .ellipsis-menu, [data-theme=light] .no-order-label {
+            [data-theme=light] h5, [data-theme=light] .ellipsis-menu, [data-theme=light] .no-order-label, [data-theme=light] .empty-gateway h6 {
                 color: #000000 !important;
             }
 

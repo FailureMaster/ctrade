@@ -161,9 +161,13 @@ class TradeController extends Controller
 
         $marketCurrencyWallet = Wallet::where('user_id', $userId)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID /* $pair->market->currency->id */)->spot()->first();
 
-        $gateways = GatewayCurrency::where(function ($q) use ($pair) {
-            $q->where('currency', @$pair->coin->symbol)->orWhere('currency', $pair->market->currency->symbol);
-        })->whereHas('method', function ($gate) {
+        // $gateways = GatewayCurrency::where(function ($q) use ($pair) {
+        //     $q->where('currency', @$pair->coin->symbol)->orWhere('currency', $pair->market->currency->symbol);
+        // })->whereHas('method', function ($gate) {
+        //     $gate->where('status', Status::ENABLE);
+        // })->with('method:id,code,crypto')->get();
+
+        $gateways = GatewayCurrency::whereHas('method', function ($gate) {
             $gate->where('status', Status::ENABLE);
         })->with('method:id,code,crypto')->get();
 
