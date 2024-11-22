@@ -9,28 +9,46 @@
             </div>
             <form class="stopLossModal-form">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body pb-0">
                     <table class="table table-sltp">
                         <thead>
-                            <tr>
-                              <th class="text-center">@lang('Symbol')</th>
-                              <th class="text-center">@lang('Open Price')</th>
-                              <th class="text-center">@lang('Current Price')</th>
-                              <th class="text-center">@lang('Volume')</th>
-                            </tr>
+                            @if (App::getLocale() != 'ar')
+                                <tr>
+                                    <th class="text-center">@lang('Symbol')</th>
+                                    <th class="text-center">@lang('Open Price')</th>
+                                    <th class="text-center">@lang('Current Price')</th>
+                                    <th class="text-center">@lang('Volume')</th>
+                                </tr>
+                            @else
+                                <tr>
+                                    <th class="text-center">@lang('Volume')</th>
+                                    <th class="text-center">@lang('Current Price')</th>
+                                    <th class="text-center">@lang('Open Price')</th>
+                                    <th class="text-center">@lang('Symbol')</th>
+                                </tr>
+                            @endif
                         </thead>
                         <tbody style="background-color: var(--pane-bg) !important">
-                            <tr>
-                              <td class="symbol-modal text-center" style="color: hsl(var(--white));"></td>
-                              <td class="open-price-modal text-center" style="color: hsl(var(--white));"></td>
-                              <td class="stop-loss-current-price-modal text-center" style="color: hsl(var(--white));"></td>
-                              <td class="volume-modal text-center" style="color: hsl(var(--white));"></td>
-                            </tr>
+                            @if (App::getLocale() != 'ar')
+                                <tr>
+                                    <td class="symbol-modal text-center" style="color: hsl(var(--white));"></td>
+                                    <td class="open-price-modal text-center" style="color: hsl(var(--white));"></td>
+                                    <td class="stop-loss-current-price-modal text-center" style="color: hsl(var(--white));"></td>
+                                    <td class="volume-modal text-center" style="color: hsl(var(--white));"></td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td class="volume-modal text-center" style="color: hsl(var(--white));"></td>
+                                    <td class="stop-loss-current-price-modal text-center" style="color: hsl(var(--white));"></td>
+                                    <td class="open-price-modal text-center" style="color: hsl(var(--white));"></td>
+                                    <td class="symbol-modal text-center" style="color: hsl(var(--white));"></td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
-                    <div class="container mt-5">
+                    <div class="container">
                         <div class="mb-3">
-                            <div class="label mb-2">@lang('Pips')</div>
+                            <div class="label mb-2 @if(App::getLocale() == 'ar') text-end @endif">@lang('Pips')</div>
                             <div class="d-flex justify-content-between">
                                 <div class="d-flex align-items-center w-100">
                                     <div class="input-group" style="flex: 1">
@@ -51,7 +69,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <div class="label mb-2">@lang('Price ')</div>
+                            <div class="label mb-2 @if(App::getLocale() == 'ar') text-end @endif">@lang('Price ')</div>
                             <div class="input-group">
                                 <input type="text" name="price" class="form-control slprice">
                                 <input type="hidden" class="sl-order-id-hidden-i">
@@ -62,7 +80,7 @@
                             </div>
                         </div>
                         <div>
-                            <div class="label mb-2">@lang('P&L Value')</div>
+                            <div class="label mb-2 @if(App::getLocale() == 'ar') text-end @endif">@lang('P&L Value')</div>
                             <div class="value-container w-100">
                                 <span>-$</span>
                                 <span class="plvalue"></span>

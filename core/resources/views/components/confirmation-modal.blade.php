@@ -15,20 +15,38 @@
                 <div class="modal-body">
                     <table class="table table-close-order">
                         <thead>
-                            <tr>
-                              <th class="text-center">@lang('Symbol')</th>
-                              <th class="text-center">@lang('Open Price')</th>
-                              <th class="text-center">@lang('Current Price')</th>
-                              <th class="text-center">@lang('Volume')</th>
-                            </tr>
+                            @if (App::getLocale() != 'ar')
+                                <tr>
+                                    <th class="text-center">@lang('Symbol')</th>
+                                    <th class="text-center">@lang('Open Price')</th>
+                                    <th class="text-center">@lang('Current Price')</th>
+                                    <th class="text-center">@lang('Volume')</th>
+                                </tr>
+                            @else
+                                <tr>
+                                    <th class="text-center">@lang('Volume')</th>
+                                    <th class="text-center">@lang('Current Price')</th>
+                                    <th class="text-center">@lang('Open Price')</th>
+                                    <th class="text-center">@lang('Symbol')</th>
+                                </tr>
+                            @endif
                         </thead>
                         <tbody>
-                            <tr>
-                              <td class="symbol-modal text-center"></td>
-                              <td class="open-price-modal text-center"></td>
-                              <td class="close-current-price-modal text-center"></td>
-                              <td class="volume-modal text-center"></td>
-                            </tr>
+                            @if (App::getLocale() != 'ar')
+                                <tr>
+                                    <td class="symbol-modal text-center"></td>
+                                    <td class="open-price-modal text-center"></td>
+                                    <td class="close-current-price-modal text-center"></td>
+                                    <td class="volume-modal text-center"></td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td class="volume-modal text-center"></td>
+                                    <td class="close-current-price-modal text-center"></td>
+                                    <td class="open-price-modal text-center"></td>
+                                    <td class="symbol-modal text-center"></td>
+                                </tr>
+                            @endif
                         </tbody>
                     </table>
                     
@@ -197,6 +215,10 @@
             // Stop the interval if it's running
             clearInterval(intervalId);
         });
+
+        function formatWithPrecision1(value, precision = 2) {
+            return Number(value).toFixed(precision);
+        }
     
     })(jQuery);
 </script>
