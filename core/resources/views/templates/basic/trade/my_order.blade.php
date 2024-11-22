@@ -447,12 +447,12 @@ $(document).ready(function() {
                 free_margin = equity - resp.totalRequiredMargin;
                 let level = equity * level_percent;
 
-                $('#used-margin-span').html(`${formatWithPrecision1(resp.totalRequiredMargin)} $`);
-                $('#free-margin-span').html(`${formatWithPrecision1(free_margin)} $`);
-                $('#equity-span').html(`${formatWithPrecision1(equity)} $`);
-                $('#pl-span').html(`${formatWithPrecision1(pl)} $`);
-                $('#level-span').html(`${formatWithPrecision1(level)} $`);
-                $('#margin_level_span').html(`${formatWithPrecision1(margin_level)} %`);
+                $('#used-margin-span').html(`<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(resp.totalRequiredMargin)} $</label>`);
+                $('#free-margin-span').html(`<label class="${(free_margin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(free_margin)} $`);
+                $('#equity-span').html(`<label class="${(equity < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(equity)} $</label>`);
+                $('#pl-span').html(`<label class="${(pl < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(pl)} $</label>`);
+                $('#level-span').html(`<label class="${(level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(level)} $</label>`);
+                $('#margin_level_span').html(`<label class="${(margin_level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(margin_level)} %</label>`);
 
                 if ((parseInt(margin_level) > 0) && (parseInt(margin_level) <= st_level_percentage)) { // if ST Level is equal to Margin Level, close all orders.
                     isClosingAllOrders = true;

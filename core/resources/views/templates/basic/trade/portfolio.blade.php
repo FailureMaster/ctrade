@@ -64,14 +64,14 @@
             z-index: 1;
         } 
 
-        .dots {
+        /* .dots {
             flex-grow: 1;
             height: 8px;
-            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 4px); /* Tiny 1px circles with 4px padding */
-            background-size: 10px; /* 5px horizontal spacing between circles */
+            background-image: radial-gradient(circle, rgba(0, 0, 0, 0.2) 1px, transparent 4px); 
+            background-size: 10px; 
             opacity: 0.2;
-            margin: 0 20px; /* Space around the entire .dots element */
-        }
+            margin: 0 20px;
+        } */
     </style>
 @endpush
 
@@ -84,7 +84,7 @@
             <div class="label p-0">@lang('Balance')</div>
             <div class="dots"></div>
             @auth
-                <div class="value-box">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
+                <div class="value-box {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">{{ showAmount(@$marketCurrencyWallet->balance) }} $</div>
             @else
                 <div class="value-box">00000</div>
             @endauth
@@ -120,7 +120,7 @@
             <div class="label p-0">@lang('Total Deposit Amount')</div>
             <div class="dots"></div>
             @auth
-                <div class="value-box">{{ getAmount($widget['total_deposit']) }} $</div>
+                <div class="value-box {{ $widget['total_deposit'] < 0 ? 'text-danger' : 'text-success'}}">{{ getAmount($widget['total_deposit']) }} $</div>
             @else
                 <div class="value-box"></div>
             @endauth
@@ -167,7 +167,7 @@
             <div class="label p-0">@lang('Total withdraw Amount')</div>
             <div class="dots"></div>
             @auth
-                <div class="value-box">{{ getAmount($widget['total_withdraw']) }} $</div>
+                <div class="value-box {{ $widget['total_withdraw'] < 0 ? 'text-danger' : 'text-success'}}">{{ getAmount($widget['total_withdraw']) }} $</div>
             @else
                 <div class="value-box"></div>
             @endauth
