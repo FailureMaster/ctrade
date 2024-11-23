@@ -67,7 +67,7 @@
     </div>
 </div>
 <div class="trading-table__mobile">
-    <div class="summary-container pb-0">
+    <div class="summary-container pb-0 sc-history">
         <h2 class="h-title p-0 mb-0 border-0">@lang('Transactions Logs')</h2>
         <h2 class="p-0 ch5"></h2>
         <div class="portfolio-item">
@@ -366,7 +366,7 @@
                 let actionUrl =
                     "{{ route('trade.order.list', ['pairSym' => @$pair->symbol ?? 'default_symbol', 'status' => 'history']) }}";
 
-                actionUrl += `?filter=${date_filter}&from_date=${from_date}&to_date=${to_date}`;
+                actionUrl += `?filter=${date_filter}&from_date=${from_date}&to_date=${to_date}&history=1`;
 
                 $.ajax({
                     url: actionUrl,
@@ -387,6 +387,11 @@
                             html =
                                 `<tr class="text-center px-4"><td class="no-order-label" colspan="9">@lang('No order found')</td></tr>`;
                         }
+
+                        if( resp.html != "" ){
+                            $('.sc-history').html( resp.html );
+                        }
+
                         $('.history-body').html(html);
 
                         $('.close-orders-count').text(`(${resp.orders.length})`)

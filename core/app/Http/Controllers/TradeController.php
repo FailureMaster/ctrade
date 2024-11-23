@@ -331,7 +331,8 @@ class TradeController extends Controller
             $query->orderBy('updated_at', 'desc');
         }
 
-        $filter = $request->get('filter');
+        $filter  = $request->get('filter');
+        $history = $request->get('history');
 
         $startDate = null;
         $endDate = null;
@@ -365,6 +366,25 @@ class TradeController extends Controller
 
         $orders = $query->orderBy('id', 'desc')->get();
 
+        $html   = '';
+
+        if( $history ){
+
+            $pl                        = 0;
+            $total_profit              = 0;
+            $total_loss                = 0;
+            
+            foreach ($orders as $co) {
+    
+                if ($co->profit > 1)  $total_profit =  $total_profit + $co->profit;
+                if ($co->profit < 1)  $total_loss =  $total_loss + $co->profit;
+    
+                $pl = ($pl + $co->profit);
+            }
+    
+            $html = view('components.mobile-transaction-logs', [ 'closed_orders' => $orders, 'pl' => $pl, 'total_profit' => $total_profit, 'total_loss' => $total_loss])->render();
+        }
+
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
 
@@ -382,6 +402,7 @@ class TradeController extends Controller
             'marketData' => $marketData,
             'totalRequiredMargin' => $this->requiredMarginTotal($userId),
             'wallet' => $wallet,
+            'html' => $html
         ])->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 
