@@ -103,9 +103,9 @@
                             'admin.users.banned',
                             'admin.users.email.unverified',
                             'admin.users.mobile.unverified',
-                            'admin.report.notification.history',
-                            'admin.report.login.ipHistory',
-                            'admin.report.login.history'
+                            // 'admin.report.notification.history',
+                            // 'admin.report.login.ipHistory',
+                            // 'admin.report.login.history'
                         ];
                     @endphp
                     <li class="sidebar-menu-item sidebar-dropdown">
@@ -158,22 +158,6 @@
                                                 <span
                                                     class="menu-badge pill bg--danger ms-auto">{{ $mobileUnverifiedUsersCount }}</span>
                                             @endif
-                                        </a>
-                                    </li>
-                                @endif
-                                @if (can_access('report'))
-                                    <li class="sidebar-menu-item {{ menuActive('admin.report.notification.history') }}">
-                                        <a href="{{ route('admin.report.notification.history') }}"
-                                            class="nav-link">
-                                            <i class="menu-icon las la-dot-circle"></i>
-                                            <span class="menu-title">@lang('Notification History')</span>
-                                        </a>
-                                    </li>
-                                    <li class="sidebar-menu-item {{ menuActive(['admin.report.login.history', 'admin.report.login.ipHistory']) }}">
-                                        <a href="{{ route('admin.report.login.history', ['filter' => 'this_month']) }}"
-                                            class="nav-link">
-                                            <i class="menu-icon las la-dot-circle"></i>
-                                            <span class="menu-title">@lang('Login History')</span>
                                         </a>
                                     </li>
                                 @endif
@@ -575,12 +559,28 @@
 
                 @if (can_access('report'))
                     <li class="sidebar-menu-item sidebar-dropdown">
-                        <a href="javascript:void(0)" class="{{ menuActive('', 3) }}">
+                        <a href="javascript:void(0)" class="{{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history'], 3) }}">
                             <i class="menu-icon la la-list"></i>
                             <span class="menu-title">@lang('Reports') </span>
                         </a>
-                        <div class="sidebar-submenu {{ menuActive('', 2) }} ">
+                        <div class="sidebar-submenu {{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history'], 2) }} ">
                             <ul>
+                                @if (can_access('report'))
+                                    <li class="sidebar-menu-item {{ menuActive('admin.report.notification.history') }}">
+                                        <a href="{{ route('admin.report.notification.history') }}"
+                                            class="nav-link">
+                                            <i class="menu-icon las la-dot-circle"></i>
+                                            <span class="menu-title">@lang('Notifications')</span>
+                                        </a>
+                                    </li>
+                                    <li class="sidebar-menu-item {{ menuActive(['admin.report.login.history', 'admin.report.login.ipHistory']) }}">
+                                        <a href="{{ route('admin.report.login.history', ['filter' => 'this_month']) }}"
+                                            class="nav-link">
+                                            <i class="menu-icon las la-dot-circle"></i>
+                                            <span class="menu-title">@lang('Logins')</span>
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
                     </li>

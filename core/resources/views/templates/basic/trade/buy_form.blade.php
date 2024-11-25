@@ -233,8 +233,11 @@
                     <h7 class="buy-sell__title" style="@if(is_mobile()) font-size: 0.75rem @endif">@lang('Balance')</h7>
                     <span class="fs-12 text-themed">
                         @auth
-                            <span class="avl-market-cur-wallet text-themed" id="balance_span">{{ showAmount(@$marketCurrencyWallet->balance) }}</span> 
-                            <span>$</span>
+                            <span class="avl-market-cur-wallet text-themed" id="balance_span">
+                                <label class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">
+                                    {{ showAmount(@$marketCurrencyWallet->balance) }} $
+                                </label>
+                            </span> 
                         @else
                             <span>00000</span>
                         @endauth
@@ -256,7 +259,11 @@
                     <h7 class="buy-sell__title" style="@if(is_mobile()) font-size: 0.75rem @endif">@lang('Bonus')</h7>
                     <span class="fs-12 text-themed">
                         @auth
-                            <span id="bonus-span">{{ showAmount(@$marketCurrencyWallet->bonus) }} $</span>
+                            <span id="bonus-span {{ @$marketCurrencyWallet->bonus < 0 ? 'text-danger' : 'text-success'}}">
+                                <label class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">
+                                    {{ showAmount(@$marketCurrencyWallet->balance) }} $
+                                </labe>
+                            </span>
                         @else
                             <span>00000</span>
                         @endauth
@@ -267,7 +274,11 @@
                     <h7 class="buy-sell__title" style="@if(is_mobile()) font-size: 0.75rem @endif">@lang('Credit')</h7>
                     <span class="fs-12 text-themed">
                         @auth
-                            <span id="credit-span">{{ showAmount(@$marketCurrencyWallet->credit) }} $</span>
+                            <span id="credit-span {{ @$marketCurrencyWallet->credit < 0 ? 'text-danger' : 'text-success'}}">
+                                <label class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">
+                                    {{ showAmount(@$marketCurrencyWallet->credit) }} $
+                                </label>
+                            </span>
                         @else
                             <span>00000</span>
                         @endauth

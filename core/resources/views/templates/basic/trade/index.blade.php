@@ -13,7 +13,7 @@
                 </div>
                 <div class="col-md-9 col-lg-10 col-xl-9">
                     <div class="row gy-2">
-                        <div class="col-xl-10 col-md-9 mt-1 px-1">
+                        <div class="col-xl-10 col-md-9 mt-1 px-1 m-graph">
                             {{-- <x-flexible-view :view="$activeTemplate . 'trade.pair'" :meta="['pair' => $pair]" /> --}}
                             <x-flexible-view :view="$activeTemplate . 'trade.tab'" :meta="[
                                 'screen' => 'small',
@@ -29,7 +29,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-2 col-md-3" style="position: relative;">
+                        <div class="col-xl-2 col-md-3 m-dashboard" style="position: relative;">
                             @if (!is_mobile())
                                 <x-flexible-view :view="$activeTemplate . 'trade.buy_sell'" :meta="[
                                     'pair' => $pair,
@@ -57,7 +57,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="row gy-2.5">
+                    <div class="row gy-2.5" id="tbl-section">
                         <div class="col-sm-12 mt-0 px-1">
                             <x-flexible-view :view="$activeTemplate . 'trade.trade_order_history'" :meta="[
                                 'pair' => $pair,
@@ -442,6 +442,13 @@
             $(document).on('click', '.market-coin-item', function(){
                 sessionStorage.removeItem("activeTab");
             })
+
+            
+            window.addEventListener('load', function() {
+                if (window.innerWidth === 1280) {
+                    window.scrollBy(0, 100);
+                }
+            });
         });
     </script>
 @endpush
@@ -867,6 +874,16 @@
         @media screen and (max-width: 320px) {
             .nav-link {
                 font-size: 10px;
+            }
+        }
+
+        @media screen and (max-width: 1280px) {
+            .m-dashboard{
+                width:23%;
+            }
+
+            .m-graph{
+                width:77%;
             }
         }
     </style>

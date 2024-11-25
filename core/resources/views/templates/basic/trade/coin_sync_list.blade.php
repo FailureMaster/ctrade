@@ -27,7 +27,7 @@
                 data-bs-toggle="tab" data-bs-target="#nav-favorites" role="tab" aria-controls="nav-favorites"
                 aria-selected="false">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Favorites')</span>
                     </div>
@@ -44,7 +44,7 @@
             <button class="dropdown-btn" id="nav-arabic-tab" onclick="toggleDropdown('arabic')" data-bs-toggle="tab"
                 data-bs-target="#nav-arabic" role="tab" aria-controls="nav-arabic" aria-selected="false">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('GCC Stocks')</span>
                     </div>
@@ -61,7 +61,7 @@
             <button class="dropdown-btn" id="nav-stocks-tab" onclick="toggleDropdown('stocks')" data-bs-toggle="tab"
                 data-bs-target="#nav-stocks" role="tab" aria-controls="nav-stocks" aria-selected="false">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Stocks')</span>
                     </div>
@@ -77,7 +77,7 @@
             <button class="dropdown-btn" id="nav-forex-tab" onclick="toggleDropdown('forex')" data-bs-toggle="tab"
                 data-bs-target="#nav-forex" role="tab" aria-controls="nav-forex" aria-selected="false">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Forex')</span>
                     </div>
@@ -95,7 +95,7 @@
             <button class="dropdown-btn" id="nav-index-tab" data-bs-toggle="tab" data-bs-target="#nav-index"
                 onclick="toggleDropdown('index')" role="tab" aria-controls="nav-index" aria-selected="false">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Index')</span>
                     </div>
@@ -112,7 +112,7 @@
             <button class="dropdown-btn" id="nav-crypto-tab" data-bs-toggle="tab" data-bs-target="#nav-crypto"
                 onclick="toggleDropdown('crypto')" role="tab" aria-controls="nav-crypto" aria-selected="true">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label" style="flex: 1">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Crypto')</span>
                     </div>
@@ -131,7 +131,7 @@
                 onclick="toggleDropdown('commodity')" role="tab" aria-controls="nav-commodity"
                 aria-selected="false">
                 <div class="d-flex justify-content-between" style="align-items: center">
-                    <div style="flex: 1">
+                    <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Commodity')</span>
                     </div>
@@ -428,13 +428,13 @@
                 let isFavorite = favoriteCoins.includes(coin);
 
                 html += `
-                    <div class="d-flex market-coin-item my-2 py-2 px-2">
-                        <div class="d-flex" style="flex: 1">
+                    <div class="d-flex market-coin-item my-2 py-2">
+                        <div class="m-item">
                             <div class="coin-icon">
                                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
                             </div>
-                            <div class="position-relative text-right">
-                                <a href="${param}" onclick="navigateToPage('${param}')" id="name-${coin}">${coin}</a>
+                            <div class="position-relative text-right mx-1">
+                                <a href="${param}" onclick="navigateToPage('${param}')" id="name-${coin}">${coin.slice(0, 6)}</a>
                             </div>
                         </div>
                         <div class="position-relative price-text">
@@ -758,7 +758,7 @@
         }
 
         .price-text {
-            width: 100px;
+            width: 80px;
             text-align: left;
             font-size: 16px;
             color: hsl(var(--white));
@@ -810,6 +810,38 @@
             padding-right: 0 !important;
             padding-left: 0 !important;
             padding-bottom: 0 !important;
+        }
+
+        
+        .coin-label{
+            flex:1;
+        }
+
+        .m-item{
+            display:flex;
+            white-space:nowrap; 
+            flex:1;
+        }
+
+        @media only screen and (max-width: 440px) {
+            .coin-label{
+                flex:unset;
+                width:140px;
+            }
+
+            .m-item{
+                flex:unset;
+                width:140px;
+            }
+        }
+
+        .price-text{
+            text-align:center;
+            flex:1;
+        }
+
+        .daily-change-text{
+            flex:1;
         }
     </style>
 @endpush

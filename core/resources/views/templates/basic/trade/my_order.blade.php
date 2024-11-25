@@ -153,9 +153,9 @@ $(document).ready(function() {
             url: `{{ route('trade.fetchUserBalance') }}`,
             method: 'GET',
             success: function(response) {
-                $('#balance_span').html(`${formatWithPrecision1(response.balance)}`);
-                $('#bonus-span').html(`${formatWithPrecision1(response.bonus)} $`);
-                $('#credit-span').html(`${formatWithPrecision1(response.credit)} $`);
+                $('#balance_span').html(`<label class="${response.balance < 0 ? 'text-danger' : 'text-success'}">${formatWithPrecision1(response.balance)} $</label>`);
+                $('#bonus-span').html(`<label class="${response.bonus < 0 ? 'text-danger' : 'text-success'}">${formatWithPrecision1(response.bonus)} $</label>`);
+                $('#credit-span').html(`<label class="${response.credit < 0 ? 'text-danger' : 'text-success'}">${formatWithPrecision1(response.credit)} $</label>`);
                 balance = parseFloat(response.balance) || 0
             },
             error: function(xhr, status, error) {
