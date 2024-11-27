@@ -138,7 +138,7 @@
                                         @endif
                                         <td>
                                             <div>
-                                                {{ @$order->pair->coin_name }}
+                                                {{ @$order->pair->symbol }}
                                             </div>
                                         </td>
                                         <td> @php echo $order->orderSideBadge; @endphp </td>
@@ -150,7 +150,7 @@
                                         <td>
                                             <div>
                                                 
-                                                {{ showAmount($order->rate, 2) }} {{ @$order->pair->market->currency->symbol }}
+                                                {{ showAmount($order->rate, 2) }}
                                             </div>
                                         </td>
                                         @if(request()->routeIs('admin.order.close'))
