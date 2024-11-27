@@ -39,6 +39,8 @@ class LoginController extends Controller
     {
         // Session::pull('key', 'loggedIn');
         Session::put('loggedIn', false);
+
+        request()->session()->invalidate();
     
         return redirect('/do-it-yourself/login');
     }
