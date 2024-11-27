@@ -98,6 +98,7 @@ class AdminController extends Controller
         ->join('currencies', 'wallets.currency_id', '=', 'currencies.id')
         ->whereIn('remark', ['deposit', 'balance_add'])
         ->orderBy('transactions.created_at', 'desc')
+        ->whereNull('users.deleted_at')
         ->limit(25)
         ->get();
 
@@ -114,6 +115,7 @@ class AdminController extends Controller
         ->join('wallets', 'transactions.wallet_id', '=', 'wallets.id')
         ->join('currencies', 'wallets.currency_id', '=', 'currencies.id')
         ->where('remark', 'withdraw')
+        ->whereNull('users.deleted_at')
         ->orderBy('transactions.created_at', 'desc')
         ->limit(25)
         ->get();
