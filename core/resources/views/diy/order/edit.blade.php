@@ -62,6 +62,10 @@
                                         >
                                 </div>
                             </div>
+                            @php
+                                $oprice = old('rate', @$order->rate);
+                                $cprice = old('closed_price', @$order->closed_price);
+                            @endphp
                             <div class="form-group col-sm-6">
                                 <label>@lang('Open Price')</label>
                                 <div class="input-group appnend-coin-sym">
@@ -70,7 +74,7 @@
                                         step="any"
                                         class="form-control rate-value"
                                         name="rate"
-                                        value="{{ old('rate', @$order->rate) }}"
+                                        value="{{ str_replace(",", '', number_format($oprice, 2)) }}"
                                         required
                                         >
                                 </div>
@@ -84,7 +88,7 @@
                                             step="any"
                                             class="form-control"
                                             name="closed_price"
-                                            value="{{ old('closed_price', @$order->closed_price) }}"
+                                            value="{{ str_replace(",", '', number_format($cprice, 2)) }}"
                                             required
                                             >
                                     </div>
@@ -102,7 +106,7 @@
                                         <span class="profit-holder mt-2"></span>
                                     @else
                                         <span class="mt-2">
-                                            {{ $order->profit }}
+                                            {{ number_format($order->profit, 2) }}
                                         </span>
                                     @endif
                                 </div>
@@ -175,7 +179,18 @@
                             ? formatWithPrecision((rate - current_price) * lot_equivalent)
                             : formatWithPrecision((current_price - rate) * lot_equivalent);
 
-                        $('.profit-holder').text(formatWithPrecision(total_price));
+                        let profitClass = '';
+
+                        if( total_price < 0 ){
+                            profitClass = "text-danger";
+                        }
+                        else{
+                            profitClass = "text-success";
+                        }
+
+                        let profitHtml = `<span class="${profitClass}">${formatWithPrecision(total_price, 2)}</span>`;
+
+                        $('.profit-holder').html(profitHtml);
                         $('input[name="profit"]').val(formatWithPrecision(total_price));
                     } else {
                         console.error(`Current price not found for type: ${type}, symbol: ${symbol}`);

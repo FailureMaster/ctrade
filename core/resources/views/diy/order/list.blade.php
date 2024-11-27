@@ -133,18 +133,18 @@
                                         <td>
                                             <div>
                                                 
-                                                {{ showAmount($order->rate, 5) }} {{ @$order->pair->market->currency->symbol }}
+                                                {{ showAmount($order->rate, 2) }}
                                             </div>
                                         </td>
                                         @if(request()->routeIs('diy.order.close'))
                                             <td>
                                                 <div>
-                                                    {{ $order->closed_price }}
+                                                    {{ number_format($order->closed_price,2) }}
                                                 </div>
                                             </td>
                                             <td>
                                                 <div>
-                                                    {{ $order->profit }}
+                                                    {{ number_format($order->profit,2) }}
                                                 </div>
                                             </td>
                                         @endif
@@ -291,7 +291,18 @@
                                     ? formatWithPrecision(((rate - current_price) * lot_equivalent))
                                     : formatWithPrecision(((current_price - rate) * lot_equivalent));
 
-                                $(this).find('.order_profit').text(formatWithPrecision(total_price));
+                                let profitClass = '';
+
+                                if( total_price < 0 ){
+                                    profitClass = "text-danger";
+                                }
+                                else{
+                                    profitClass = "text-success";
+                                }
+
+                                let profitHtml = `<span class="${profitClass}">${formatWithPrecision(total_price, 2)}</span>`;
+
+                                $(this).find('.order_profit').html(profitHtml);
                             } else {
                                 console.error(`Current price not found for type: ${type}, symbol: ${symbol}`);
                             }
