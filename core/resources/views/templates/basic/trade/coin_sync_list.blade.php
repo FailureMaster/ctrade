@@ -445,7 +445,7 @@
                                 <span class="d-block text-secondary ${colorClass}">
                                     ${coinsData[coin].percent}
                                 </span>
-                                <div class="icon-favorite" style="margin-left: 5px; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
+                                <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
                                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
                                 </div>
                             </div>
