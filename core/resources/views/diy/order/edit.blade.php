@@ -29,11 +29,10 @@
                                 <label>@lang('Date')</label>
                                 <div class="input-group appnend-coin-sym">
                                     <input
-                                        type="text"
+                                        type="datetime-local"
                                         class="form-control"
                                         name="created_at"
-                                        value="{{ old('created_at',@$order->formatted_date) }}"
-                                        disabled
+                                        value="{{ old('created_at',@$order->created_at) }}"
                                         >
                                 </div>
                             </div>

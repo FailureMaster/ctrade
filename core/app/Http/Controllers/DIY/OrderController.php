@@ -188,6 +188,8 @@ class OrderController extends Controller
                 } else {
                     $order->fill($validatedData);
                 }
+
+                $order->created_at = $request->created_at;
         
                 $order->save();
             }

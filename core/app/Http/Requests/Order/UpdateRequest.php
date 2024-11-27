@@ -16,7 +16,10 @@ class UpdateRequest extends FormRequest
             'rate' => [
                'required',
                 'numeric',
-            ]
+            ],
+            'created_at' => [
+                'required'
+             ]
         ];
     }
 }
