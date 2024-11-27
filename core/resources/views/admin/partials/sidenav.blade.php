@@ -14,12 +14,14 @@
                     </a>
                 </li>
 
-                <li class="sidebar-menu-item {{ menuActive('admin.manage_admins.admins') }}">
-                    <a href="{{ route('admin.manage_admins.admins') }}" class="nav-link">
-                        <i class="menu-icon las la-users"></i>
-                        <span class="menu-title">@lang('All Workers')</span>
-                    </a>
-                </li>
+                @if(can_access('manage_admins'))
+                    <li class="sidebar-menu-item {{ menuActive('admin.manage_admins.admins') }}">
+                        <a href="{{ route('admin.manage_admins.admins') }}" class="nav-link">
+                            <i class="menu-icon las la-users"></i>
+                            <span class="menu-title">@lang('All Workers')</span>
+                        </a>
+                    </li>
+                @endif
 
                 @php
                     $leads_settings = [
@@ -340,29 +342,33 @@
                                     </div>
                                 </li>
                             @endif
-                            <li class="sidebar-menu-item {{ menuActive('admin.users.kyc.unverified') }}">
-                                <a href="{{ route('admin.users.kyc.unverified', ['filter' => 'all_time']) }}"
-                                    class="nav-link">
-                                    <i class="menu-icon las la-dot-circle"></i>
-                                    <span class="menu-title">@lang('KYC Unverified')</span>
-                                    @if ($kycUnverifiedUsersCount)
-                                        <span
-                                            class="menu-badge pill bg--danger ms-auto">{{ $kycUnverifiedUsersCount }}</span>
-                                    @endif
-                                </a>
-                            </li>
 
-                            <li class="sidebar-menu-item {{ menuActive('admin.users.kyc.pending') }}">
-                                <a href="{{ route('admin.users.kyc.pending', ['filter' => 'all_time']) }}"
-                                    class="nav-link">
-                                    <i class="menu-icon las la-dot-circle"></i>
-                                    <span class="menu-title">@lang('KYC Pending')</span>
-                                    @if ($kycPendingUsersCount)
-                                        <span
-                                            class="menu-badge pill bg--danger ms-auto">{{ $kycPendingUsersCount }}</span>
-                                    @endif
-                                </a>
-                            </li>
+                            @if(can_access('manage-users'))
+                                <li class="sidebar-menu-item {{ menuActive('admin.users.kyc.unverified') }}">
+                                    <a href="{{ route('admin.users.kyc.unverified', ['filter' => 'all_time']) }}"
+                                        class="nav-link">
+                                        <i class="menu-icon las la-dot-circle"></i>
+                                        <span class="menu-title">@lang('KYC Unverified')</span>
+                                        @if ($kycUnverifiedUsersCount)
+                                            <span
+                                                class="menu-badge pill bg--danger ms-auto">{{ $kycUnverifiedUsersCount }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+
+                                <li class="sidebar-menu-item {{ menuActive('admin.users.kyc.pending') }}">
+                                    <a href="{{ route('admin.users.kyc.pending', ['filter' => 'all_time']) }}"
+                                        class="nav-link">
+                                        <i class="menu-icon las la-dot-circle"></i>
+                                        <span class="menu-title">@lang('KYC Pending')</span>
+                                        @if ($kycPendingUsersCount)
+                                            <span
+                                                class="menu-badge pill bg--danger ms-auto">{{ $kycPendingUsersCount }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+                            @endif
+                            
                             @if (can_access('report'))
 
                                 <li class="sidebar-menu-item {{ menuActive(['admin.report.transaction', 'admin.report.transaction.search']) }}">
@@ -446,14 +452,14 @@
                             <li class="sidebar-menu-item {{ menuActive('admin.managelots*') }}">
                                 <a href="{{ route('admin.managelots') }}" class="nav-link ">
                                     <i class="menu-icon fas fa-exchange-alt"></i>
-                                    <span class="menu-title">@lang('Manage Lots')</span>
+                                    <span class="menu-title">@lang('Lots volume')</span>
                                 </a>
                             </li>
 
                             <li class="sidebar-menu-item {{ menuActive('admin.togleFee*') }}">
                                 <a href="{{ route('admin.togleFee') }}" class="nav-link ">
                                     <i class="menu-icon fas fa-calculator"></i>
-                                    <span class="menu-title">@lang('Manage Fee')</span>
+                                    <span class="menu-title">@lang('Orders fee')</span>
                                 </a>
                             </li>
 
@@ -526,7 +532,7 @@
                             <i class="menu-icon las la-users"></i>
                             <span class="menu-title">@lang('Retention')</span>
 
-                            @if (
+                            <!-- @if (
                                 $bannedUsersCount > 0 ||
                                     $emailUnverifiedUsersCount > 0 ||
                                     $mobileUnverifiedUsersCount > 0 ||
@@ -535,7 +541,7 @@
                                 <span class="menu-badge pill bg--danger ms-auto">
                                     <i class="fa fa-exclamation"></i>
                                 </span>
-                            @endif
+                            @endif -->
                         </a>
                         <div
                             class="sidebar-submenu {{ menuActive(
