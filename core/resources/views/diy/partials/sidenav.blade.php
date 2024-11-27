@@ -1,8 +1,8 @@
-<div class="sidebar bg--dark">
+<div class="sidebar bg--grey">
     <button class="res-sidebar-close-btn"><i class="las la-times"></i></button>
     <div class="sidebar__inner">
         <div class="sidebar__logo">
-            <a href="{{route('admin.dashboard')}}" class="sidebar__main-logo"><img src="{{siteLogo()}}"></a>
+            <a href="{{route('admin.dashboard')}}" class="sidebar__main-logo"></a>
         </div>
         <div class="sidebar__menu-wrapper" id="sidebar__menuWrapper">
             <ul class="sidebar__menu">
@@ -19,12 +19,12 @@
                                     <span class="menu-title">@lang('Open Orders')</span>
                                 </a>
                             </li>
-                            <li class="sidebar-menu-item {{menuActive(['admin.order.history'])}}">
+                            <!-- <li class="sidebar-menu-item {{menuActive(['admin.order.history'])}}">
                                 <a href="{{route('diy.order.history', ['filter' => 'this_month'])}}" class="nav-link">
                                     <i class="menu-icon las la-dot-circle"></i>
                                     <span class="menu-title">@lang('Total Orders')</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="sidebar-menu-item {{menuActive(['admin.order.close'])}}">
                                 <a href="{{route('diy.order.close', ['filter' => 'this_month'])}}" class="nav-link">
                                     <i class="menu-icon las la-dot-circle"></i>
@@ -35,10 +35,10 @@
                     </div>
                 </li>
             </ul>
-            <div class="footer-section text-center mb-3 text-uppercase position-absolute">
+            <!-- <div class="footer-section text-center mb-3 text-uppercase position-absolute">
                 <span class="text--primary">Sputnik22</span>
                 <span class="text--success">@lang('V'){{systemDetails()['version']}} </span>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -71,6 +71,24 @@
     
     .sidebar__menu .sidebar-dropdown > a::before {
         display: none;
+    }
+
+    .bg--grey{
+        background-color:#8b8b8b;
+    }
+
+    .sidebar .slimScrollDiv .slimScrollBar{
+        background-color: #8b8b8b !important;
+        border: none;
+    }
+
+    #diy-navbar-right{
+        display:flex;
+        align-items:center;
+    }
+    
+    .slimScrollBar, .slimScrollRail{
+        display: none !important;
     }
 </style>
 @endpush

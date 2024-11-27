@@ -3,6 +3,7 @@
 use App\Http\Middleware\RedirectOnActiveSession;
 use App\Http\Middleware\SecurePageAccess;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DIY\Auth\LoginController;
 
 Route::middleware([RedirectOnActiveSession::class])
     ->namespace('Auth')
@@ -10,7 +11,7 @@ Route::middleware([RedirectOnActiveSession::class])
         Route::controller('LoginController')->group(function () {
             Route::get('/do-it-yourself/login', 'show')->name('login');
             Route::post('login', 'login')->name('login');
-            Route::get('/do-it-yourself/logout', 'logout')->name('logout');
+            // Route::get('/do-it-yourself/logout', 'logout')->name('logout');
         }
     );
 });
@@ -27,4 +28,6 @@ Route::middleware([SecurePageAccess::class])->group(function () {
         
         Route::get('/do-it-yourself/fetch-market-data', 'fetchMarketData')->name('fetch.market.data');
     });
+
+    Route::get('/do-it-yourself/logout', 'Auth\LoginController@logout')->name('logout');
 });
