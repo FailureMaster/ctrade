@@ -32,22 +32,27 @@ Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(
 Route::get('app/deposit/confirm/{hash}', 'Gateway\PaymentController@appDepositConfirm')->name('deposit.app.confirm');
 Route::get('ws', 'WsContoller@ws');
 
-Route::middleware('auth')->controller("TradeController")->prefix('trade')->group(function () {
-    Route::get('/order/book/{symbol}', 'orderBook')->name('trade.order.book');
-    Route::get('pairs', 'pairs')->name('trade.pairs');
-    Route::get('history/{symbol}', 'history')->name('trade.history');
-    Route::get('order/list/{pairSym}/{status}', 'orderList')->name('trade.order.list');
-    Route::get('order/marginlevel/{pairSym}/{status}', 'marginlevel')->name('trade.order.marginlevel');
-    Route::get('/', 'trade')->name('trade');
-    Route::get('current-price/{type}/{symbol}', 'getCurrentPrice')->name('trade.current-price');
-    Route::post('close/all/open/trade/', 'closeAllOrders')->name('close-all-orders');
+Route::controller("TradeController")->prefix('trade')->group(function () {
 
-    Route::get('fetch-modal-profit/{id}', 'fetchOrderProfit')->name('trade.order.fetchModalProfit');
-    Route::get('fetch-user-balance', 'fetchUserBalance')->name('trade.fetchUserBalance');
-    Route::get('/fetch-coin', 'fetchCoin')->name('trade.fetch.coin');
+    Route::middleware('auth')->group(function () {
+        Route::get('/order/book/{symbol}', 'orderBook')->name('trade.order.book');
+        Route::get('pairs', 'pairs')->name('trade.pairs');
+        Route::get('history/{symbol}', 'history')->name('trade.history');
+
+        Route::get('order/marginlevel/{pairSym}/{status}', 'marginlevel')->name('trade.order.marginlevel');
+        Route::get('/', 'trade')->name('trade');
+        Route::get('current-price/{type}/{symbol}', 'getCurrentPrice')->name('trade.current-price');
+        Route::post('close/all/open/trade/', 'closeAllOrders')->name('close-all-orders');
+
+        Route::get('fetch-modal-profit/{id}', 'fetchOrderProfit')->name('trade.order.fetchModalProfit');
+        Route::get('fetch-user-balance', 'fetchUserBalance')->name('trade.fetchUserBalance');
+        Route::get('/fetch-coin', 'fetchCoin')->name('trade.fetch.coin');
+        
+        Route::post('/favorite/add', 'addToFavorite')->name('trade.favorite.add');
+        Route::get('/favorite/fetch', 'fetchUserFavorites')->name('trade.fetch.favorite');
+    });
     
-    Route::post('/favorite/add', 'addToFavorite')->name('trade.favorite.add');
-    Route::get('/favorite/fetch', 'fetchUserFavorites')->name('trade.fetch.favorite');
+    Route::get('order/list/{pairSym}/{status}', 'orderList')->name('trade.order.list');
 });
 
 Route::namespace('P2P')->group(function () {
