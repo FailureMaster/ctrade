@@ -37,8 +37,8 @@
                                 
                                 <!-- List all users in the group -->
                                 <td>
-                                    
                                     @foreach($group->groupUsers as $groupUser)
+                                        @if( $groupUser->user == null ) @continue @endif
                                         {{ $groupUser->user->firstname }}@if (!$loop->last), @endif
                                     @endforeach
                                 </td>
