@@ -29,7 +29,8 @@ Route::namespace('Auth')->withoutMiddleware([LanguageMiddleware::class])->group(
 
 Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddleware::class])->group(function () {
 
-    Route::controller('PermissionGroupController')->middleware(['permission:manage_admins'])->group(function () {
+    // Route::controller('PermissionGroupController')->middleware(['permission:manage_admins'])->group(function () {
+    Route::controller('PermissionGroupController')->middleware(['permission:permission-groups|all-workers|manage_admins'])->group(function () {
         // ->name('manage_admins')
         Route::get('permission_group/list', [PermissionGroupController::class, 'index'])->name('manage_admins.permission_groups');
         Route::get('permission_group/create', [PermissionGroupController::class, 'create'])->name('manage_admins.permission_group.create');
@@ -39,10 +40,10 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
         Route::get('admins', [PermissionGroupController::class, 'getAdmins'])->name('manage_admins.admins');
         Route::post('admin/store', [PermissionGroupController::class, 'adminStore'])->name('manage_admins.admin.store');
         Route::post('admin/update/{id}', [PermissionGroupController::class, 'adminUpdate'])->name('manage_admins.admin.update');
-        
+
         Route::post('admin/{admin}/delete', [PermissionGroupController::class, 'adminDelete'])->name('manage_admins.admin.delete');
         Route::post('permission_group/{permission_group}/delete', [PermissionGroupController::class, 'permissionGroupDelete'])->name('manage_admins.group.delete');
-    }); 
+    });
 
     Route::controller('OrderController')->group(function () {
         Route::name('order.')->prefix('order')->group(function () {
@@ -51,13 +52,12 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
             Route::get('close', 'close')->name('close');
             Route::get('history', 'history')->name('history');
             Route::get('manage-level', 'manageLevel')->name('manageLevel');
-            
+
             Route::get('/{order}/edit', 'edit')->name('edit');
             Route::post('/{order}/update', 'update')->name('update');
             Route::post('/{order}/delete', 'destroy')->name('delete');
-            
-            Route::get('/fetch-market-data', 'fetchMarketData')->name('fetch.market.data');
 
+            Route::get('/fetch-market-data', 'fetchMarketData')->name('fetch.market.data');
         });
         Route::get('trade/history', 'tradeHistory')->name('trade.history');
     });
@@ -229,8 +229,6 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
             Route::post('message/save/{id}', 'messageSave')->name('message.save');
             Route::post('complete/{id}/{action}', 'complete')->name('complete');
             Route::get('{scope}', 'index')->name('index');
-            
-            
         });
     });
 
@@ -312,7 +310,7 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
         Route::post('delete/key/{id}', 'deleteLanguageJson')->name('delete.key');
         Route::post('update/key/{id}', 'updateLanguageJson')->name('update.key');
         Route::get('get-keys', 'getKeys')->name('get.key');
-        
+
         Route::get('setting/{language}', 'languageSettingView')->name('setting');
         Route::post('language/countries/add', 'addCountriesToLanguage')->name('countries.add');
         Route::post('language/countries/delete/{id}', 'deleteCountryFromLanguage')->name('countries.delete');
@@ -365,10 +363,10 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
         Route::get('wallet-setting', 'walletSetting')->name('wallet.setting');
         Route::post('wallet-setting', 'walletSettingSubmit');
     });
-    
+
     Route::controller('BlacklistCountryController')->group(function () {
         Route::get('blacklist/countries', 'index')->name('blacklist.countries.index');
-        
+
         Route::post('blacklist/countries', 'store')->name('blacklist.countries.store');
         Route::post('blacklist/countries/delete/{id}', 'destroy')->name('blacklist.countries.delete');
     });

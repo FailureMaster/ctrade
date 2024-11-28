@@ -18,24 +18,32 @@ class PermissionMiddleware
             return $next($request);
         }
         $permission_group = auth()->guard('admin')->user()->group->permissions();
-        // Log::error('PermissionMiddleware $permission' . $permission);
-        // Log::error('PermissionMiddleware $permission_group' . $permission_group);
 
-        foreach ($permission_arr as $item) {
-            // Log::error('can_acPermissionMiddleware $item' . $item);
-            if ($get_single_per = $permission_group->where('name', $item)->first()) {
-                // if (!$get_single_per['value']) {
-                //     return to_route('admin.dashboard')->with('alert', 'Unauthorised access');
-                // }
-                if ($get_single_per['value']) {
-                    return $next($request);
+        // foreach ($permission_arr as $item) {
+        //     if ($get_single_per = $permission_group->where('name', $item)->first()) {
+               
+        //         if ($get_single_per['value']) {
+        //             return $next($request);
+        //         }
+        //     }
+        // }
+
+        $activePermissions = [];
+    
+        foreach( $permission_group as $item ){
+            foreach( $item as $i ){
+                if( $i['value'] ){ 
+                    array_push($activePermissions, $i['name']);
                 }
             }
-            // else {
-            //     return to_route('admin.dashboard')->with('alert', 'Unauthorised access');
-            // }
         }
-        // return $next($request);
+    
+        foreach ($permission_arr as $item) {
+            if( in_array($item, $activePermissions) ){
+                return $next($request);
+            }
+        }
+
         return to_route('admin.dashboard')->with('alert', 'Unauthorised access');
     }
 }

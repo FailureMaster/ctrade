@@ -772,7 +772,7 @@ function country2flag(string $countryCode): string
     );
 }
 
-function can_access($permission)
+function old_can_access($permission)
 {
     if (auth()->guard('admin')->user()->id == 1 || auth()->guard('admin')->user()->id == 2) {
         return true;
@@ -798,6 +798,33 @@ function can_access($permission)
 
     return false;
 }
+
+function can_access($permission)
+{
+    if (auth()->guard('admin')->user()->id == 1 || auth()->guard('admin')->user()->id == 2) {
+        return true;
+    }
+    $permission_arr = explode('|', $permission);
+    $permission_group = auth()->guard('admin')->user()->group->permissions();
+    $activePermissions = [];
+
+    foreach( $permission_group as $item ){
+        foreach( $item as $i ){
+            if( $i['value'] ){
+                array_push($activePermissions, $i['name']);
+            }
+        }
+    }
+
+    foreach ($permission_arr as $item) {
+        if( in_array($item, $activePermissions) ){
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // }
 function shadowadmin()
 {
