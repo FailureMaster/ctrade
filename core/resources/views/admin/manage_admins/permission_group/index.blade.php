@@ -48,11 +48,11 @@ section('content')
                         <a href="{{route('admin.manage_admins.permission_group.edit',$group->id)}}" class="btn s7__btn-primary btn-sm" data-bs-toggle="tooltip">
                             <i class="fa fa-edit"></i>
                         </a>
-                        <!-- @if(can_access('delete-group'))
+                        @if(can_access('delete-group'))
                             <a class="btn s7__btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#actionMessageModal{{ $group->id }}">
                                 <i class="fa fa-trash"></i>
                             </a>
-                        @endif -->
+                        @endif
                         <!-- s7__bg-base -->
                     </td>
                     <div id="actionMessageModal{{ $group->id }}" class="modal fade" tabindex="-1" role="dialog">
