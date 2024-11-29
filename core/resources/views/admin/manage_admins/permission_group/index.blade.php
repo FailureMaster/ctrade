@@ -48,7 +48,8 @@ section('content')
                         <a href="{{route('admin.manage_admins.permission_group.edit',$group->id)}}" class="btn s7__btn-primary btn-sm" data-bs-toggle="tooltip">
                             <i class="fa fa-edit"></i>
                         </a>
-                        @if(can_access('delete-group'))
+                        {{-- 2 means default group can't be deleted --}}
+                        @if(can_access('delete-group') && $group->id <> 2 ) 
                             <a class="btn s7__btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#actionMessageModal{{ $group->id }}">
                                 <i class="fa fa-trash"></i>
                             </a>

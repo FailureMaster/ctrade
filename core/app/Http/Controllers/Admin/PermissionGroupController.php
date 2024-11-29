@@ -599,13 +599,26 @@ class PermissionGroupController extends Controller
     
     public function permissionGroupDelete(PermissionGroup $permissionGroup)
     {
-        DB::transaction(
-            function () use ($permissionGroup) {
-                $permissionGroup->delete();
-            }
-        );
+      try{
+
+        DB::beginTransaction();
+
+        $data = $permissionGroup;
+
+        Admin::where('permission_group_id', $data->id)->update([
+          'permission_group_id' => 2
+        ]);
+
+        $permissionGroup->delete();
+
+        DB::commit();
 
         return returnBack('Permission Group deleted successfully', 'success');
+      } 
+      catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => 'Failed to save data', 'message' => $e->getMessage()], 500);
+      }
     }
 
     public function newGetPermissionCollection()
