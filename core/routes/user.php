@@ -138,6 +138,7 @@ Route::middleware('auth')->name('user.')->group(function () {
                     Route::post('preview', 'withdrawSubmit')->name('.submit');
                     Route::post('/new-store', 'newWithdrawStore')->name('.new-money');
                     Route::post('/new-submit', 'newWithdrawSubmit')->name('.new-submit');
+                    Route::post('/cancel/pending-withdraw', 'cancelPendingWithdraw')->name('.cancel.pending-withdraw');
                 });
                 Route::get('history', 'withdrawLog')->name('.history');
             });

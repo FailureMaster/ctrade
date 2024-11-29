@@ -395,4 +395,31 @@ class WithdrawController extends Controller
 
         return abort(403, 'Unauthorized!');
     }
+
+    public function cancelPendingWithdraw( Request $request  )
+    {
+        if( $request->ajax() ){
+            try{
+                $id        = Crypt::decrypt($request->id);
+
+                $withdraw = Withdrawal::where('user_id', auth()->user()->id)->where('id', $id)->first();
+
+                if( $withdraw <> null ){
+
+                    $withdraw->status = 3;
+
+                    if( $withdraw->save() ){
+                        return response()->json(['success' => 1, 'message' => 'Success!'], 200);
+                    }
+                }
+
+                return response()->json(['message' => 'Failed!'], 500);
+            }
+            catch(Exception $e){
+                return response()->json(['message' => 'Failed!'], 500);
+            }
+        }
+
+        return abort(403, 'Unauthorized!');
+    }
 }

@@ -297,7 +297,7 @@
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="withdraw-offcanvas" aria-labelledby="offcanvasLabel">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="withdraw-offcanvas" aria-labelledby="offcanvasLabel">
         <div class="offcanvas-header">
             <h4 class="mb-0 fs-18 offcanvas-title text-white">
                 @lang('Withdraw')
@@ -371,6 +371,74 @@
                     @lang('Currency')
                 </h6>
             </div>
+
+            <div class="mt-5 pending-withdraw-section">
+                <div class="text-center">
+                    <h4 class="mb-0 fs-18 offcanvas-title text-white">@lang('Pending Withdraws')</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="tbl-pw">
+                        <thead>
+                            @if (App::getLocale() != 'ar')
+                                <tr>
+                                    <th>@lang('Date')</th>
+                                    <th>@lang('Amount')</th>
+                                    <th></th>
+                                </tr>
+                            @else
+                                <tr>
+                                    <th></th>
+                                    <th>@lang('Amount')</th>
+                                    <th>@lang('Date')</th>
+                                </tr>
+                            @endif
+                        </thead>
+                        <tbody>
+                            @foreach( $pendingWithdraw as $pw )
+                                @if (App::getLocale() != 'ar')
+                                    <tr>
+                                        <td>
+                                            {{ showDateTime($pw->created_at) }} <br>
+                                            {{ diffForHumans($pw->created_at) }}
+                                        </td>
+                                        <td>
+                                            {{ showAmount($pw->amount) }} - <span class="text--danger"
+                                                title="@lang('charge')">{{ showAmount($pw->charge) }} </span>
+                                            <br>
+                                            <strong title="@lang('Amount after charge')">
+                                                {{ showAmount($pw->amount - $pw->charge) }}
+                                                {{ @$pw->currency }}
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning btn-cancelw" data-id="{{ Crypt::encrypt($pw->id) }}">@lang('Cancel')</button>
+                                        </td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td>
+                                            <button class="btn btn-sm btn-warning btn-cancelw" data-id="{{ Crypt::encrypt($pw->id) }}">@lang('Cancel')</button>
+                                        </td>
+                                        <td>
+                                            {{ showAmount($pw->amount) }} - <span class="text--danger"
+                                                title="@lang('charge')">{{ showAmount($pw->charge) }} </span>
+                                            <br>
+                                            <strong title="@lang('Amount after charge')">
+                                                {{ showAmount($pw->amount - $pw->charge) }}
+                                                {{ @$pw->currency }}
+                                            </strong>
+                                        </td>
+                                        <td>
+                                            {{ showDateTime($pw->created_at) }} <br>
+                                            {{ diffForHumans($pw->created_at) }}
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -398,6 +466,7 @@
     <script src="{{ asset('assets/global/js/pusher.min.js') }}"></script>
     <script src="{{ asset('assets/global/js/broadcasting.js') }}"></script>
     <script src="{{ asset('assets/global/js/iziToast.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         "use strict";
 
@@ -448,6 +517,49 @@
                 if (window.innerWidth === 1280) {
                     window.scrollBy(0, 100);
                 }
+            });
+
+            $(document).on('click', '.btn-cancelw', function() {
+              
+                let id = $(this).attr('data-id');
+         
+                Swal.fire({
+                    target: document.getElementById('withdraw-offcanvas'),
+                    text: "Are you sure you want to cancel this withdrawal?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: 'POST',
+                            data: { id : id },
+                            dataType: 'json',
+                            url: "{{ route('user.withdraw.cancel.pending-withdraw') }}",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            },
+                            success: function(response) {
+                                if( response.success == 1 ){
+                                    
+                                    notify('success', response.message);
+
+                                    $("#m-portfolio").trigger("click");
+
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                }
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                notify('error', 'Failed!');
+                            },
+                            complete: function(response) {}
+                        });
+                    }
+                });
             });
         });
     </script>
@@ -1033,6 +1145,25 @@
             [data-theme=dark] .confirm-withdraw-content form input{
                 border-color: #ffffff !important;
                 color: #ffffff !important;
+            }
+
+            .btn-sm{
+                padding: .25rem .5rem;
+                font-size: .875rem;
+                line-height: 1.5;
+                border-radius: .2rem;
+            }
+
+            [data-theme=light] .tbl-pw tr td{
+                color: #000000 !important;
+            }
+
+            .tbl-pw{
+                display:table;
+            }
+
+            .pending-withdraw-section tbody tr td:last-child {
+                padding-right: 0;
             }
         </style>
         @if (App::getLocale() == 'ar')
