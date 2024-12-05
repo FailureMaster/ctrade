@@ -343,6 +343,8 @@ class ManageUsersController extends Controller
 
         $pageTitle = 'User Detail - ' . $user->fullname;
 
+        if( $user->account_type == "demo" ) $pageTitle = "";
+
         $widget = [];
         $widget['total_trade'] = Trade::where('trader_id', $user->id)->count();
         $widget['total_order'] = Trade::where('order_id', $user->id)->count();
@@ -480,6 +482,12 @@ class ManageUsersController extends Controller
         } else {
             $user->kv = 1;
         }
+
+        // lead type
+        if( $request->has('lead_type') ){
+            $user->account_type = $request->lead_type;
+        }
+
         $user->save();
 
         $notify[] = ['success', 'User details updated successfully'];

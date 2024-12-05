@@ -2,222 +2,224 @@
 @section('panel')
 <div class="row">
     <div class="col-12">
-        <div class="row gy-4">
+        @if( $user->account_type != "demo" )
+            <div class="row gy-4">
 
-            <div class="col-xxl-3 col-sm-6">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-money-bill-wave-alt"></i>
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-money-bill-wave-alt"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($widget['open_order']) }}</h3>
+                            <p class="text-white">@lang('Open Orders')</p>
+                        </div>
+                        <a href="{{ route('admin.order.open') }}?user_id={{ $user->id }}"
+                            class="widget-two__btn">@lang('View All')</a>
                     </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($widget['open_order']) }}</h3>
-                        <p class="text-white">@lang('Open Orders')</p>
+                </div>
+
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($widget['canceled_order']) }}</h3>
+                            <p class="text-white">@lang('Closed Orders')</p>
+                        </div>
+                        <a href="{{ route('admin.order.close') }}?user_id={{ $user->id }}"
+                            class="widget-two__btn">@lang('View All')</a>
                     </div>
-                    <a href="{{ route('admin.order.open') }}?user_id={{ $user->id }}"
-                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($widget['total_deposit']) }}</h3>
+                            <p class="text-white">@lang('Total Deposit')</p>
+                        </div>
+                        <a href="{{ route('admin.deposit.list') }}?user_email={{ $user->email }}"
+                            class="widget-two__btn">@lang('View All')</a>
+                    </div>
+                </div>
+                <div class="col-xxl-3 col-sm-6">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-exchange-alt"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($widget['total_transaction']) }}</h3>
+                            <p class="text-white">@lang('Transactions')</p>
+                        </div>
+                        <a href="{{ route('admin.report.transaction') }}?search={{ $user->email }}"
+                            class="widget-two__btn">@lang('View All')</a>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-xxl-3 col-sm-6">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
+            <div class="row gy-4 mt-1">
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}</h3>
+                            <p class="text-white">@lang('Balance')</p>
+                        </div>
                     </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($widget['canceled_order']) }}</h3>
-                        <p class="text-white">@lang('Closed Orders')</p>
+                </div>
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white admin-equity-val">0</h3>
+                            <p class="text-white">@lang('Equity')</p>
+                        </div>
                     </div>
-                    <a href="{{ route('admin.order.close') }}?user_id={{ $user->id }}"
-                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white admin-pl-val">0</h3>
+                            <p class="text-white">@lang('P/L')</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white admin-used-margin-val">{{ getAmount($requiredMarginTotal) }}</h3>
+                            <p class="text-white">@lang('Used Margin')</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-xxl-3 col-sm-6">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="fas fa-wallet"></i>
+            <div class="row gy-4 mt-1">
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white admin-free-margin-val">0</h3>
+                            <p class="text-white">@lang('Free Margin')</p>
+                        </div>
                     </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($widget['total_deposit']) }}</h3>
-                        <p class="text-white">@lang('Total Deposit')</p>
+                </div>
+                
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}</h3>
+                            <p class="text-white">@lang('Bonus')</p>
+                        </div>
                     </div>
-                    <a href="{{ route('admin.deposit.list') }}?user_email={{ $user->email }}"
-                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}</h3>
+                            <p class="text-white">@lang('Credit')</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                        <div class="widget-two__icon b-radius--5 bg--primary">
+                            <i class="las la-wallet"></i>
+                        </div>
+                        <div class="widget-two__content">
+                            <h3 class="text-white admin-user_margin_level">0</h3>
+                            <p class="text-white">@lang('Margin Level')</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-xxl-3 col-sm-6">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-exchange-alt"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($widget['total_transaction']) }}</h3>
-                        <p class="text-white">@lang('Transactions')</p>
-                    </div>
-                    <a href="{{ route('admin.report.transaction') }}?search={{ $user->email }}"
-                        class="widget-two__btn">@lang('View All')</a>
-                </div>
-            </div>
-        </div>
 
-        <div class="row gy-4 mt-1">
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                @if (can_access("add-remove-user-balance"))
+                    <div class="flex-fill">
+                        <button data-bs-toggle="modal" data-bs-target="#addSubModal"
+                            class="btn btn--success btn--shadow w-100 btn-lg bal-btn" data-act="add"
+                            {{can_access("add-remove-user-balance") }}>
+                            <i class="las la-plus-circle"></i> @lang('Balance')
+                        </button>
                     </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}</h3>
-                        <p class="text-white">@lang('Balance')</p>
+                @endif
+                @if (can_access("add-remove-user-balance"))
+                    <div class="flex-fill">
+                        <button data-bs-toggle="modal" data-bs-target="#addSubModal"
+                            class="btn btn--danger btn--shadow w-100 btn-lg bal-btn" data-act="sub">
+                            <i class="las la-minus-circle"></i> @lang('Balance')
+                        </button>
                     </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white admin-equity-val">0</h3>
-                        <p class="text-white">@lang('Equity')</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white admin-pl-val">0</h3>
-                        <p class="text-white">@lang('P/L')</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white admin-used-margin-val">{{ getAmount($requiredMarginTotal) }}</h3>
-                        <p class="text-white">@lang('Used Margin')</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row gy-4 mt-1">
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white admin-free-margin-val">0</h3>
-                        <p class="text-white">@lang('Free Margin')</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}</h3>
-                        <p class="text-white">@lang('Bonus')</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}</h3>
-                        <p class="text-white">@lang('Credit')</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                    <div class="widget-two__icon b-radius--5 bg--primary">
-                        <i class="las la-wallet"></i>
-                    </div>
-                    <div class="widget-two__content">
-                        <h3 class="text-white admin-user_margin_level">0</h3>
-                        <p class="text-white">@lang('Margin Level')</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                @endif
 
-        <div class="d-flex flex-wrap gap-3 mt-4">
-            @if (can_access("add-remove-user-balance"))
                 <div class="flex-fill">
-                    <button data-bs-toggle="modal" data-bs-target="#addSubModal"
-                        class="btn btn--success btn--shadow w-100 btn-lg bal-btn" data-act="add"
-                        {{can_access("add-remove-user-balance") }}>
-                        <i class="las la-plus-circle"></i> @lang('Balance')
-                    </button>
+                    <a href="{{route('admin.report.login.history')}}?lead_code={{ $user->lead_code }}"
+                        class="btn btn--primary btn--shadow w-100 btn-lg">
+                        <i class="las la-list-alt"></i>@lang('Logins')
+                    </a>
                 </div>
-            @endif
-            @if (can_access("add-remove-user-balance"))
+
                 <div class="flex-fill">
-                    <button data-bs-toggle="modal" data-bs-target="#addSubModal"
-                        class="btn btn--danger btn--shadow w-100 btn-lg bal-btn" data-act="sub">
-                        <i class="las la-minus-circle"></i> @lang('Balance')
-                    </button>
+                    <a href="{{ route('admin.users.notification.log',$user->id) }}"
+                        class="btn btn--secondary btn--shadow w-100 btn-lg">
+                        <i class="las la-bell"></i>@lang('Notifications')
+                    </a>
                 </div>
-            @endif
 
-            <div class="flex-fill">
-                <a href="{{route('admin.report.login.history')}}?lead_code={{ $user->lead_code }}"
-                    class="btn btn--primary btn--shadow w-100 btn-lg">
-                    <i class="las la-list-alt"></i>@lang('Logins')
-                </a>
-            </div>
-
-            <div class="flex-fill">
-                <a href="{{ route('admin.users.notification.log',$user->id) }}"
-                    class="btn btn--secondary btn--shadow w-100 btn-lg">
-                    <i class="las la-bell"></i>@lang('Notifications')
-                </a>
-            </div>
-
-            <div class="flex-fill">
-                <a href="{{route('admin.users.login',$user->id)}}" target="_blank"
-                    class="btn btn--primary btn--gradi btn--shadow w-100 btn-lg">
-                    <i class="las la-sign-in-alt"></i>@lang('Login as User')
-                </a>
-            </div>
-
-            @if($user->kyc_data)
-            <div class="flex-fill">
-                <a href="{{ route('admin.users.kyc.details', $user->id) }}" target="_blank"
-                    class="btn btn--dark btn--shadow w-100 btn-lg">
-                    <i class="las la-user-check"></i>@lang('KYC Data')
-                </a>
-            </div>
-            @endif
-
-            @if (can_access("banned-user"))
                 <div class="flex-fill">
-                    @if($user->status == Status::USER_ACTIVE)
-                    <button type="button" class="btn btn--warning btn--gradi btn--shadow w-100 btn-lg userStatus"
-                        data-bs-toggle="modal" data-bs-target="#userStatusModal">
-                        <i class="las la-ban"></i>@lang('Ban User')
-                    </button>
-                    @else
-                    <button type="button" class="btn btn--success btn--gradi btn--shadow w-100 btn-lg userStatus"
-                        data-bs-toggle="modal" data-bs-target="#userStatusModal">
-                        <i class="las la-undo"></i>@lang('Unban User')
-                    </button>
-                    @endif
+                    <a href="{{route('admin.users.login',$user->id)}}" target="_blank"
+                        class="btn btn--primary btn--gradi btn--shadow w-100 btn-lg">
+                        <i class="las la-sign-in-alt"></i>@lang('Login as User')
+                    </a>
                 </div>
-            @endif
-        </div>
+
+                @if($user->kyc_data)
+                <div class="flex-fill">
+                    <a href="{{ route('admin.users.kyc.details', $user->id) }}" target="_blank"
+                        class="btn btn--dark btn--shadow w-100 btn-lg">
+                        <i class="las la-user-check"></i>@lang('KYC Data')
+                    </a>
+                </div>
+                @endif
+
+                @if (can_access("banned-user"))
+                    <div class="flex-fill">
+                        @if($user->status == Status::USER_ACTIVE)
+                        <button type="button" class="btn btn--warning btn--gradi btn--shadow w-100 btn-lg userStatus"
+                            data-bs-toggle="modal" data-bs-target="#userStatusModal">
+                            <i class="las la-ban"></i>@lang('Ban User')
+                        </button>
+                        @else
+                        <button type="button" class="btn btn--success btn--gradi btn--shadow w-100 btn-lg userStatus"
+                            data-bs-toggle="modal" data-bs-target="#userStatusModal">
+                            <i class="las la-undo"></i>@lang('Unban User')
+                        </button>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        @endif
 
 
         <div class="card mt-30">
@@ -229,8 +231,9 @@
                     @csrf
                     
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group ">
+                        <div class="col-md-12 @if( $user->account_type == "demo" ) d-flex @endif">
+                         
+                            <div class="form-group" @if( $user->account_type == "demo" ) style="width:90%;" @endif>
                                 <label>@lang('ID')</label>
                                 <input
                                     class="form-control"
@@ -240,6 +243,15 @@
                                     readonly
                                     >
                             </div>
+                            @if( $user->account_type == "demo" )
+                                <div class="form-group" style="width:10%;">
+                                    <label>@lang('Lead Type')</label>
+                                    <select name="lead_type" class="form-control">
+                                        <option value="demo">Demo</option>
+                                        <option value="real">Real</option>
+                                    </select>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="col-md-6">
