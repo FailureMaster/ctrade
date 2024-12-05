@@ -425,7 +425,15 @@ class ManageUsersController extends Controller
                     ->ignore($user->id)
                     ->whereNull('deleted_at'), // Ignores soft-deleted records
             ],
-            'mobile' => 'required|string|max:40|unique:users,mobile,' . $user->id,
+            // 'mobile' => 'required|string|max:40|unique:users,mobile,' . $user->id,
+            'mobile' => [
+                'required',
+                'string',
+                'max:40',
+                Rule::unique('users', 'mobile')
+                    ->ignore($user->id)
+                    ->whereNull('deleted_at'),
+            ],
             'country' => 'required|in:' . $countries,
             'status' => 'nullable|in:NEW,CALLBACK,NA,UNDER_AGE,DENY_REGISTRATION,DEPOSIT,NOT_INTERESTED,VOICE_MAIL',
             'comment' => 'nullable|string|max:1024',

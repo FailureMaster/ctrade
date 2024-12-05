@@ -1039,6 +1039,18 @@ class PermissionGroupController extends Controller
               'group' => $group[1],
               'value' => false,
             ],
+            [
+              'name' => 'bulk-update-leads',
+              'label' => 'Bulk Update Leads',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'change-user-type',
+              'label' => 'Change User Type',
+              'group' => $group[1],
+              'value' => false,
+            ],
         ],
       ]);
 
@@ -1585,6 +1597,18 @@ class PermissionGroupController extends Controller
             [
               'name' => 'access-all-users',
               'label' => 'Access all users',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'bulk-update-leads',
+              'label' => 'Bulk Update Leads',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'change-user-type',
+              'label' => 'Change User Type',
               'group' => $group[1],
               'value' => false,
             ],
