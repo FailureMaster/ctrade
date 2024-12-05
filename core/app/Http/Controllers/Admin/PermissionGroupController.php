@@ -944,6 +944,12 @@ class PermissionGroupController extends Controller
               'value' => false,
             ],
             [
+              "name" => "kyc-verification",
+              "label" => "KYC verification",
+              "group" => "Post Management",
+              "value" => false
+            ],
+            [
               'name' => 'mobile-verification',
               'label' => 'Mobile verification',
               'group' => $group[1],
@@ -1503,6 +1509,12 @@ class PermissionGroupController extends Controller
               'label' => '2FA verification',
               'group' => $group[1],
               'value' => false,
+            ],
+            [
+              "name" => "kyc-verification",
+              "label" => "KYC verification",
+              "group" => "Post Management",
+              "value" => false
             ],
             [
               'name' => 'mobile-verification',

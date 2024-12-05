@@ -135,6 +135,7 @@ class RegisterController extends Controller
         $user->user_ip = getRealIP();
         $user->profile_complete = 1;
         $user->account_type = allowsDemoAccount() ? 'demo' : 'real';
+        $user->user_source  = 'registration';
         $user->save();
 
 

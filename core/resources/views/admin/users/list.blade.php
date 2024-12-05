@@ -209,6 +209,9 @@
                                         <a class="fas fa-sort" href="{{$url}}" style="color: #fff; margin-left: 6px;"></a>
                                 </th>
                                 <th>@lang('Source')</th>
+                                @if(auth()->guard('admin')->user()->id === 1 )
+                                    <th>@lang('Source Type')</th>
+                                @endif
                                 @if(can_access('manage-sales-leads|manage-retention-leads'))
                                     <th>@lang('IP')</th>
                                 @endif
@@ -374,6 +377,15 @@
                                         <span class="d-block"></span>
                                         {{ $user->lead_source ?? '-'}}
                                 </td>
+                                @if(auth()->guard('admin')->user()->id === 1 )
+                                    <td>  <button
+                                        type="button"
+                                        class="btn--primary"
+                                        title="{{ $user->user_source ?? '-' }}"
+                                        >
+                                        <i class="fas fa-info"></i>
+                                    </button></td>
+                                @endif
                                  @if(can_access('manage-sales-leads|manage-retention-leads'))
                                     <td>
                                         <span class="d-block">

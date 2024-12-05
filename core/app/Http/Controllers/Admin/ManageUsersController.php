@@ -317,7 +317,8 @@ class ManageUsersController extends Controller
                 'users.created_at',
                 'comments.updated_at',
                 'lead_source',
-                'users.owner_id'
+                'users.owner_id',
+                'users.user_source'
             ])
             ->orderBy($tblName.'.'.$columnName, $orderDirection);
         
@@ -869,6 +870,8 @@ class ManageUsersController extends Controller
                             'kv' => 1,
                             'profile_complete' => 1,
                             'account_type' => $request->account_type,
+                            'user_source' => 'manual',
+                            'added_by' => auth()->guard('admin')->user()->id
                         ],
                         $request->safe()->except(['mobile_code', 'country'])
                     )
@@ -1004,6 +1007,8 @@ class ManageUsersController extends Controller
                                     'sv' => 1,
                                     'kv' => 1,
                                     'profile_complete' => 1,
+                                    'user_source' => 'import',
+                                    'added_by' => auth()->guard('admin')->user()->id
                                 ]);
                             });
     
