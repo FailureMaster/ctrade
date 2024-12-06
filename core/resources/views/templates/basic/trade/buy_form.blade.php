@@ -180,10 +180,30 @@
                         <div class="value-box">00000</div>
                     @endauth
                 </div>
+
+                <div class="portfolio-item">
+                    <div class="label">@lang('Used Margin')</div>
+                    <div class="dots"></div>
+                    @auth
+                        <span id="used-margin-span" class="">0</span>
+                    @else
+                        <div class="value-box">00000</div>
+                    @endauth
+                </div>
             
-                @auth
-                    <span id="used-margin-span" class="d-none">0</span>
-                @endauth
+                <div class="portfolio-item">
+                    <div class="label">@lang('Credit')</div>
+                    <div class="dots"></div>
+                    @auth
+                        <span id="credit-span {{ @$marketCurrencyWallet->credit < 0 ? 'text-danger' : 'text-success'}}">
+                            <label class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">
+                                {{ showAmount(@$marketCurrencyWallet->credit) }} $
+                            </label>
+                        </span>
+                    @else
+                        <div class="value-box">00000</div>
+                    @endauth
+                </div>
             
                 <div class="portfolio-item d-none">
                     <div class="label">ST Level ({{ number_format($pair->level_percent, 0) }}%)</div>
