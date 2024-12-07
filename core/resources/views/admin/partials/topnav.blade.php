@@ -86,6 +86,11 @@
                     </a>
                 </div>
             </li>
+            <li>
+                <span id="fullscreenButton" class="text-white" style="cursor:pointer;">
+                    <i class="fas fa-expand"></i>
+                </span>
+            </li>
         </ul>
     </div>
 </nav>
@@ -114,5 +119,18 @@
 
     // Update time every second
     setInterval(updateTime, 1000);
+
+    // Toggle fullscreen mode for the whole page
+    fullscreenButton.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch((err) => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+        fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
+      } else {
+        document.exitFullscreen();
+        fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
+      }
+    });
 </script>
 @endpush
