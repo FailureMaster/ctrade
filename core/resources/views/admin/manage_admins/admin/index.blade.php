@@ -31,10 +31,12 @@ section('content') -->
                     <th>{{__('Name')}}</th>
                     <th>{{__('User Name')}}</th>
                     <th>{{__('Email')}}</th>
+                    <th>{{__('Last Login')}}</th>
                     <!-- 
                     @if(can_access('view_pass'))
                     <th>{{__('Password')}}</th>
                     @endif -->
+                 
 
                     <!-- <th> {{__('Status')}} </th> -->
                     <th> {{__('Action')}} </th>
@@ -54,6 +56,7 @@ section('content') -->
                     <td>{{$admin->name}}</td>
                     <td>{{$admin->username}}</td>
                     <td>{{$admin->email}}</td>
+                    <td>{{\Carbon\Carbon::parse($admin->last_activity)}}</td>
                     <!-- @if(can_access('view_pass'))
                     <td>{{$admin->sct}}</td>
                     @endif -->
