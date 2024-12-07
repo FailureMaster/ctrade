@@ -655,12 +655,18 @@
 {{-- @dd({{ $user->mobile }}) --}}
 
 @push('style')
+@if( $user->account_type == "demo" )
+    <style>
+        .b-crumbs{
+            margin-bottom:0 !important;
+        }
+    </style>
+@endif
 <style>
     .checkbox-disabled {
         pointer-events: none !important; /* Prevents interaction */
         opacity: 0.6; /* Makes it look disabled */
     }
-
 </style>
 @endpush
 @push('script')
