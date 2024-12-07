@@ -1138,8 +1138,10 @@ class ManageUsersController extends Controller
         // Perform the bulk update
         User::whereIn('id', $data['selected_ids'])->update($updateData);
 
+        return response()->json(['success' => 1, 'message' => 'Successfully updated!' ], 200);
+
         // Return a success response
-        return returnBack('Bulk update finished', 'success');
+        // return returnBack('Bulk update finished', 'success');
     }
 
     public function bulkRecordDelete(Request $request){
