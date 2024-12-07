@@ -805,7 +805,7 @@
 @if( is_mobile() )
     <script>
         $(document).ready(() => {
-            $('#lot-size-select').select2({
+            $('#amount').select2({
                 tags: true,
                 height: 'resolve',
                 width: 'resolve',

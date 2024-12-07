@@ -1,18 +1,15 @@
-@if( !is_mobile() )
-    <header class="header w-100" id="header" >
+@if (!is_mobile())
+    <header class="header w-100" id="header">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
                 <div class="d-flex align-items-center">
-                    <a class="navbar-brand logo"  href="{{ route('home') }}" style="margin-right: 0">
+                    <a class="navbar-brand logo" href="{{ route('home') }}" style="margin-right: 0">
                         <img src="{{ siteLogo() }}">
                     </a>
                     @auth
-                        @if (! enabledDashboard() && is_mobile())
-                            <a
-                                href="https://dev.quikipay.com/donate/ElomZUyWptRBW5HJFUolk69aFHUgXnqbE3wYcstX/68/27b1b43cbdde7099bb0ea35fc71c1a818abbc7dee6c97b529658065cf1dcf6c8"
-                                class="btn btn--base btn--sm"
-                                id="for-deposit-btn"
-                                >
+                        @if (!enabledDashboard() && is_mobile())
+                            <a href="https://dev.quikipay.com/donate/ElomZUyWptRBW5HJFUolk69aFHUgXnqbE3wYcstX/68/27b1b43cbdde7099bb0ea35fc71c1a818abbc7dee6c97b529658065cf1dcf6c8"
+                                class="btn btn--base btn--sm" id="for-deposit-btn">
                                 @lang('Deposit ')
                             </a>
                         @endif
@@ -51,6 +48,7 @@
                                                 <span class="text">@lang('Logout')</span>
                                             </a>
                                         </li>
+
                                     </ul>
                                 </div>
                             </div>
@@ -58,7 +56,8 @@
                     </div>
                     @if (allowsDemoAccount())
                         @if (auth()->user()->account_type == 'demo')
-                            <form action="{{ route('user.toggle.type', auth()->user()->id) }}" method="POST" id="accountTypeForm">
+                            <form action="{{ route('user.toggle.type', auth()->user()->id) }}" method="POST"
+                                id="accountTypeForm">
                                 @csrf
                                 <div class="position-relative" style="width: 150px; margin-left: 15px">
                                     <div class="custom--dropdown w-100">
@@ -70,7 +69,8 @@
                                             </p>
                                         </div>
                                         <ul class="dropdown-list">
-                                            <li class="dropdown-list__item change-account-type" data-account="demo" {{ auth()->user()->account_type == 'real' ? 'style=pointer-events:none;opacity:0.6;' : '' }}>
+                                            <li class="dropdown-list__item change-account-type" data-account="demo"
+                                                {{ auth()->user()->account_type == 'real' ? 'style=pointer-events:none;opacity:0.6;' : '' }}>
                                                 <span class="text">Demo</span>
                                             </li>
                                             <li class="dropdown-list__item change-account-type" data-account="real">
@@ -79,18 +79,19 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <input type="hidden" name="account_type" id="accountTypeInput" value="{{ auth()->user()->account_type }}">
+                                <input type="hidden" name="account_type" id="accountTypeInput"
+                                    value="{{ auth()->user()->account_type }}">
                             </form>
                         @endif
                     @endif
                 @endauth
-                
+
                 <button class="navbar-toggler header-button" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="Toggle navigation">
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
                     <span id="hiddenNav"><i class="las la-bars"></i></span>
                 </button>
-    
+
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav nav-menu me-auto align-items-lg-center flex-wrap">
                         <li class="nav-item d-block d-lg-none">
@@ -139,7 +140,7 @@
                                             <a href="{{ route('user.logout') }}" class="sign-in">@lang('Logout')</a>
                                         </li>
                                     @endguest
-                                    <li>
+                                    {{-- <li>
                                         <div class="theme-switch-wrapper">
                                             <label class="theme-switch" for="checkbox">
                                                 <input type="checkbox" class="d-none" id="checkbox">
@@ -148,7 +149,7 @@
                                                 </span>
                                             </label>
                                         </div>
-                                    </li>
+                                    </li> --}}
                                 </ul>
                             </div>
                         </li>
@@ -186,7 +187,7 @@
                                     <li class="login-registration-list__item">
                                         <a href="{{ route('user.register') }}"
                                             class="btn btn--base btn--sm">@lang('Sign up') </a>
-    
+
                                     </li>
                                 @else
                                     <li class="login-registration-list__item">
@@ -198,20 +199,19 @@
                                             <!--    >-->
                                             <!--    @lang('Deposit ')-->
                                             <!--</a>-->
-                                            <a
-                                                href="{{ route('user.home') }}"
-                                                class="btn btn--base btn--sm"
-                                                id="for-deposit-btn"
-                                                >
+                                            <a href="{{ route('user.home') }}" class="btn btn--base btn--sm"
+                                                id="for-deposit-btn">
                                                 @lang('Deposit ')
                                             </a>
                                         @else
-                                            <button class="btn btn--base btn--sm" data-bs-toggle="modal" data-bs-target="#frozeAccountModal">@lang('Deposit ')</button>
+                                            <button class="btn btn--base btn--sm" data-bs-toggle="modal"
+                                                data-bs-target="#frozeAccountModal">@lang('Deposit ')</button>
                                         @endif
                                     </li>
                                     @if (enabledDashboard())
                                         <li class="login-registration-list__item">
-                                            <a href="{{ route('user.home') }}" class="btn btn--base btn--sm">@lang('Dashboard ')</a>
+                                            <a href="{{ route('user.home') }}"
+                                                class="btn btn--base btn--sm">@lang('Dashboard ')</a>
                                         </li>
                                     @endif
                                     <li class="login-registration-list__item">
@@ -228,66 +228,72 @@
                                         </label>
                                     </div>
                                 </li>
+                                <li class="login-registration-list__item">
+                                    <span id="fullscreenButton" class="text-white"
+                                        style="cursor:pointer; font-size: 19px">
+                                        <i class="fas fa-expand" class="text-white"></i>
+                                    </span>
+                                </li>
+
                             </ul>
                         </div>
                     </li>
                 </ul>
             </nav>
         </div>
-        @if(!is_mobile())
+        @if (!is_mobile())
             <div class="container-fluid px-0 mt-2">
                 <!-- TradingView Widget BEGIN -->
                 <div class="tradingview-widget-container">
-                <div class="tradingview-widget-container__widget"></div>
-                
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                {
-                "symbols": [
-                    {
-                    "proName": "FOREXCOM:SPXUSD",
-                    "title": "S&P 500 Index"
-                    },
-                    {
-                    "proName": "FOREXCOM:NSXUSD",
-                    "title": "US 100 Cash CFD"
-                    },
-                    {
-                    "proName": "FX_IDC:EURUSD",
-                    "title": "EUR to USD"
-                    },
-                    {
-                    "proName": "BITSTAMP:BTCUSD",
-                    "title": "Bitcoin"
-                    },
-                    {
-                    "proName": "BITSTAMP:ETHUSD",
-                    "title": "Ethereum"
-                    },
-                    {
-                    "description": "TSLA",
-                    "proName": "NASDAQ:TSLA"
-                    },
-                    {
-                    "description": "GOLD",
-                    "proName": "OANDA:XAUUSD"
-                    },
-                    {
-                    "description": "CL",
-                    "proName": "NYMEX:CL1!"
-                    },
-                    
-                    {
-                    "description": "AAPL",
-                    "proName": "NASDAQ:AAPL"
-                    }
-                ],
-                "showSymbolLogo": true,
-                "isTransparent": false,
-                "displayMode": "adaptive",
-                "colorTheme": "dark",
-                "locale": "en"
-                }
-                </script>
+                    <div class="tradingview-widget-container__widget"></div>
+
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                        {
+                            "symbols": [{
+                                    "proName": "FOREXCOM:SPXUSD",
+                                    "title": "S&P 500 Index"
+                                },
+                                {
+                                    "proName": "FOREXCOM:NSXUSD",
+                                    "title": "US 100 Cash CFD"
+                                },
+                                {
+                                    "proName": "FX_IDC:EURUSD",
+                                    "title": "EUR to USD"
+                                },
+                                {
+                                    "proName": "BITSTAMP:BTCUSD",
+                                    "title": "Bitcoin"
+                                },
+                                {
+                                    "proName": "BITSTAMP:ETHUSD",
+                                    "title": "Ethereum"
+                                },
+                                {
+                                    "description": "TSLA",
+                                    "proName": "NASDAQ:TSLA"
+                                },
+                                {
+                                    "description": "GOLD",
+                                    "proName": "OANDA:XAUUSD"
+                                },
+                                {
+                                    "description": "CL",
+                                    "proName": "NYMEX:CL1!"
+                                },
+
+                                {
+                                    "description": "AAPL",
+                                    "proName": "NASDAQ:AAPL"
+                                }
+                            ],
+                            "showSymbolLogo": true,
+                            "isTransparent": false,
+                            "displayMode": "adaptive",
+                            "colorTheme": "dark",
+                            "locale": "en"
+                        }
+                    </script>
                 </div>
                 <!-- TradingView Widget END -->
             </div>
@@ -295,11 +301,28 @@
     </header>
 @endif
 @push('script')
-<script>
-    // document.getElementById("for-deposit-btn") && document.getElementById("for-deposit-btn").addEventListener('click', () => {
-    //     document.getElementById("deposit__button").click();
-    // })
-    "use strict";
+    <script>
+        // Toggle fullscreen mode for the whole page
+        fullscreenButton.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch((err) => {
+                    console.error(
+                        `Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+                fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                document.exitFullscreen();
+                fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        });
+    </script>
+@endpush
+@push('script')
+    <script>
+        // document.getElementById("for-deposit-btn") && document.getElementById("for-deposit-btn").addEventListener('click', () => {
+        //     document.getElementById("deposit__button").click();
+        // })
+        "use strict";
         (function($) {
 
             $('.depositBtnTopbar').on('click', function(e) {
@@ -327,25 +350,25 @@
                 $(`.other-${tranfserType}-transfer`).removeClass('d-none');
             });
 
-            $('.max').on('click',function(e){
-                const max=$(this).data('max');
+            $('.max').on('click', function(e) {
+                const max = $(this).data('max');
                 $(this).closest('div').find(`input`).val(max);
-                if($(this).hasClass('other-user-transfer-max')){
+                if ($(this).hasClass('other-user-transfer-max')) {
                     $(".other-user-transfer input[name=transfer_amount]").trigger('change');
                 }
             });
-            
-            $('.user-info__button').on('click', function () {
-              $('.user-info-dropdown').toggleClass('show');
+
+            $('.user-info__button').on('click', function() {
+                $('.user-info-dropdown').toggleClass('show');
             });
             $('.user-info__button').attr('tabindex', -1).focus();
-        
-            $('.user-info__button').on('focusout', function () {
-              $('.user-info-dropdown').removeClass('show');
+
+            $('.user-info__button').on('focusout', function() {
+                $('.user-info-dropdown').removeClass('show');
             });
-            
+
         })(jQuery);
-</script>
+    </script>
 @endpush
 @push('style')
     <style>
@@ -353,11 +376,11 @@
         .tradingview-widget-container iframe {
             height: 37px !important;
         }
-        
+
         .user-info__button {
             cursor: pointer;
         }
-        
+
         .user-info .user-info-dropdown {
             border-radius: 4px;
             overflow: hidden;
@@ -376,21 +399,21 @@
             visibility: hidden;
             opacity: 0;
         }
-        
+
         .user-info .user-info-dropdown.show {
             visibility: visible;
             opacity: 1;
             transform: scale(1);
         }
-        
+
         /* #header{
-            margin-top: 167px;
-        }
-        
-        @media (max-width: 1812px) and (min-width: 1200px) {
-            #header {
-                margin-top: 307px;
-            }
-        } */
+                                                                                        margin-top: 167px;
+                                                                                    }
+                                                                                    
+                                                                                    @media (max-width: 1812px) and (min-width: 1200px) {
+                                                                                        #header {
+                                                                                            margin-top: 307px;
+                                                                                        }
+                                                                                    } */
     </style>
 @endpush
