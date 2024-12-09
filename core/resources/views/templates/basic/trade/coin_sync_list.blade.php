@@ -681,8 +681,8 @@
         }
 
         .dropdown-container>.tab-pane>div {
-            max-height: 455px;
-            overflow-y: auto;
+            max-height: 613px;
+            overflow-y: scroll;
         }
 
         .dropdown-btn {
