@@ -629,8 +629,8 @@
 @endsection
 
 @push('breadcrumb-plugins')
-@if (request()->query('back') == 'leads')
-    <a href="{{ route('admin.users.all', ['filter' => 'this_month']) }}" class="btn btn-outline--primary mx-2">
+@if (request()->query('back') == 'leads' || request()->query('back') == null )
+    <a href="{{ route('admin.users.all', ['filter' => 'all_time']) }}" class="btn btn-outline--primary mx-2">
         <i class="las la-list"></i>@lang('Leads List')
     </a>
 @else
