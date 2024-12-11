@@ -125,6 +125,13 @@ $credentials = $general->socialite_credentials;
 input:-webkit-autofill {
     -webkit-text-fill-color: hsl(var(--black)) !important;
 }
+
+@media (max-width: 767px) {
+    .account-left {
+        margin:0 !important;
+        padding:0 !important;
+    }
+}
 </style>
 @endpush
 

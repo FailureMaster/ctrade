@@ -198,6 +198,14 @@ $credentials = $general->socialite_credentials;
     body{
         overflow: auto;
     }
+
+    @media (max-width: 767px) {
+        .account-left {
+            margin:0 !important;
+            padding:0 !important;
+        }
+    }
+
 </style>
 @endpush
 @if($general->secure_password)
