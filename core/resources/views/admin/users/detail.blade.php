@@ -52,7 +52,7 @@
                         </div>
                         <div class="widget-two__content">
                             <h3 class="text-white">{{ getAmount($widget['total_transaction']) }}</h3>
-                            <p class="text-white">@lang('Transactions')</p>
+                            <p class="text-white">@lang('Log History')</p>
                         </div>
                         <a href="{{ route('admin.report.transaction') }}?search={{ $user->email }}"
                             class="widget-two__btn">@lang('View All')</a>
@@ -222,7 +222,7 @@
         @endif
 
 
-        <div class="card mt-30">
+        <div class="card @if( $user->account_type != 'demo' ) mt-30 @else mt-15 @endif">
             <div class="card-header">
                 <h5 class="card-title mb-0">@lang('Information of') {{$user->fullname}}</h5>
             </div>
@@ -659,6 +659,10 @@
     <style>
         .b-crumbs{
             margin-bottom:0 !important;
+        }
+
+        .body-wrapper{
+            padding: 15px 30px;
         }
     </style>
 @endif
