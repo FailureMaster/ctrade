@@ -269,17 +269,13 @@
                                                     $filters = isset(parse_url(url()->full())['query'])
                                                         ? parse_url(url()->full())['query']
                                                         : '';
-
                                                 @endphp
-                                                {{ $user->lead_code ?? $user->id }}
-                                                <a
-                                                    href="{{ route('admin.users.detail', $user->id) . '?' . $filters . '&account_type=' . $lastPathPart }}">
-                                                    {{-- <a href="{{ route('admin.users.detail', $user->id)}}"> --}}
-                                                    <i class="fa fa-eye"></i>
-                                                    {{-- <span>{{$lastPathPart}}</span> --}}
+                                                <a href="{{ route('admin.users.detail', $user->id) . '?' . $filters . '&account_type=' . $lastPathPart }}">
+                                                    {{ $user->lead_code ?? $user->id }}
                                                 </a>
                                             </span>
                                         </td>
+
                                         <td>
                                             @if ($user->last_request && \Carbon\Carbon::parse($user->last_request)->gt(\Carbon\Carbon::now()->subMinutes(5)))
                                                 <span class="badge-userstatus badge-online">●</span>
