@@ -843,5 +843,14 @@
         .daily-change-text{
             flex:1;
         }
+
+        #market-nav{
+            margin-bottom:0 !important;
+        }
+
+        .trading-right{
+            padding-bottom:0 !important;
+        }
+       
     </style>
 @endpush
