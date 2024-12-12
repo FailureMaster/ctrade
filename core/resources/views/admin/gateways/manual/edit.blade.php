@@ -74,10 +74,26 @@
                                     <div class="col-lg-12">
                                         <div class="card border--primary mt-3">
 
+                                            <h5 class="card-header bg--primary">@lang('Deposit Message')</h5>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <textarea rows="8" class="form-control border-radius-5" name="message" id="message">{{ __(@$method->message)  }}</textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Enable Pay button</label>
+                                                    <input type="checkbox" class="" name="allow_pay" value="1" {{ @$method->allow_pay ? "checked" : "" }}>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="card border--primary mt-3">
+
                                             <h5 class="card-header bg--primary">@lang('Deposit Instruction')</h5>
                                             <div class="card-body">
                                                 <div class="form-group">
-                                                    <textarea rows="8" class="form-control border-radius-5 nicEdit" name="instruction">{{ __(@$method->description)  }}</textarea>
+                                                    <textarea rows="8" id="summernote" class="form-control border-radius-5 w-100" name="instruction">{{ __(@$method->description)  }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,9 +171,12 @@
     </script>
 
     <script src="{{ asset('assets/global/js/form_actions.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
 @endpush
 
-
+@push('style')
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
+@endpush
 
 @push('breadcrumb-plugins')
     <x-back route="{{ route('admin.gateway.manual.index') }}" />
@@ -168,6 +187,11 @@
 
         (function ($) {
             "use strict";
+
+            $('#summernote').summernote({
+                codeviewFilter: false, // Disable sanitization
+                codeviewIframeFilter: false // Allow all content in Code View
+            });
 
             $('input[name=currency]').on('input', function () {
                 $('.currency_symbol').text($(this).val());

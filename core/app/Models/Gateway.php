@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Constants\Status;
 use App\Traits\GlobalStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Gateway extends Model
 {
-    use GlobalStatus;
+    use GlobalStatus, SoftDeletes;
 
     protected $hidden = [
         'gateway_parameters','extra'

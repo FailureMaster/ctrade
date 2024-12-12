@@ -69,6 +69,22 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-lg-12">
+                                        <div class="card border--primary mt-3">
+
+                                            <h5 class="card-header bg--primary">@lang('Deposit Message')</h5>
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <textarea rows="8" class="form-control border-radius-5" name="message" id="message">{{ __(@$method->message)  }}</textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Enable Pay button</label>
+                                                    <input type="checkbox" class="" name="allow_pay" value="1">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-12">
                                         <div class="card border--primary mt-3">
                                             <h5 class="card-header bg--primary">@lang('Deposit Instruction')</h5>

@@ -30,7 +30,7 @@ class ManualGatewayController extends Controller
         $formProcessor = new FormProcessor();
         $this->validation($request,$formProcessor);
 
-        $lastMethod = Gateway::manual()->orderBy('id','desc')->first();
+        $lastMethod = Gateway::manual()->withTrashed()->orderBy('id','desc')->first();
         $methodCode = 1000;
         if ($lastMethod) {
             $methodCode = $lastMethod->code + 1;
@@ -48,6 +48,11 @@ class ManualGatewayController extends Controller
         $method->supported_currencies = [];
         $method->crypto = Status::DISABLE;
         $method->description = $request->instruction;
+
+        // New 
+        $method->message   = $request->message;
+        $method->allow_pay = $request->has('allow_pay') ? 1 : 0;
+
         $method->save();
 
         $gatewayCurrency = new GatewayCurrency();
@@ -90,9 +95,11 @@ class ManualGatewayController extends Controller
         $method->crypto = Status::DISABLE;
         $method->description = $request->instruction;
         $method->form_id = @$generate->id ?? 0;
+
+        // New 
+        $method->message   = $request->message;
+        $method->allow_pay = $request->has('allow_pay') ? 1 : 0;
         $method->save();
-
-
 
         $singleCurrency = $method->singleCurrency;
         $singleCurrency->name = $request->name;
@@ -131,5 +138,27 @@ class ManualGatewayController extends Controller
     public function status($id)
     {
         return Gateway::changeStatus($id);
+    }
+
+    public function remove(Request $request)
+    {
+        if( $request->ajax() ){
+
+            $request->validate(['id' => 'required']);
+
+            try{
+                $data = Gateway::find( $request->id );
+             
+               if( $data->delete() )
+                    return response()->json([ 'success' => 1, 'message' => 'Successfully deleted.' ], 200);
+
+                return response()->json([ 'message' => 'Failed!' ], 500);
+            }
+            catch( Exception $e ){
+                return response()->json([ 'message' => 'Failed!' ], 500);
+            }
+        }
+
+        return abort(403, 'Unauthorized!');
     }
 }

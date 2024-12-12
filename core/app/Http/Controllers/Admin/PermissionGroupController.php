@@ -1057,6 +1057,12 @@ class PermissionGroupController extends Controller
               'group' => $group[1],
               'value' => false,
             ],
+            [
+              'name' => 'remove-manual-gateway',
+              'label' => 'Delete Manual Gateway',
+              'group' => $group[1],
+              'value' => false,
+            ],
         ],
       ]);
 
@@ -1621,6 +1627,12 @@ class PermissionGroupController extends Controller
             [
               'name' => 'change-user-type',
               'label' => 'Change User Type',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'remove-manual-gateway',
+              'label' => 'Delete Manual Gateway',
               'group' => $group[1],
               'value' => false,
             ],

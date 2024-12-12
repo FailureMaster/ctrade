@@ -35,7 +35,12 @@
                                         @endphp
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.gateway.manual.edit', $gateway->alias) }}" class="btn btn-sm btn-outline--primary editGatewayBtn">
+                                        @if (can_access('remove-manual-gateway'))
+                                            <button class="btn btn-sm btn-outline--danger btnDelete" data-id="{{ $gateway->id }}">
+                                                <i class="la la-eraser"></i> @lang('Delete')
+                                            </button>
+                                        @endif
+                                        <a href="{{ route('admin.gateway.manual.edit', $gateway->alias) }}" class="btn btn-sm btn-outline--primary editGatewayBtn mx-1">
                                             <i class="la la-pencil"></i> @lang('Edit')
                                         </a>
 
@@ -119,4 +124,51 @@
         <button class="btn btn--primary input-group-text"><i class="fa fa-search"></i></button>
     </div>
     <a class="btn btn-outline--primary" href="{{ route('admin.gateway.manual.create') }}"><i class="las la-plus"></i>@lang('Add New')</a>
+@endpush
+
+@push('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function(){
+            $(document).on('click', '.btnDelete', function() {
+              
+              let id = $(this).attr('data-id');
+       
+              Swal.fire({
+                  target: document.getElementById('withdraw-offcanvas'),
+                  text: "Are you sure you want to remove this gateway?",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Yes"
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      $.ajax({
+                          method: 'POST',
+                          data: { id : id },
+                          dataType: 'json',
+                          url: "{{ route('admin.gateway.manual.remove') }}",
+                          headers: {
+                              "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                          },
+                          success: function(response) {
+                              if( response.success == 1 ){
+                                  notify('success', response.message);
+
+                                  setTimeout(() => {
+                                      location.reload();
+                                  }, 1000);
+                              }
+                          },
+                          error: function(XMLHttpRequest, textStatus, errorThrown) {
+                              notify('error', 'Failed!');
+                          },
+                          complete: function(response) {}
+                      });
+                  }
+              });
+          });
+        });
+    </script>
 @endpush

@@ -202,6 +202,7 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
             Route::get('edit/{alias}', 'edit')->name('edit');
             Route::post('update/{id}', 'update')->name('update');
             Route::post('status/{id}', 'status')->name('status');
+            Route::post('remove', 'remove')->name('remove');
         });
     });
 
