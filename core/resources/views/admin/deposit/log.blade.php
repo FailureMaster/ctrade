@@ -112,7 +112,8 @@
                                     <th>@lang('Name')</th>
                                     <th>@lang('Email')</th>
                                     <th>@lang('Currency')</th>
-                                    <th>@lang('Gateway | Transaction')</th>
+                                    <th>@lang('Gateway')</th>
+                                    <th>@lang('Transaction')</th>
                                     <th>@lang('Initiated')</th>
                                     <th>@lang('Amount')</th>
                                     <th>@lang('Status')</th>
@@ -141,8 +142,10 @@
                                             <span class="fw-bold"> <a
                                                     href="{{ appendQuery('method', @$deposit->gateway->alias) }}">{{ __(@$deposit->gateway->name) }}</a>
                                             </span>
-                                            <br>
-                                            <small> {{ $deposit->trx }} </small>
+                                            
+                                        </td>
+                                         <td>
+                                            <span class="fw-bold"> {{ $deposit->trx }}</span>
                                         </td>
 
                                         <td>

@@ -94,7 +94,8 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>@lang('Currency')</th>
-                                <th>@lang('Gateway | Transaction')</th>
+                                <th>@lang('Gateway')</th>
+                                <th>@lang('Transaction')</th>
                                 <th>@lang('Initiated')</th>
                                 <th>@lang('Amount')</th>
                                 <th>@lang('Status')</th>
@@ -126,8 +127,9 @@
 
                                     <td>
                                         <span class="fw-bold"><a href="{{ appendQuery('method',@$withdraw->method->id) }}"> {{ __(@$withdraw->method->name) }}</a></span>
-                                        <br>
-                                        <small>{{ $withdraw->trx }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">{{ $withdraw->trx }}</span>
                                     </td>
                                     <td>
                                         {{ showDateTime($withdraw->created_at) }} <br>  {{ diffForHumans($withdraw->created_at) }}
