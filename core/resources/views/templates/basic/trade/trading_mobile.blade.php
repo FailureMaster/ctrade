@@ -95,7 +95,7 @@
                             <a href="#"
                                 class="text-white @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
                                 <i class="fas fa-university"></i>
-                                <span>{{ ( $userGroup != null ? ( ucwords($userGroup->name).' '.__('account') ) : __('Standard account') ) }}</span>
+                                <span>{{ ( $userGroup != null ? ( ucwords($userGroup->name).' '.__('Account') ) : __('Standard Account') ) }}</span>
                             </a>
                         </li>
                     @endif
