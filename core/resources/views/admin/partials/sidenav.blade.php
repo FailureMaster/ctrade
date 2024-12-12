@@ -671,6 +671,15 @@
                     </li>
                 @endif
 
+                @if (can_access('seo-manager'))
+                    <li class="sidebar-menu-item {{ menuActive('admin.seo') }}">
+                        <a href="{{ route('admin.seo') }}" class="nav-link">
+                            <i class="menu-icon las la-tachometer-alt"></i>
+                            <span class="menu-title">@lang('SEO')</span>
+                        </a>
+                    </li>
+                @endif
+
                 @if (can_access('logo-favicon'))
                     <li class="sidebar-menu-item {{ menuActive('admin.setting.logo.icon') }}">
                         <a href="{{ route('admin.setting.logo.icon') }}" class="nav-link">
