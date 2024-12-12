@@ -122,7 +122,6 @@
                 <div class="form-group">
                     <select class="form-control form--control form-select text-white" name="gateway" required
                     style="border: 1px solid #7c666675">
-                        <option value="" selected="" disabled="">@lang('Select currency')</option>
                         <option value="USD" >United States Dollar-USD</option>
                     </select>
                 </div>
@@ -1100,8 +1099,8 @@
             }
 
             #amount{
-                height: 30px !important;
-                padding: 0;
+                height: 45px;
+                padding: 15px;
             }
 
             [data-theme=light] #mobileDateFilterDropdown {

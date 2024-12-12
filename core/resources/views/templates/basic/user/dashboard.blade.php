@@ -279,7 +279,10 @@
                                     <input type="number" step="any" name="amount"
                                         class="form--control form-control" placeholder="@lang('Amount')">
                                     <div class="input-group-text skeleton">
-                                        <x-currency-list :action="route('user.currency.all')" valueType="2" logCurrency="true" />
+                                        <!-- <x-currency-list :action="route('user.currency.all')" valueType="2" logCurrency="true" /> -->
+                                        <select class="form-control form--control form-select" name="currency" id="currency" required style="border:none;">
+                                            <option value="USD" >United States Dollar-USD</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -309,8 +312,11 @@
                                         <input type="number" name="amount" step="any"
                                             class="form--control form-control" placeholder="@lang('Amount')">
                                         <div class="input-group-text skeleton">
-                                            <x-currency-list :action="route('user.currency.all')" id="withdraw_currency_list"
-                                                parent="withdraw_currency_list_wrapper" valueType="2" logCurrency="true"/>
+                                            <!-- <x-currency-list :action="route('user.currency.all')" id="withdraw_currency_list"
+                                                parent="withdraw_currency_list_wrapper" valueType="2" logCurrency="true"/> -->
+                                                <select class="form-control form--control form-select" name="currency" id="withdraw_currency_list" required style="border:none;">
+                                                    <option value="USD" >United States Dollar-USD</option>
+                                                </select>
                                         </div>
                                     </div>
                                 </div>
