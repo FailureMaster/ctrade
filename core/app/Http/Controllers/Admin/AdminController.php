@@ -31,23 +31,25 @@ class AdminController extends Controller
     {
 
         $pageTitle = 'Dashboard';
-        
-        $inactiveUsersQuery = User::inactive();
+
+        $current_month = Carbon::now()->startOfMonth();
+
+        $inactiveUsersQuery = User::inactive()->where('created_at', '>=', $current_month );
         $inactiveUsersQuery = $this->filterUsersBasedOnAccess($inactiveUsersQuery);
         $inactiveUsersCount = $inactiveUsersQuery->count();
 
-        $activeUsersQuery = User::active();
+        $activeUsersQuery = User::active()->where('created_at', '>=', $current_month );;
         $activeUsersQuery = $this->filterUsersBasedOnAccess($activeUsersQuery);
         $activeUsersCount = $activeUsersQuery->count();
 
         // User Info
         $widget['total_users']             = $inactiveUsersCount;
         $widget['verified_users']          = $activeUsersCount;
-        $widget['email_unverified_users']  = User::emailUnverified()->count();
-        $widget['mobile_unverified_users'] = User::mobileUnverified()->count();
+        $widget['email_unverified_users']  = User::emailUnverified()->where('created_at', '>=', $current_month )->count();
+        $widget['mobile_unverified_users'] = User::mobileUnverified()->where('created_at', '>=', $current_month )->count();
 
 
-        $orders                             = Order::query();
+        $orders                             = Order::query()->where('created_at', '>=', $current_month );
         $widget['order_count']['total']     = (clone $orders)->count();
         $widget['order_count']['open']      = (clone $orders)->open()->count();
         $widget['order_count']['completed'] = (clone $orders)->completed()->count();
@@ -60,30 +62,30 @@ class AdminController extends Controller
         $widget['order']['count']  = (clone $orders)->selectRaw("count(*) as total")->orderBy('total', 'desc')->with('pair')->get()->pluck('total');
 
 
-        $currency = Currency::query();
+        $currency = Currency::query()->where('created_at', '>=', $current_month );
 
-        $widget['total_trade'] = Trade::count();
+        $widget['total_trade'] = Trade::where('created_at', '>=', $current_month )->count();
 
         $widget['total_currency']        = (clone $currency)->count();
         $widget['total_crypto_currency'] = (clone $currency)->crypto()->count();
         $widget['total_fiat_currency']   = (clone $currency)->fiat()->count();
 
-        $deposit                             = Deposit::with('currency')->where('status', '!=', Status::PAYMENT_INITIATE)->where('status', '!=', Status::PAYMENT_REJECT)->groupBy('currency_id');
+        $deposit                             = Deposit::with('currency')->where('created_at', '>=', $current_month )->where('status', '!=', Status::PAYMENT_INITIATE)->where('status', '!=', Status::PAYMENT_REJECT)->groupBy('currency_id');
         $widget['deposit']['list']           = (clone $deposit)->selectRaw('*,SUM(amount) as total_amount')->orderBy('total_amount', 'DESC')->take(6)->get();
         $widget['deposit']['total_deposits'] = Deposit::sum('amount');
         $widget['deposit']['currency_count'] = (clone $deposit)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('count');
         $widget['deposit']['currency_symbol']  = (clone $deposit)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('currency.symbol');
 
-        $withdraw                             = Withdrawal::with('withdrawCurrency')->where('status','!=',Status::PAYMENT_INITIATE)->where('status', '!=', Status::PAYMENT_REJECT)->groupBy('currency');
+        $withdraw                             = Withdrawal::with('withdrawCurrency')->where('created_at', '>=', $current_month )->where('status','!=',Status::PAYMENT_INITIATE)->where('status', '!=', Status::PAYMENT_REJECT)->groupBy('currency');
         $widget['withdraw']['list']           = (clone $withdraw)->selectRaw('*,SUM(amount) as total_amount')->orderBy('total_amount', 'DESC')->take(6)->get();
         $widget['withdraw']['currency_count'] = (clone $withdraw)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('count');
         $widget['withdraw']['currency_symbol']  = (clone $withdraw)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('withdrawCurrency.symbol');
 
-        $p2ptrade                         = P2PTrade::query();
+        $p2ptrade                         = P2PTrade::query()->where('created_at', '>=', $current_month );
         $widget['p2p']['total_trade']     = (clone $p2ptrade)->count();
         $widget['p2p']['runing_trade']    = (clone $p2ptrade)->running()->count();
         $widget['p2p']['completed_trade'] = (clone $p2ptrade)->completed()->count();
-        $widget['p2p']['total_ad']        = Ad::count();
+        $widget['p2p']['total_ad']        = Ad::where('created_at', '>=', $current_month )->count();
 
         $deposits = Transaction::select(
             'users.firstname',
@@ -99,6 +101,7 @@ class AdminController extends Controller
         ->whereIn('remark', ['deposit', 'balance_add'])
         ->orderBy('transactions.created_at', 'desc')
         ->whereNull('users.deleted_at')
+        ->where('transactions.created_at', '>=', $current_month )
         ->limit(25)
         ->get();
 
@@ -117,13 +120,15 @@ class AdminController extends Controller
         ->where('remark', 'withdraw')
         ->whereNull('users.deleted_at')
         ->orderBy('transactions.created_at', 'desc')
+        ->where('transactions.created_at', '>=', $current_month )
         ->limit(25)
         ->get();
 
-        $notification_count = AdminNotification::where('is_read', Status::NO)->count();
+        $notification_count = AdminNotification::where('is_read', Status::NO)->where('created_at', '>=', $current_month )->count();
         
          // user Browsing, Country, Operating Log
-         $userLoginData = UserLogin::where('created_at', '>=', Carbon::now()->subDay(30))->get(['browser', 'os', 'country']);
+        //  $userLoginData = UserLogin::where('created_at', '>=', Carbon::now()->subDay(30))->get(['browser', 'os', 'country']);
+        $userLoginData = UserLogin::where('created_at', '>=', $current_month)->get(['browser', 'os', 'country']);
 
          $chart['user_browser_counter'] = $userLoginData->groupBy('browser')->map(function ($item, $key) {
              return collect($item)->count();
