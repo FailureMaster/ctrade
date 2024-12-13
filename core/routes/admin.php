@@ -170,6 +170,11 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
         Route::post('{user}', 'destroy')->name('delete');
         Route::post('bulk/update', 'bulkRecordUpdate')->name('bulk.record.update');
         Route::post('bulk/delete', 'bulkRecordDelete')->name('bulk.record.delete');
+
+        // All Leads
+        Route::get('online-leads', 'onlineLeads')->name('online.leads');
+
+        Route::post('bulk/export', 'bulkRecordExport')->name('bulk.record.export');
     });
 
     // Subscriber
