@@ -29,7 +29,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\User\StoreRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\User\SalesStatus\StoreRequest as SalesStatusStoreRequest;
+use Exception;
 use Illuminate\Validation\Rule;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class ManageUsersController extends Controller
 {
@@ -1160,6 +1162,57 @@ class ManageUsersController extends Controller
             return response()->json(['message' => 'Bulk delete failed'], 500);
         }
 
+
+        abort(403, 'Unauthorized');
+    }
+
+    public function onlineLeads( Request $request ){
+        $perPage = 25;
+
+        $pageTitle = "Online Leads";
+
+        $users = $this->userData('id', 'desc', $scope = null, $startDate = null, $endDate = null)->paginate($perPage);
+
+        return view('admin.reports.all_leads.index', compact('users', 'perPage', 'pageTitle'));
+    }
+
+    public function bulkRecordExport(Request $request){
+      
+        if ($request->ajax()) {
+
+            $data = $request->validate([
+                'ids' => ['required']
+            ]);
+
+            try{
+                $users = User::whereIn('id', $data['ids'])->get();
+
+                $fileName = 'users_' . now()->format('Y_m_d_H_i_s') . '.csv'; // Dynamic file name
+    
+                $filePath = storage_path("app/public/{$fileName}");
+    
+                $writer = SimpleExcelWriter::create($filePath, 'csv');
+
+                $users->each(function ($user) use ($writer) {
+                    $writer->addRow([
+                        'ID'            => $user->lead_code,
+                        'Type'          => $user->account_type,
+                        'First Name'    => $user->firstname,
+                        'last Name'     => $user->lastname,
+                        'Email'         => $user->email,
+                        'Mobile'        => $user->mobile,
+                        'Country'       => $user->country_code,
+                        'Registered'    => $user->created_at->format('Y-m-d H:i:s'),
+                        'lead_source'   => $user->lead_source
+                    ]);
+                });
+
+                return response()->download($filePath)->deleteFileAfterSend();
+            }
+            catch( Exception $e ){
+                return response()->json(['message' => 'Bulk export failed'], 500);
+            }
+        }
 
         abort(403, 'Unauthorized');
     }

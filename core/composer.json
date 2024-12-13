@@ -31,6 +31,7 @@
         "sendgrid/sendgrid": "^7.6",
         "simplito/elliptic-php": "^1.0",
         "spatie/laravel-ignition": "^1.6",
+        "spatie/simple-excel": "^3.2",
         "stripe/stripe-php": "^7.72",
         "textalk/websocket": "^1.6",
         "textmagic/sdk": "dev-master",

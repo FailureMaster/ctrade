@@ -171,7 +171,12 @@
                                 </div>
                             @endif
 
-
+                            @if (can_access('export-user'))
+                                <button class="btn btn-success btn-md export-action">
+                                    Export:
+                                    <span class="selected-leads-count text-white"></span>
+                                </button>
+                            @endif
 
                             @if (can_access('delete-user'))
                                 <button class="btn btn-danger btn-md ms-2 delete-action">
@@ -731,6 +736,7 @@
 
                     $('.bulk-action').toggle(selectedCount > 0);
                     $('.delete-action').toggle(selectedCount > 0);
+                    $('.export-action').toggle(selectedCount > 0);
                 }
 
                 updateSelectedCount();
@@ -806,32 +812,91 @@
                     });
                 });
 
-                $(document).on('click', '.delete-action', function() {
+                $(document).on('click', '.export-action', function() {
                     // Collect the IDs of the selected checkboxes
                     let selectedIds = [];
+
                     checkboxes.filter(':checked').each(function() {
                         selectedIds.push(parseInt($(this).val()));
                     });
 
-                    $.ajax({
-                        url: "{{ route('admin.users.bulk.record.delete') }}",
-                        type: 'POST',
-                        data: {
-                            ids: selectedIds,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            window.location.reload();
-
-                            iziToast['success']({
-                                message: 'deleted successful',
-                                position: 'topRight',
-                                displayMode: 1
+                    Swal.fire({
+                        target: document.getElementById('withdraw-offcanvas'),
+                        text: "Are you sure you want to export the selected user?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('admin.users.bulk.record.export') }}",
+                                type: 'POST',
+                                data: {
+                                    ids: selectedIds,
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                xhrFields: { responseType: 'blob' }, // Handle the binary file
+                                success: function (response, status, xhr) {
+                                    // Create a temporary download link
+                                    const blob = new Blob([response], { type: xhr.getResponseHeader('Content-Type') });
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = xhr.getResponseHeader('Content-Disposition').split('filename=')[1];
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                    window.URL.revokeObjectURL(url); // Clean up the URL
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error:', error);
+                                }
                             });
+                        }
+                    });
+                });
 
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Error:', error);
+                $(document).on('click', '.delete-action', function() {
+                    // Collect the IDs of the selected checkboxes
+                    let selectedIds = [];
+
+                    checkboxes.filter(':checked').each(function() {
+                        selectedIds.push(parseInt($(this).val()));
+                    });
+
+                    Swal.fire({
+                        target: document.getElementById('withdraw-offcanvas'),
+                        text: "Are you sure you want to delete the selected user?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Yes"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "{{ route('admin.users.bulk.record.delete') }}",
+                                type: 'POST',
+                                data: {
+                                    ids: selectedIds,
+                                    _token: "{{ csrf_token() }}"
+                                },
+                                success: function(response) {
+                                    window.location.reload();
+
+                                    iziToast['success']({
+                                        message: 'deleted successful',
+                                        position: 'topRight',
+                                        displayMode: 1
+                                    });
+
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error:', error);
+                                }
+                            });
                         }
                     });
                 });
@@ -868,7 +933,8 @@
         }
 
         .bulk-action,
-        .delete-action {
+        .delete-action,
+        .export-action {
             display: none;
         }
 
