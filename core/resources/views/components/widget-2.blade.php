@@ -18,9 +18,9 @@
         <i class="{{ $icon }}"></i>
     </div>
 
-    <div class="widget-two__content">
+    <div class="widget-two__content p-2">
         <h3>{{ $value }}</h3>
-        <p>{{ __($title) }}</p>
+        <p class="mx-1">{{ __($title) }}</p>
     </div>
 
     @if ($link)
