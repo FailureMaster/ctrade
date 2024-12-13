@@ -3,364 +3,404 @@
     <div class="row">
         <div class="col-12">
             @if ($user->account_type != 'demo')
-                <div class="row gy-4">
-
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-money-bill-wave-alt"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($widget['open_order']) }}</h3>
-                                <p class="text-white">@lang('Open Orders')</p>
+                <div class="row g-3 parent-row">
+                    <!-- Open Orders -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Open Orders')</p>
+                                <p class="text-dark mb-0">{{ getAmount($widget['open_order']) }}</p>
                             </div>
                             <a href="{{ route('admin.order.open') }}?user_id={{ $user->id }}"
-                                class="widget-two__btn">@lang('View All')</a>
+                                class="text-dark">@lang('View All')</a>
                         </div>
                     </div>
 
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($widget['canceled_order']) }}</h3>
-                                <p class="text-white">@lang('Closed Orders')</p>
+                    <!-- Closed Orders -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Closed Orders')</p>
+                                <p class="text-dark mb-0">{{ getAmount($widget['canceled_order']) }}</p>
                             </div>
                             <a href="{{ route('admin.order.close') }}?user_id={{ $user->id }}"
-                                class="widget-two__btn">@lang('View All')</a>
+                                class="text-dark">@lang('View All')</a>
                         </div>
                     </div>
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($widget['total_deposit']) }}</h3>
-                                <p class="text-white">@lang('Total Deposit')</p>
+
+                    <!-- Total Deposit -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Total Deposit')</p>
+                                <p class="text-dark mb-0">{{ getAmount($widget['total_deposit']) }}</p>
                             </div>
                             <a href="{{ route('admin.deposit.list') }}?user_email={{ $user->email }}"
-                                class="widget-two__btn">@lang('View All')</a>
+                                class="text-dark">@lang('View All')</a>
                         </div>
                     </div>
-                    <div class="col-xxl-3 col-sm-6">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-exchange-alt"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($widget['total_transaction']) }}</h3>
-                                <p class="text-white">@lang('Log History')</p>
+
+                    <!-- Log History -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Log History')</p>
+                                <p class="text-dark mb-0">{{ getAmount($widget['total_transaction']) }}</p>
                             </div>
                             <a href="{{ route('admin.report.transaction') }}?search={{ $user->email }}"
-                                class="widget-two__btn">@lang('View All')</a>
+                                class="text-dark">@lang('View All')</a>
+                        </div>
+                    </div>
+
+                    <!-- Balance -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Balance')</p>
+                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equity -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                {{-- <p class="text-white mb-0">500.00 USD</p> --}}
+                                <p class="text-dark mb-0 px-2">@lang('Equity')</p>
+                                <p class="text-dark admin-equity-val">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- P/L -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                {{-- <p class="text-white mb-0">-70.90 USD</p> --}}
+                                <p class="text-dark mb-0 px-2">@lang('P/L')</p>
+                                <p class="text-dark admin-pl-val">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Used Margin -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                {{-- <p class="text-white mb-0">{{ getAmount($requiredMarginTotal) }}</p> --}}
+                                <p class="text-dark mb-0 px-2">@lang('Used Margin')</p>
+                                <p class="text-dark admin-used-margin-val">{{ getAmount($requiredMarginTotal) }} $</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Free Margin -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                {{-- <p class="text-white mb-0">0</p> --}}
+                                <p class="text-dark mb-0 px-2">@lang('Free Margin')</p>
+                                <p class="text-dark admin-free-margin-val">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bonus -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Bonus')</p>
+                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                <p class="text-dark mb-0 px-2">@lang('Credit')</p>
+                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Margin Level -->
+                    <div class="col-md-3">
+                        <div
+                            class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
+                            <div class="d-flex align-items-center">
+                                {{-- <p class="text-white mb-0">1623.53%</p> --}}
+                                <p class="text-dark mb-0 px-2">@lang('Margin Level')</p>
+                                <p class="text-dark admin-user_margin_level">0</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row gy-4 mt-1">
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}</h3>
-                                <p class="text-white">@lang('Balance')</p>
-                            </div>
-                        </div>
+
+        </div>
+        {{-- <div class="row gy-4">
+            <div class="col-xxl-3 col-sm-6">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-money-bill-wave-alt"></i>
                     </div>
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white admin-equity-val">0</h3>
-                                <p class="text-white">@lang('Equity')</p>
-                            </div>
-                        </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($widget['open_order']) }}</h3>
+                        <p class="text-white">@lang('Open Orders')</p>
                     </div>
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white admin-pl-val">0</h3>
-                                <p class="text-white">@lang('P/L')</p>
-                            </div>
-                        </div>
+                    <a href="{{ route('admin.order.open') }}?user_id={{ $user->id }}"
+                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+            </div>
+
+            <div class="col-xxl-3 col-sm-6">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
                     </div>
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white admin-used-margin-val">{{ getAmount($requiredMarginTotal) }}</h3>
-                                <p class="text-white">@lang('Used Margin')</p>
-                            </div>
-                        </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($widget['canceled_order']) }}</h3>
+                        <p class="text-white">@lang('Closed Orders')</p>
+                    </div>
+                    <a href="{{ route('admin.order.close') }}?user_id={{ $user->id }}"
+                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-sm-6">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($widget['total_deposit']) }}</h3>
+                        <p class="text-white">@lang('Total Deposit')</p>
+                    </div>
+                    <a href="{{ route('admin.deposit.list') }}?user_email={{ $user->email }}"
+                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-sm-6">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-exchange-alt"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($widget['total_transaction']) }}</h3>
+                        <p class="text-white">@lang('Log History')</p>
+                    </div>
+                    <a href="{{ route('admin.report.transaction') }}?search={{ $user->email }}"
+                        class="widget-two__btn">@lang('View All')</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row gy-4 mt-1">
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--19">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}</h3>
+                        <p class="text-white">@lang('Balance')</p>
                     </div>
                 </div>
-                <div class="row gy-4 mt-1">
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white admin-free-margin-val">0</h3>
-                                <p class="text-white">@lang('Free Margin')</p>
-                            </div>
-                        </div>
+            </div>
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--primary">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
                     </div>
-
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}</h3>
-                                <p class="text-white">@lang('Bonus')</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}</h3>
-                                <p class="text-white">@lang('Credit')</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
-                            <div class="widget-two__icon b-radius--5 bg--primary">
-                                <i class="las la-wallet"></i>
-                            </div>
-                            <div class="widget-two__content">
-                                <h3 class="text-white admin-user_margin_level">0</h3>
-                                <p class="text-white">@lang('Margin Level')</p>
-                            </div>
-                        </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white admin-equity-val">0</h3>
+                        <p class="text-white">@lang('Equity')</p>
                     </div>
                 </div>
-
-                <div class="d-flex flex-wrap gap-3 mt-4">
-                    @if (can_access('add-remove-user-balance'))
-                        <div class="flex-fill">
-                            <button data-bs-toggle="modal" data-bs-target="#addSubModal"
-                                class="btn btn--success btn--shadow w-100 btn-lg bal-btn" data-act="add"
-                                {{ can_access('add-remove-user-balance') }}>
-                                <i class="las la-plus-circle"></i> @lang('Balance')
-                            </button>
-                        </div>
-                    @endif
-                    @if (can_access('add-remove-user-balance'))
-                        <div class="flex-fill">
-                            <button data-bs-toggle="modal" data-bs-target="#addSubModal"
-                                class="btn btn--danger btn--shadow w-100 btn-lg bal-btn" data-act="sub">
-                                <i class="las la-minus-circle"></i> @lang('Balance')
-                            </button>
-                        </div>
-                    @endif
-
-                    <div class="flex-fill">
-                        <a href="{{ route('admin.report.login.history') }}?lead_code={{ $user->lead_code }}"
-                            class="btn btn--primary btn--shadow w-100 btn-lg">
-                            <i class="las la-list-alt"></i>@lang('Logins')
-                        </a>
+            </div>
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--1">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
                     </div>
-
-                    <div class="flex-fill">
-                        <a href="{{ route('admin.users.notification.log', $user->id) }}"
-                            class="btn btn--secondary btn--shadow w-100 btn-lg">
-                            <i class="las la-bell"></i>@lang('Notifications')
-                        </a>
+                    <div class="widget-two__content">
+                        <h3 class="text-white admin-pl-val">0</h3>
+                        <p class="text-white">@lang('P/L')</p>
                     </div>
-
-                    <div class="flex-fill">
-                        <a href="{{ route('admin.users.login', $user->id) }}" target="_blank"
-                            class="btn btn--primary btn--gradi btn--shadow w-100 btn-lg">
-                            <i class="las la-sign-in-alt"></i>@lang('Login as User')
-                        </a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
                     </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white admin-used-margin-val">{{ getAmount($requiredMarginTotal) }}</h3>
+                        <p class="text-white">@lang('Used Margin')</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row gy-4 mt-1">
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white admin-free-margin-val">0</h3>
+                        <p class="text-white">@lang('Free Margin')</p>
+                    </div>
+                </div>
+            </div>
 
-                    @if ($user->kyc_data)
-                        <div class="flex-fill">
-                            <a href="{{ route('admin.users.kyc.details', $user->id) }}" target="_blank"
-                                class="btn btn--dark btn--shadow w-100 btn-lg">
-                                <i class="las la-user-check"></i>@lang('KYC Data')
-                            </a>
-                        </div>
-                    @endif
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}</h3>
+                        <p class="text-white">@lang('Bonus')</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}</h3>
+                        <p class="text-white">@lang('Credit')</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="widget-two style--two box--shadow2 b-radius--5 bg--17">
+                    <div class="widget-two__icon b-radius--5 bg--primary">
+                        <i class="las la-wallet"></i>
+                    </div>
+                    <div class="widget-two__content">
+                        <h3 class="text-white admin-user_margin_level">0</h3>
+                        <p class="text-white">@lang('Margin Level')</p>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
 
-                    @if (can_access('banned-user'))
-                        <div class="flex-fill">
-                            @if ($user->status == Status::USER_ACTIVE)
-                                <button type="button"
-                                    class="btn btn--warning btn--gradi btn--shadow w-100 btn-lg userStatus"
-                                    data-bs-toggle="modal" data-bs-target="#userStatusModal">
-                                    <i class="las la-ban"></i>@lang('Ban User')
-                                </button>
-                            @else
-                                <button type="button"
-                                    class="btn btn--success btn--gradi btn--shadow w-100 btn-lg userStatus"
-                                    data-bs-toggle="modal" data-bs-target="#userStatusModal">
-                                    <i class="las la-undo"></i>@lang('Unban User')
-                                </button>
-                            @endif
-                        </div>
-                    @endif
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            @if (can_access('add-remove-user-balance'))
+                <div class="flex-fill">
+                    <button data-bs-toggle="modal" data-bs-target="#addSubModal"
+                        class="btn btn--success btn--shadow w-100 btn-lg bal-btn" data-act="add"
+                        {{ can_access('add-remove-user-balance') }}>
+                        <i class="las la-plus-circle"></i> @lang('Balance')
+                    </button>
+                </div>
+            @endif
+            @if (can_access('add-remove-user-balance'))
+                <div class="flex-fill">
+                    <button data-bs-toggle="modal" data-bs-target="#addSubModal"
+                        class="btn btn--danger btn--shadow w-100 btn-lg bal-btn" data-act="sub">
+                        <i class="las la-minus-circle"></i> @lang('Balance')
+                    </button>
                 </div>
             @endif
 
+            <div class="flex-fill">
+                <a href="{{ route('admin.report.login.history') }}?lead_code={{ $user->lead_code }}"
+                    class="btn btn--primary btn--shadow w-100 btn-lg">
+                    <i class="las la-list-alt"></i>@lang('Logins')
+                </a>
+            </div>
 
-            <div class="card @if ($user->account_type != 'demo') mt-30 @else mt-15 @endif">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">@lang('Information of') {{ $user->fullname }}</h5>
+            <div class="flex-fill">
+                <a href="{{ route('admin.users.notification.log', $user->id) }}"
+                    class="btn btn--secondary btn--shadow w-100 btn-lg">
+                    <i class="las la-bell"></i>@lang('Notifications')
+                </a>
+            </div>
+
+            <div class="flex-fill">
+                <a href="{{ route('admin.users.login', $user->id) }}" target="_blank"
+                    class="btn btn--primary btn--gradi btn--shadow w-100 btn-lg">
+                    <i class="las la-sign-in-alt"></i>@lang('Login as User')
+                </a>
+            </div>
+
+            @if ($user->kyc_data)
+                <div class="flex-fill">
+                    <a href="{{ route('admin.users.kyc.details', $user->id) }}" target="_blank"
+                        class="btn btn--dark btn--shadow w-100 btn-lg">
+                        <i class="las la-user-check"></i>@lang('KYC Data')
+                    </a>
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('admin.users.update', [$user->id]) }}" method="POST"
-                        enctype="multipart/form-data">
-                        @csrf
+            @endif
 
-                        <div class="row">
-                            <div class="col-md-12 @if ($user->account_type == 'demo') d-flex @endif">
+            @if (can_access('banned-user'))
+                <div class="flex-fill">
+                    @if ($user->status == Status::USER_ACTIVE)
+                        <button type="button" class="btn btn--warning btn--gradi btn--shadow w-100 btn-lg userStatus"
+                            data-bs-toggle="modal" data-bs-target="#userStatusModal">
+                            <i class="las la-ban"></i>@lang('Ban User')
+                        </button>
+                    @else
+                        <button type="button" class="btn btn--success btn--gradi btn--shadow w-100 btn-lg userStatus"
+                            data-bs-toggle="modal" data-bs-target="#userStatusModal">
+                            <i class="las la-undo"></i>@lang('Unban User')
+                        </button>
+                    @endif
+                </div>
+            @endif
+        </div>
+        @endif
 
-                                <div class="form-group" @if ($user->account_type == 'demo') style="width:90%;" @endif>
-                                    <label>@lang('ID')</label>
-                                    <input class="form-control" type="text" name="lead_code"
-                                        value="{{ $user->lead_code }}" readonly>
-                                </div>
-                                @if ($user->account_type == 'demo')
-                                    <div class="form-group" style="width:10%;">
-                                        <label>@lang('Lead Type')</label>
-                                        <select name="lead_type" class="form-control">
-                                            <option value="demo">Demo</option>
-                                            <option value="real">Real</option>
-                                        </select>
-                                    </div>
-                                @endif
+
+        <div class="card @if ($user->account_type != 'demo') mt-30 @else mt-15 @endif">
+            {{-- <div class="card-header">
+                <h5 class="card-title mb-0">@lang('Information of') {{ $user->fullname }}</h5>
+            </div> --}}
+            <div class="card-body">
+                <form action="{{ route('admin.users.update', [$user->id]) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="row">
+                        <div class="col-md-4 @if ($user->account_type == 'demo') d-flex @endif">
+
+                            <div class="form-group" @if ($user->account_type == 'demo') style="width:75%;" @endif>
+                                <label>@lang('ID')</label>
+                                <input class="form-control" type="text" name="lead_code"
+                                    value="{{ $user->lead_code }}" readonly>
                             </div>
 
-                            <div class="col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group ">
-                                    <label>@lang('First Name')</label>
-                                    <input class="form-control" type="text" name="firstname" required
-                                        value="{{ $user->firstname }}">
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-control-label">@lang('Last Name')</label>
-                                    <input class="form-control" type="text" name="lastname" required
-                                        value="{{ $user->lastname }}">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('Password') </label>
-                                    <input class="form-control" type="password" name="password">
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('Email') </label>
-                                    <input class="form-control" type="email" name="email"
-                                        value="{{ $user->email }}" required>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('Mobile Number') </label>
-                                    {{-- <div class="input-group ">
-                                    <span class="input-group-text mobile-code"></span>
-                                    <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
-                                        class="form-control checkUser" required>
-                                </div> --}}
-                                    <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
-                                        class="form-control checkUser" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('Source') </label>
-                                    <input class="form-control" type="source" name="source"
-                                        value="{{ $user->lead_source }}">
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="row mt-4">
-                            <div class="col-md-12">
-                                <div class="form-group ">
-                                    <label>@lang('Address')</label>
-                                    <input class="form-control" type="text" name="address"
-                                        value="{{ @$user->address->address }}">
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6">
-                                <div class="form-group">
-                                    <label>@lang('City')</label>
-                                    <input class="form-control" type="text" name="city"
-                                        value="{{ @$user->address->city }}">
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6">
-                                <div class="form-group ">
-                                    <label>@lang('State')</label>
-                                    <input class="form-control" type="text" name="state"
-                                        value="{{ @$user->address->state }}">
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6">
-                                <div class="form-group ">
-                                    <label>@lang('Zip/Postal')</label>
-                                    <input class="form-control" type="text" name="zip"
-                                        value="{{ @$user->address->zip }}">
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6">
-                                <div class="form-group ">
-                                    <label>@lang('Country')</label>
-                                    <select name="country" class="form-control">
-                                        @foreach ($countries as $key => $country)
-                                            <option data-mobile_code="{{ $country->dial_code }}"
-                                                value="{{ $key }}">{{ __($country->country) }}</option>
-                                        @endforeach
+                            @if ($user->account_type == 'demo')
+                                <div class="form-group" style="width:25%; margin-left:1rem;">
+                                    <label>@lang('Lead Type')</label>
+                                    <select name="lead_type" class="form-control">
+                                        <option value="demo">Demo</option>
+                                        <option value="real">Real</option>
                                     </select>
                                 </div>
-                            </div>
+                            @endif
                         </div>
-                        <div class="row">
-                            <div class="form-group  col-xl-12 col-md-12 col-12">
+
+                        <div class="col-md-2">
+                            <div class="form-group">
                                 <label>@lang('Status')</label>
                                 <select class="form-control" name="status" id="userStatusInline"
                                     value="{{ $user->sales_status }}">
@@ -370,148 +410,257 @@
                                             {{ $status == $user->sales_status ? 'selected' : '' }}>
                                             {{ $status }}</option>
                                     @endforeach
-                                    <!-- <option value="NEW">NEW</option>
-                                    <option value="CALLBACK">CALLBACK</option>
-                                    <option value="NA">NA</option>
-                                    <option value="UNDER_AGE">UNDER_AGE</option>
-                                    <option value="DENY_REGISTRATION">DENY_REGISTRATION</option>
-                                    <option value="DEPOSIT">DEPOSIT</option>
-                                    <option value="NOT_INTERESTED">NOT_INTERESTED</option>
-                                    <option value="VOICE_MAIL">VOICE_MAIL</option> -->
                                 </select>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="form-group col-xl-12 col-md-12 col-12">
-                                <label for="userComment" class="col-form-label">Comment:</label>
-                                <textarea class="form-control" placeholder="@lang('Comment')" name="comment" type="text" rows="4"
-                                    id="userComment"></textarea>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@lang('Password') </label>
+                                <input class="form-control" type="password" name="password">
                             </div>
+                        </div>
 
-                            <div class="form-group col-xl-12 col-md-12 col-12">
-                                <label for="userComment" class="col-form-label">Comment History:</label>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@lang('Source') </label>
+                                <input class="form-control" type="source" name="source"
+                                    value="{{ $user->lead_source }}">
+                            </div>
+                        </div>
+                    </div>
 
-                                <div>
-                                    <ul class="list-group">
-                                        @foreach ($user->comments->sortByDesc('created_at') as $comment)
-                                            <li class="list-group-item">
-                                                <div class="d-flex justify-content-between">
-                                                    <div class="flex-grow-1">
-                                                        {{ $comment->comment ?? '-' }}
-                                                    </div>
-                                                    <div class="d-flex justify-content-end"
-                                                        style="width: 250px; flex-shrink: 0">
-                                                        <small>
-                                                            <i class="fas fa-user"></i>
-                                                            {{ $comment?->commentor?->username }}
-                                                        </small>
-                                                        <small class="mx-2">
-                                                            <i class="fas fa-calendar"></i>
-                                                            {{ $comment->formatted_date }}
-                                                        </small>
-                                                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group ">
+                                <label>@lang('First Name')</label>
+                                <input class="form-control" type="text" name="firstname" required
+                                    value="{{ $user->firstname }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-control-label">@lang('Last Name')</label>
+                                <input class="form-control" type="text" name="lastname" required
+                                    value="{{ $user->lastname }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@lang('Email') </label>
+                                <input class="form-control" type="email" name="email" value="{{ $user->email }}"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@lang('Mobile Number') </label>
+                                {{-- <div class="input-group ">
+                                    <span class="input-group-text mobile-code"></span>
+                                    <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
+                                        class="form-control checkUser" required>
+                                </div> --}}
+                                <input type="tel" name="mobile" value="{{ old('mobile') }}" id="mobile"
+                                    class="form-control checkUser" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="form-group ">
+                                <label>@lang('Address')</label>
+                                <input class="form-control" type="text" name="address"
+                                    value="{{ @$user->address->address }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>@lang('City')</label>
+                                <input class="form-control" type="text" name="city"
+                                    value="{{ @$user->address->city }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group ">
+                                <label>@lang('State')</label>
+                                <input class="form-control" type="text" name="state"
+                                    value="{{ @$user->address->state }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group ">
+                                <label>@lang('Zip/Postal')</label>
+                                <input class="form-control" type="text" name="zip"
+                                    value="{{ @$user->address->zip }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group ">
+                                <label>@lang('Country')</label>
+                                <select name="country" class="form-control">
+                                    @foreach ($countries as $key => $country)
+                                        <option data-mobile_code="{{ $country->dial_code }}"
+                                            value="{{ $key }}">{{ __($country->country) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <div class="row">
+                        <div class="form-group  col-xl-12 col-md-12 col-12">
+                            <label>@lang('Status')</label>
+                            <select class="form-control" name="status" id="userStatusInline"
+                                value="{{ $user->sales_status }}">
+                                <option disabled>@lang('Select One')</option>
+                                @foreach (STATUS_OPTIONS as $status)
+                                    <option value="{{ $status }}"
+                                        {{ $status == $user->sales_status ? 'selected' : '' }}>
+                                        {{ $status }}</option>
+                                @endforeach
+                                <!-- <option value="NEW">NEW</option>
+                                                                                                                                                                                                                    <option value="CALLBACK">CALLBACK</option>
+                                                                                                                                                                                                                    <option value="NA">NA</option>
+                                                                                                                                                                                                                    <option value="UNDER_AGE">UNDER_AGE</option>
+                                                                                                                                                                                                                    <option value="DENY_REGISTRATION">DENY_REGISTRATION</option>
+                                                                                                                                                                                                                    <option value="DEPOSIT">DEPOSIT</option>
+                                                                                                                                                                                                                    <option value="NOT_INTERESTED">NOT_INTERESTED</option>
+                                                                                                                                                                                                                    <option value="VOICE_MAIL">VOICE_MAIL</option> -->
+                            </select>
+                        </div>
+                    </div> --}}
+
+                    <div class="row">
+                        <div class="form-group col-xl-12 col-md-12 col-12">
+                            <label for="userComment" class="col-form-label">Comment:</label>
+                            <textarea class="form-control" placeholder="@lang('Comment')" name="comment" type="text" rows="4"
+                                id="userComment"></textarea>
+                        </div>
+
+                        <div class="form-group col-xl-12 col-md-12 col-12">
+                            <label for="userComment" class="col-form-label">Comment History:</label>
+
+                            <div>
+                                <ul class="list-group">
+                                    @foreach ($user->comments->sortByDesc('created_at') as $comment)
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="flex-grow-1">
+                                                    {{ $comment->comment ?? '-' }}
                                                 </div>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                                <div class="d-flex justify-content-end"
+                                                    style="width: 250px; flex-shrink: 0">
+                                                    <small>
+                                                        <i class="fas fa-user"></i>
+                                                        {{ $comment?->commentor?->username }}
+                                                    </small>
+                                                    <small class="mx-2">
+                                                        <i class="fas fa-calendar"></i>
+                                                        {{ $comment->formatted_date }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @if (can_access('email-verification'))
+                            <div class="form-group  col-xl-3 col-md-6 col-12">
+                                <label>@lang('Email Verification')</label>
+                                <input type="checkbox" data-width="100%" data-onstyle="-success" data-offstyle="-danger"
+                                    data-bs-toggle="toggle" data-on="@lang('Verified')" data-off="@lang('Unverified')"
+                                    name="ev" @if ($user->ev) checked @endif>
+                            </div>
+                        @else
+                            <div class="form-group col-xl-3 col-md-6 col-12">
+                                <label>@lang('Email Verification')</label>
+                                <input type="checkbox" data-width="100%" data-onstyle="-success" data-offstyle="-danger"
+                                    data-bs-toggle="toggle" data-on="@lang('Verified')" data-off="@lang('Unverified')"
+                                    name="ev" @if ($user->ev) checked @endif disabled
+                                    class="checkbox-disabled">
+                            </div>
+                        @endif
+
+                        @if (can_access('mobile-verification'))
+                            <div class="form-group  col-xl-3 col-md-6 col-12">
+                                <label>@lang('Mobile Verification')</label>
+                                <input type="checkbox" data-width="100%" data-onstyle="-success" data-offstyle="-danger"
+                                    data-bs-toggle="toggle" data-on="@lang('Verified')" data-off="@lang('Unverified')"
+                                    name="sv" @if ($user->sv) checked @endif>
+                            </div>
+                        @else
+                            <div class="form-group col-xl-3 col-md-6 col-12">
+                                <label>@lang('Mobile Verification')</label>
+                                <input type="checkbox" data-width="100%" data-onstyle="-success" data-offstyle="-danger"
+                                    data-bs-toggle="toggle" data-on="@lang('Verified')" data-off="@lang('Unverified')"
+                                    name="sv" @if ($user->sv) checked @endif disabled
+                                    class="checkbox-disabled">
+                            </div>
+                        @endif
+
+                        @if (can_access('2fa-verification'))
+                            <div class="form-group col-xl-3 col-md- col-12">
+                                <label>@lang('2FA Verification') </label>
+                                <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
+                                    data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Enable')"
+                                    data-off="@lang('Disable')" name="ts"
+                                    @if ($user->ts) checked @endif>
+                            </div>
+                        @else
+                            <div class="form-group col-xl-3 col-md- col-12">
+                                <label>@lang('2FA Verification')</label>
+                                <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
+                                    data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Enable')"
+                                    data-off="@lang('Disable')" name="ts"
+                                    @if ($user->ts) checked @endif disabled class="checkbox-disabled">
+                            </div>
+                        @endif
+
+                        @if (can_access('kyc-verification'))
+                            <div class="form-group col-xl-3 col-md- col-12">
+                                <label>@lang('KYC') </label>
+                                <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
+                                    data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
+                                    data-off="@lang('Unverified')" name="kv"
+                                    @if ($user->kv == 1) checked @endif>
+                            </div>
+                        @else
+                            <div class="form-group col-xl-3 col-md- col-12">
+                                <label>@lang('KYC')</label>
+                                <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
+                                    data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
+                                    data-off="@lang('Unverified')" name="kv"
+                                    @if ($user->kv == 1) checked @endif disabled class="checkbox-disabled">
+                            </div>
+                        @endif
+                    </div>
+
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')
+                                </button>
                             </div>
                         </div>
 
-                        <div class="row">
-                            @if (can_access('email-verification'))
-                                <div class="form-group  col-xl-3 col-md-6 col-12">
-                                    <label>@lang('Email Verification')</label>
-                                    <input type="checkbox" data-width="100%" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
-                                        data-off="@lang('Unverified')" name="ev"
-                                        @if ($user->ev) checked @endif>
-                                </div>
-                            @else
-                                <div class="form-group col-xl-3 col-md-6 col-12">
-                                    <label>@lang('Email Verification')</label>
-                                    <input type="checkbox" data-width="100%" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
-                                        data-off="@lang('Unverified')" name="ev"
-                                        @if ($user->ev) checked @endif disabled
-                                        class="checkbox-disabled">
-                                </div>
-                            @endif
-
-                            @if (can_access('mobile-verification'))
-                                <div class="form-group  col-xl-3 col-md-6 col-12">
-                                    <label>@lang('Mobile Verification')</label>
-                                    <input type="checkbox" data-width="100%" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
-                                        data-off="@lang('Unverified')" name="sv"
-                                        @if ($user->sv) checked @endif>
-                                </div>
-                            @else
-                                <div class="form-group col-xl-3 col-md-6 col-12">
-                                    <label>@lang('Mobile Verification')</label>
-                                    <input type="checkbox" data-width="100%" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
-                                        data-off="@lang('Unverified')" name="sv"
-                                        @if ($user->sv) checked @endif disabled
-                                        class="checkbox-disabled">
-                                </div>
-                            @endif
-
-                            @if (can_access('2fa-verification'))
-                                <div class="form-group col-xl-3 col-md- col-12">
-                                    <label>@lang('2FA Verification') </label>
-                                    <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Enable')"
-                                        data-off="@lang('Disable')" name="ts"
-                                        @if ($user->ts) checked @endif>
-                                </div>
-                            @else
-                                <div class="form-group col-xl-3 col-md- col-12">
-                                    <label>@lang('2FA Verification')</label>
-                                    <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Enable')"
-                                        data-off="@lang('Disable')" name="ts"
-                                        @if ($user->ts) checked @endif disabled
-                                        class="checkbox-disabled">
-                                </div>
-                            @endif
-
-                            @if (can_access('kyc-verification'))
-                                <div class="form-group col-xl-3 col-md- col-12">
-                                    <label>@lang('KYC') </label>
-                                    <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
-                                        data-off="@lang('Unverified')" name="kv"
-                                        @if ($user->kv == 1) checked @endif>
-                                </div>
-                            @else
-                                <div class="form-group col-xl-3 col-md- col-12">
-                                    <label>@lang('KYC')</label>
-                                    <input type="checkbox" data-width="100%" data-height="50" data-onstyle="-success"
-                                        data-offstyle="-danger" data-bs-toggle="toggle" data-on="@lang('Verified')"
-                                        data-off="@lang('Unverified')" name="kv"
-                                        @if ($user->kv == 1) checked @endif disabled
-                                        class="checkbox-disabled">
-                                </div>
-                            @endif
-                        </div>
-
-
-                        <div class="row mt-4">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn--primary w-100 h-45">@lang('Submit')
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
-
         </div>
+
+    </div>
     </div>
 
 
@@ -613,7 +762,7 @@
                             @else
                                 <p><span>@lang('Ban reason was'):</span></p>
                                 <p>{{ $user->ban_reason }}</p>
-                                <h4 class="text-center mt-3">@lang('Are you sure to unban this user?')</h4>
+                                <p class="text-center mt-3">@lang('Are you sure to unban this user?')</p>
                             @endif
                         </div>
                         <div class="modal-footer">
@@ -633,7 +782,10 @@
 @endsection
 
 @push('breadcrumb-plugins')
-    @if (request()->query('back') == 'leads' || request()->query('back') == 'active')
+    @php
+        $account_type = request()->input('account_type');
+    @endphp
+    @if ( $account_type == 'users' )
         <a href="{{ route('admin.users.all', ['filter' => 'all_time']) }}" class="btn btn-outline--primary mx-2">
             <i class="las la-list"></i>@lang('Leads List')
         </a>
@@ -676,6 +828,21 @@
             /* Prevents interaction */
             opacity: 0.6;
             /* Makes it look disabled */
+        }
+
+        .bg--primary1{
+            background-color:#ffffff;
+            color: black;
+        }
+
+        .parent-row p,
+        .parent-row a{
+            font-size:18px !important;
+            color: #5b6e88 !important;
+        }
+
+        .parent-row p label{
+            font-size: 18px !important;
         }
     </style>
 @endpush
@@ -823,13 +990,22 @@
 
                         // free_margin = equity - Math.abs(pl) - resp.totalRequiredMargin;
                         free_margin = equity - resp.totalRequiredMargin;
-                        document.querySelector(".admin-free-margin-val").innerText =
-                            `${formatWithPrecision1(free_margin)} USD`;
+                        // document.querySelector(".admin-free-margin-val").innerText =
+                        //     `${formatWithPrecision1(free_margin)} USD`;
+
+                        $(".admin-free-margin-val").text(`${formatWithPrecision1(free_margin)} $`);
 
                         // $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
                         $('.admin-equity-val').html(
-                            `${formatWithPrecision1(Number(resp.wallet.balance) + bonus + credit)} USD`);
-                        $('.admin-pl-val').html(`${formatWithPrecision1(pl)} USD`);
+                            `${formatWithPrecision1(Number(resp.wallet.balance) + bonus + credit)} $`);
+
+                        let plClass = "text-success";
+
+                        if( pl < 0 ){
+                            plClass = "text-danger";
+                        }
+
+                        $('.admin-pl-val').html(`<label class="${plClass}">${formatWithPrecision1(pl)} $</label>`);
                         $('.admin-user_margin_level').html(`${formatWithPrecision1(margin_level)} %`);
 
                     },
