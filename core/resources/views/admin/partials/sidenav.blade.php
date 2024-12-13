@@ -595,6 +595,16 @@
                                         </a>
                                     </li>
                                 @endif
+
+                                {{-- @if (can_access('logins')) --}}
+                                    <li class="sidebar-menu-item {{ menuActive(['']) }}">
+                                        <a href="{{ route('admin.users.online.leads') }}"
+                                            class="nav-link">
+                                            <i class="menu-icon las la-dot-circle"></i>
+                                            <span class="menu-title">@lang('Online Leads')</span>
+                                        </a>
+                                    </li>
+                                {{-- @endif --}}
                             </ul>
                         </div>
                     </li>
