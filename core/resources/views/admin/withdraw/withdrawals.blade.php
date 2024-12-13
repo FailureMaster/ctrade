@@ -113,8 +113,8 @@
                                     </td>
                                     <td>
                                         <span class="fw-bold">{{ $withdraw?->user?->fullname }}</span>
-                                        <br>
-                                        <span class="small"> <a href="{{ appendQuery('search',@$withdraw?->user?->username) }}"><span>@</span>{{ $withdraw?->user?->username }}</a> </span>
+                                        {{-- <br> --}}
+                                        {{-- <span class="small"> <a href="{{ appendQuery('search',@$withdraw?->user?->username) }}"><span>@</span>{{ $withdraw?->user?->username }}</a> </span> --}}
                                     </td>
                                     <td>
                                         {{ $withdraw->user->email }}
