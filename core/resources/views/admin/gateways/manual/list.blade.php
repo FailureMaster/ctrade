@@ -43,16 +43,20 @@
                                         <a href="{{ route('admin.gateway.manual.edit', $gateway->alias) }}" class="btn btn-sm btn-outline--primary editGatewayBtn mx-1">
                                             <i class="la la-pencil"></i> @lang('Edit')
                                         </a>
-
-                                        @if($gateway->status == Status::DISABLE)
-                                            <button class="btn btn-sm btn-outline--success confirmationBtn" data-question="@lang('Are you sure to enable this gateway?')" data-action="{{ route('admin.gateway.manual.status',$gateway->id) }}">
-                                                <i class="la la-eye"></i> @lang('Enable')
-                                            </button>
-                                        @else
-                                            <button class="btn btn-sm btn-outline--danger confirmationBtn" data-question="@lang('Are you sure to disable this gateway?')" data-action="{{ route('admin.gateway.manual.status',$gateway->id) }}">
-                                                <i class="la la-eye-slash"></i> @lang('Disable')
-                                            </button>
-                                        @endif
+                                       <div>
+                                            <form action="{{ route('admin.gateway.manual.status',$gateway->id) }}" method="POST">
+                                                @csrf
+                                                @if($gateway->status == Status::DISABLE)
+                                                    <button type="button" class="btn btn-sm btn-outline--success btnConfirmation" data-id="{{$gateway->id}}" data-question="@lang('Are you sure to enable this gateway?')" data-action="{{ route('admin.gateway.manual.status',$gateway->id) }}">
+                                                        <i class="la la-eye"></i> @lang('Enable')
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-outline--danger btnConfirmation" data-id="{{$gateway->id}}" data-question="@lang('Are you sure to disable this gateway?')" data-action="{{ route('admin.gateway.manual.status',$gateway->id) }}">
+                                                        <i class="la la-eye-slash"></i> @lang('Disable')
+                                                    </button>
+                                                @endif
+                                            </form>
+                                        </div> 
                                     </td>
                                 </tr>
                             @empty
@@ -166,6 +170,26 @@
                           },
                           complete: function(response) {}
                       });
+                  }
+              });
+          });
+
+          $(document).on('click', '.btnConfirmation', function() {
+              
+              let url       = $(this).attr('data-action');
+              let question  = $(this).attr('data-question');
+              let parent    = $(this).parent('form');
+
+              Swal.fire({
+                  text: question,
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#d33",
+                  confirmButtonText: "Yes"
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                    $(parent).submit();
                   }
               });
           });
