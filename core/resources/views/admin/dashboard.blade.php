@@ -5,21 +5,21 @@
 @if(can_access('manage-users'))
 <div class="row mb-none-30 mb-3 align-items-center gy-4">
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'all_time']) }}" icon="las la-users f-size--56" icon_style="false"
+        <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'all_time']) }}" icon="las la-users " icon_style="false"
             title="Total Lead" value="{{$widget['total_users']}}" color="primary" />
     </div><!-- dashboard-w1 end -->
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.users.active', ['filter' => 'all_time'])}}" icon="las la-user-check f-size--56"
+        <x-widget style="2" link="{{route('admin.users.active', ['filter' => 'all_time'])}}" icon="las la-user-check "
             title="Active Users" icon_style="false" value="{{$widget['verified_users']}}" color="success" />
     </div>
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'all_time'])}}" icon="lar la-envelope f-size--56"
+        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'all_time'])}}" icon="lar la-envelope "
             icon_style="false" title="Email Unverified Users" value="{{$widget['email_unverified_users']}}"
             color="danger" />
     </div>
     <div class="col-xxl-3 col-sm-6">
         <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'all_time'])}}"
-            icon="las la-comment-slash f-size--56" title="Mobile Unverified Users"
+            icon="las la-comment-slash " title="Mobile Unverified Users"
             value="{{$widget['mobile_unverified_users']}}" color="red" />
     </div>
 </div>
@@ -194,7 +194,8 @@
 <div class="row mb-none-30 mt-5">
     <div class="col-xl-4 col-lg-6 mb-30">
         <div class="card d-flex flex-column align-items-center justify-content-center pt-4">
-            <h5 class="card-title">@lang('Login By Browser') (@lang('Last 30 days'))</h5>
+            {{-- <h5 class="card-title">@lang('Login By Browser') (@lang('Last 30 days'))</h5> --}}
+            <h5 class="card-title">@lang('Login By Browser') (@lang('Current Month'))</h5>
             <div class="card-body">
                 <canvas id="userBrowserChart" class="" style="font-size: 50px !important"></canvas>
             </div>
@@ -202,7 +203,8 @@
     </div>
     <div class="col-xl-4 col-lg-6 mb-30">
         <div class="card d-flex flex-column align-items-center justify-content-center pt-4">
-            <h5 class="card-title">@lang('Login By OS') (@lang('Last 30 days'))</h5>
+            {{-- <h5 class="card-title">@lang('Login By OS') (@lang('Last 30 days'))</h5> --}}
+            <h5 class="card-title">@lang('Login By Browser') (@lang('Current Month'))</h5>
             <div class="card-body">
                 <canvas id="userOsChart"></canvas>
             </div>
@@ -210,7 +212,8 @@
     </div>
     <div class="col-xl-4 col-lg-6 mb-30">
         <div class="card d-flex flex-column align-items-center justify-content-center pt-4">
-            <h5 class="card-title">@lang('Login By Country') (@lang('Last 30 days'))</h5>
+            {{-- <h5 class="card-title">@lang('Login By Country') (@lang('Last 30 days'))</h5> --}}
+            <h5 class="card-title">@lang('Login By Browser') (@lang('Current Month'))</h5>
             <div class="card-body">
                 <canvas id="userCountryChart"></canvas>
             </div>
@@ -816,6 +819,22 @@ $lastCron = Carbon\Carbon::parse($general->last_cron)->diffInSeconds();
     }
 }
 
+.widget-two__icon {
+    width: unset;
+    height: unset;
+}
 
+.widget-two__content{
+    display:flex;
+    align-items: center;
+}
+
+.widget-two__icon i {
+    font-size: 25px;
+}
+
+.widget-two{
+    padding:10px;
+}
 </style>
 @endpush
