@@ -5,6 +5,8 @@
         <a class="notify__item @if($notification->is_read == Status::NO) unread--notification @endif" href="{{ route('admin.notification.read',$notification->id) }}">
             <div class="notify__content">
                 <h6 class="title">{{ __($notification->title) }}</h6>
+                <p>{{ $notification->user->email }}</p>
+                <p>{{ $notification->created_at }}</p>
                 <span class="date"><i class="las la-clock"></i> {{ $notification->created_at->diffForHumans() }}</span>
             </div>
         </a>
