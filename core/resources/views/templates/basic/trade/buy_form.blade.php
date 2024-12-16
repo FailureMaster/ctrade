@@ -20,6 +20,8 @@
     <input type="hidden" name="order_side" value="{{ Status::BUY_SIDE_ORDER }}">
     <input type="hidden" name="order_type" value="{{ Status::ORDER_TYPE_LIMIT }}">
 
+    <input type="hidden" name="order_volume_1" value="" id="order_volume_1">
+    <input type="hidden" name="order_volume_2" value="" id="order_volume_2">
     @if (is_mobile())
     <div class="modal fade" id="modalBuySell" tabindex="-1" aria-labelledby="fullScreenModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen"> 
@@ -68,11 +70,11 @@
                         </div>
 
                         <div class="d-flex align-items-center justify-content-between">
-                            <div>
+                            <div id="lot-eq-fetch">
                                 <span class="lot-eq-span">{{ $pair ? $pair->percent_charge_for_buy : '0' }}</span> 
                                 <span class="lot-currency ms-2">{{ @$pair->coin_name }}</span> 
                             </div> 
-                            <div>
+                            <div id="lot-eq2-fetch">
                                 <span class="ll-size-span"></span> 
                                 <span>{{ @$pair->market_name }}</span> 
                             </div> 
@@ -423,7 +425,7 @@
                             {{-- <h6 class="mb-0">Send money</h6> --}}
                         </div>
                         <div class="user-progress d-flex align-items-center gap-1">
-                            <small class="text-themed d-block mb-1 lot-eq">
+                            <small class="text-themed d-block mb-1 lot-eq" id="lot-eq-fetch">
                                 <span class="lot-eq-span">{{ $pair ? $pair->percent_charge_for_buy : '0' }}</span> <span class="lot-currency">{{ @$pair->coin_name }}</span>
                             </small>
                         </div>
@@ -435,7 +437,7 @@
                             <small class="text-themed d-block mb-1">&nbsp</small>
                         </div>
                         <div class="user-progress d-flex align-items-center gap-1">
-                            <small class="text-themed d-block mb-1 lot-eq2"><span class="ll-size-span"></span> {{ @$pair->market_name }}</small>
+                            <small class="text-themed d-block mb-1 lot-eq2" id="lot-eq2-fetch"><span class="ll-size-span"></span> {{ @$pair->market_name }}</small>
                         </div>
                     </div>
                 </li>

@@ -265,6 +265,12 @@
                     // let level_equity_threshold = parseFloat({{$level_equity_threshold}}) / 100;
                     let used_margin_equity_threshold = parseFloat({{$used_margin_equity_threshold}}) / 100;
 
+                    // New added for volumen display
+                    let l1 = $('#lot-eq-fetch').text().trim();
+                    let l2 = $('#lot-eq2-fetch').text().trim();
+                    formData.set("order_volume_1", l1); 
+                    formData.set("order_volume_2", l2); 
+
                     if (parseFloat(level) >= parseFloat(equity)) {
                         toastr('error', 'Unable to open an order: Level is already below or equal to the 10% of the equity. Need to increase your balance.');
                         return;
