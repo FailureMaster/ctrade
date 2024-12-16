@@ -219,7 +219,7 @@
                                             <ul>
                                                 @if(can_access('pending-deposits'))
                                                     <li class="sidebar-menu-item {{ menuActive('admin.deposit.pending') }} ">
-                                                        <a href="{{ route('admin.deposit.pending', ['filter' => 'this_month']) }}"
+                                                        <a href="{{ route('admin.deposit.pending', ['filter' => 'all_time']) }}"
                                                             class="nav-link">
                                                             <i class="menu-icon las la-dot-circle"></i>
                                                             <span class="menu-title">@lang('Pending Deposits')</span>
@@ -312,7 +312,7 @@
 
                                                 @if(can_access('pending-withdrawal'))
                                                     <li class="sidebar-menu-item {{ menuActive('admin.withdraw.pending') }} ">
-                                                        <a href="{{ route('admin.withdraw.pending', ['filter' => 'this_month']) }}"
+                                                        <a href="{{ route('admin.withdraw.pending', ['filter' => 'all_time']) }}"
                                                             class="nav-link">
                                                             <i class="menu-icon las la-dot-circle"></i>
                                                             <span class="menu-title">@lang('Pending Withdrawals')</span>
@@ -570,15 +570,25 @@
 
                 @if (can_access('notifications|logins'))
                     <li class="sidebar-menu-item sidebar-dropdown">
-                        <a href="javascript:void(0)" class="{{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history'], 3) }}">
+                        <a href="javascript:void(0)" class="{{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history', 'admin.notifications'], 3) }}">
                             <i class="menu-icon la la-list"></i>
                             <span class="menu-title">@lang('Reports') </span>
                         </a>
-                        <div class="sidebar-submenu {{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history'], 2) }} ">
+                        <div class="sidebar-submenu {{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history', 'admin.notifications'], 2) }} ">
                             <ul>
                                 @if (can_access('notifications'))
                                     <li class="sidebar-menu-item {{ menuActive('admin.report.notification.history') }}">
                                         <a href="{{ route('admin.report.notification.history') }}"
+                                            class="nav-link">
+                                            <i class="menu-icon las la-dot-circle"></i>
+                                            <span class="menu-title">@lang('Email Notifications')</span>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                @if (can_access('notifications'))
+                                    <li class="sidebar-menu-item {{ menuActive('admin.notifications') }}">
+                                        <a href="{{ route('admin.notifications') }}"
                                             class="nav-link">
                                             <i class="menu-icon las la-dot-circle"></i>
                                             <span class="menu-title">@lang('Notifications')</span>
