@@ -5,20 +5,20 @@
 @if(can_access('manage-users'))
 <div class="row mb-none-30 mb-3 align-items-center gy-4">
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'all_time']) }}" icon="las la-users " icon_style="false"
+        <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'this_month']) }}" icon="las la-users " icon_style="false"
             title="Total Lead" value="{{$widget['total_users']}}" color="primary" />
     </div><!-- dashboard-w1 end -->
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.users.active', ['filter' => 'all_time'])}}" icon="las la-user-check "
+        <x-widget style="2" link="{{route('admin.users.active', ['filter' => 'this_month'])}}" icon="las la-user-check "
             title="Active Users" icon_style="false" value="{{$widget['verified_users']}}" color="success" />
     </div>
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'all_time'])}}" icon="lar la-envelope "
+        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'this_month'])}}" icon="lar la-envelope "
             icon_style="false" title="Email Unverified Users" value="{{$widget['email_unverified_users']}}"
             color="danger" />
     </div>
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'all_time'])}}"
+        <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'this_month'])}}"
             icon="las la-comment-slash " title="Mobile Unverified Users"
             value="{{$widget['mobile_unverified_users']}}" color="red" />
     </div>
@@ -30,20 +30,20 @@
   
     @if(can_access('manage-currency'))
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.deposit.list', ['filter' => 'all_time'])}}" icon="las la-list-alt" icon_style="false"
+        <x-widget style="2" link="{{route('admin.deposit.list', ['filter' => 'this_month'])}}" icon="las la-list-alt" icon_style="false"
             title="Total Deposits" value="${{ showAmount($widget['deposit']['total_deposits']) ?? 0 }}" color="primary" />
     </div><!-- dashboard-w1 end -->
     @endif
     @if(can_access('manage-currency'))
     <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.order.open', ['filter' => 'all_time'])}}" icon="fa  fa-spinner" icon_style="false"
+        <x-widget style="2" link="{{route('admin.order.open', ['filter' => 'this_month'])}}" icon="fa  fa-spinner" icon_style="false"
             title="Open Orders" value="{{$widget['order_count']['open']}}" color="info" />
     </div>
     <!-- dashboard-w1 end -->
     @endif
     @if(can_access('manage-currency'))
     <div class="col-xxl-3 col-sm-6">
-       <x-widget style="2" link="{{route('admin.order.close', ['filter' => 'all_time'])}}?status={{Status::ORDER_CANCELED}}"
+       <x-widget style="2" link="{{route('admin.order.close', ['filter' => 'this_month'])}}&status={{Status::ORDER_CANCELED}}"
                 icon="las la-times-circle" icon_style="false" title="Close Orders"
                 value="{{$widget['order_count']['canceled']}}" color="danger" />
     </div>
@@ -143,7 +143,7 @@
 @endif
 
 @if(can_access('manage-order'))
-<div class="row mb-none-30 mb-3 gy-4">
+<div class="row mb-none-30 mb-4 gy-4">
     <div class="col-lg-12">
         <div class="card">
             <div class="card-header">
@@ -191,7 +191,7 @@
 @endif
 
 @if(can_access('report'))
-<div class="row mb-none-30 mt-5">
+<div class="row mb-none-30">
     <div class="col-xl-4 col-lg-6 mb-30">
         <div class="card d-flex flex-column align-items-center justify-content-center pt-4">
             {{-- <h5 class="card-title">@lang('Login By Browser') (@lang('Last 30 days'))</h5> --}}
@@ -835,6 +835,10 @@ $lastCron = Carbon\Carbon::parse($general->last_cron)->diffInSeconds();
 
 .widget-two{
     padding:10px;
+}
+
+.widget-two__btn{
+    z-index: 999;
 }
 </style>
 @endpush
