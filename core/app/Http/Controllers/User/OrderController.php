@@ -92,7 +92,9 @@ class OrderController extends Controller
 
         if (!$pair) return $this->response('Pair not found');
 
-            $amount         = Fee::first()->status ?  $request->amount : 0;
+            // $amount         = Fee::first()->status ?  $request->amount : 0;
+
+            $amount         = $request->amount;
 
             $requestRate    = $request->order_side ==  Status::BUY_SIDE_ORDER ? $request->buy_rate : $request->sell_rate;
             $rate           = $request->order_type == Status::ORDER_TYPE_LIMIT ? $requestRate : $pair->marketData->price;
@@ -152,10 +154,10 @@ class OrderController extends Controller
         $order->save();
         
         if ($request->order_side ==  Status::BUY_SIDE_ORDER) {
-            $details       = "Open order for buy on " . $pair->symbol;
+            $details       = "Open order for buy on " . $pair->symbol. " ($request->order_volume_1, $request->order_volume_2)";
             $walletBalance = $this->createTrx($wallet, 'order_buy', $amount, $charge, $details, $user);
         } else {
-            $details       = "Open order for sell on " . $pair->symbol;
+            $details       = "Open order for sell on " . $pair->symbol. " ($request->order_volume_1, $request->order_volume_2)";
             $walletBalance = $this->createTrx($wallet, 'order_sell', $amount, 0, $details, $user);
         }
 
