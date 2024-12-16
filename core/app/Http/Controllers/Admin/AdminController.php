@@ -30,7 +30,7 @@ class AdminController extends Controller
     public function dashboard()
     {
 
-        $pageTitle = 'Dashboard';
+        $pageTitle = 'Dashboard     - '. Carbon::now()->format('F Y');
 
         $current_month = Carbon::now()->startOfMonth();
 
@@ -49,7 +49,7 @@ class AdminController extends Controller
         $widget['mobile_unverified_users'] = User::mobileUnverified()->where('created_at', '>=', $current_month )->count();
 
 
-        $orders                             = Order::query()->where('created_at', '>=', $current_month );
+        $orders                             = Order::query()->whereHas('user')->where('created_at', '>=', $current_month );
         $widget['order_count']['total']     = (clone $orders)->count();
         $widget['order_count']['open']      = (clone $orders)->open()->count();
         $widget['order_count']['completed'] = (clone $orders)->completed()->count();
@@ -72,7 +72,7 @@ class AdminController extends Controller
 
         $deposit                             = Deposit::with('currency')->where('created_at', '>=', $current_month )->where('status', '!=', Status::PAYMENT_INITIATE)->where('status', '!=', Status::PAYMENT_REJECT)->groupBy('currency_id');
         $widget['deposit']['list']           = (clone $deposit)->selectRaw('*,SUM(amount) as total_amount')->orderBy('total_amount', 'DESC')->take(6)->get();
-        $widget['deposit']['total_deposits'] = Deposit::sum('amount');
+        $widget['deposit']['total_deposits'] = Deposit::where('created_at', '>=', $current_month )->whereHas('user')->sum('amount');
         $widget['deposit']['currency_count'] = (clone $deposit)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('count');
         $widget['deposit']['currency_symbol']  = (clone $deposit)->selectRaw('*,count(*) as count')->orderBy('count', 'DESC')->get()->plucK('currency.symbol');
 
@@ -205,7 +205,7 @@ class AdminController extends Controller
 
     public function notifications()
     {
-        $notifications = AdminNotification::orderBy('id', 'desc')->with('user')->paginate(getPaginate());
+        $notifications = AdminNotification::with('user')->orderBy('id', 'desc')->with('user')->paginate(getPaginate());
         $pageTitle = 'Notifications';
         return view('admin.notifications', compact('pageTitle', 'notifications'));
     }
