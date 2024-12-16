@@ -62,7 +62,7 @@
                             class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
                             <div class="d-flex align-items-center">
                                 <p class="text-dark mb-0 px-2">@lang('Balance')</p>
-                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}</p>
+                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->balance ?? 0) }}$</p>
                             </div>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                             class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
                             <div class="d-flex align-items-center">
                                 <p class="text-dark mb-0 px-2">@lang('Bonus')</p>
-                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}</p>
+                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->bonus ?? 0) }}$</p>
                             </div>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                             class="d-flex align-items-center justify-content-between bg--primary1 p-2 box--shadow b-radius--5">
                             <div class="d-flex align-items-center">
                                 <p class="text-dark mb-0 px-2">@lang('Credit')</p>
-                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}</p>
+                                <p class="text-dark mb-0">{{ getAmount($marketCurrencyWallet->credit ?? 0) }}$</p>
                             </div>
                         </div>
                     </div>
