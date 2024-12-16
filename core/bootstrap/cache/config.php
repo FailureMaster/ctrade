@@ -6,6 +6,11 @@
     'debug' => false,
     'url' => 'https://trade.c-trading.net/',
     'asset_url' => NULL,
+    'timezone' => 'Asia/Jerusalem',
+    'PUSHER_APP_ID' => '1688847',
+    'PUSHER_APP_KEY' => 'c5afd2b879ff37c4a429',
+    'PUSHER_APP_SECRET' => 'bc91ce796e70e0861721',
+    'PUSHER_APP_CLUSTER' => 'ap2',
     'locale' => 'en',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
@@ -155,12 +160,12 @@
       'pusher' => 
       array (
         'driver' => 'pusher',
-        'key' => NULL,
-        'secret' => NULL,
-        'app_id' => NULL,
+        'key' => 'c5afd2b879ff37c4a429',
+        'secret' => 'bc91ce796e70e0861721',
+        'app_id' => '1688847',
         'options' => 
         array (
-          'cluster' => NULL,
+          'cluster' => 'ap2',
           'useTLS' => true,
         ),
         'client_options' => 
