@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Wallet;
+use App\Scopes\ExcludeUserScope;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
@@ -52,6 +53,11 @@ class User extends Authenticatable
         static::created(function (User $user) {
             $user->generateLeadCode();
         });
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ExcludeUserScope('users.id'));
     }
 
     public function generateLeadCode()

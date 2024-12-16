@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Constants\Status;
+use App\Scopes\ExcludeUserScope;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -16,6 +17,11 @@ class Deposit extends Model
     ];
 
     protected $hidden = ['detail'];
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ExcludeUserScope('deposits.user_id'));
+    }
 
     public function user()
     {
@@ -70,7 +76,7 @@ class Deposit extends Model
 
     public function scopePending($query)
     {
-        return $query->where('method_code','>=',1000)->where('status', Status::PAYMENT_PENDING);
+        return $query->where('method_code','>=',1000)->where('status', Status::PAYMENT_PENDING)->whereHas('user');
     }
 
     public function scopeRejected($query)

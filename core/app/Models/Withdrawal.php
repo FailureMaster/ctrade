@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Constants\Status;
+use App\Scopes\ExcludeUserScope;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,11 @@ class Withdrawal extends Model
     protected $hidden = [
         'withdraw_information'
     ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new ExcludeUserScope('withdrawals.user_id'));
+    }
 
     public function user()
     {
@@ -55,7 +61,7 @@ class Withdrawal extends Model
 
     public function scopePending($query)
     {
-        return $query->where('status', Status::PAYMENT_PENDING);
+        return $query->where('status', Status::PAYMENT_PENDING)->whereHas('user');
     }
 
     public function scopeApproved($query)
