@@ -215,9 +215,10 @@ class PaymentController extends Controller
 
         $walletName = @$data->wallet->currency->symbol;
 
+        $filteredAmount = showAmount($data->amount);
         $adminNotification            = new AdminNotification();
         $adminNotification->user_id   = $data->user->id;
-        $adminNotification->title     = 'Deposit request from ' . $data->user->username . " to wallet name " . $walletName;
+        $adminNotification->title     = 'Deposit request from ' . $data->user->username . " to wallet name " . $walletName. " (Amount: $filteredAmount $data->method_currency)";
         $adminNotification->click_url = urlPath('admin.deposit.details', $data->id);
         $adminNotification->save();
 
@@ -357,9 +358,10 @@ class PaymentController extends Controller
 
         $walletName = @$data->wallet->currency->symbol;
 
+        $filteredAmount               = showAmount($data->amount);
         $adminNotification            = new AdminNotification();
         $adminNotification->user_id   = $data->user->id;
-        $adminNotification->title     = 'Deposit request from ' . $data->user->username . " to wallet name " . $walletName;
+        $adminNotification->title     = 'Deposit request from ' . $data->user->username . " to wallet name " . $walletName. " (Amount: $filteredAmount $data->method_currency)";
         $adminNotification->click_url = urlPath('admin.deposit.details', $data->id);
         $adminNotification->save();
 
