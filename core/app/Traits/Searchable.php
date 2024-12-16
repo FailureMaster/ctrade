@@ -129,4 +129,67 @@ trait Searchable
         }
         return request()->$column;
     }
+
+    public function scopeDateFilterNew($query, $column = 'created_at')
+    {
+
+        if (!request()->filter) {
+            return $query;
+        }
+        try {
+            $table = $this->getTable();
+
+            // Append the table name to the column
+            $column = "{$table}.{$column}";
+
+            $filter = request()->input('filter');
+       
+            if (request()->input('customfilter')) {
+                $filter = 'custom';
+            }
+        
+            $startDate = null;
+            $endDate   = null;
+    
+            switch ($filter) {
+                case 'today':
+                    $startDate = Carbon::today();
+                    $endDate = Carbon::today()->endOfDay();
+                    break;
+                case 'yesterday':
+                    $startDate = Carbon::yesterday();
+                    $endDate = Carbon::yesterday()->endOfDay();
+                    break;
+                case 'this_week':
+                    $startDate = Carbon::now()->startOfWeek();
+                    $endDate = Carbon::now()->endOfWeek();
+                    break;
+                case 'last_week':
+                    $startDate = Carbon::now()->subWeek()->startOfWeek();
+                    $endDate = Carbon::now()->subWeek()->endOfWeek();
+                    break;
+                case 'this_month':
+                    $startDate = Carbon::now()->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                    break;
+                case 'last_month':
+                    $startDate = Carbon::now()->subMonth()->startOfMonth();
+                    $endDate = Carbon::now()->subMonth()->endOfMonth();
+                    break;
+                case 'custom':
+                    $date = explode('-', request()->input('customfilter'));
+                    $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
+                    $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                    break;
+            }
+
+        } catch (\Exception $e) {
+            throw ValidationException::withMessages(['error' => 'Unauthorized action']);
+        }
+
+        if( $startDate && $endDate)
+            return $query->whereDate($column, '>=', $startDate)->whereDate($column, '<=', $endDate);
+
+        return $query;
+    }
 }

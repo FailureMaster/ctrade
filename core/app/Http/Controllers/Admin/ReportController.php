@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Models\Currency;
+use App\Models\Deposit;
 use App\Models\NotificationLog;
 use App\Models\Transaction;
 use App\Models\UserLogin;
+use App\Models\Withdrawal;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 class ReportController extends Controller
 {
@@ -17,12 +22,14 @@ class ReportController extends Controller
         $pageTitle    = 'Transaction Logs';
         $remarks      = Transaction::distinct('remark')->orderBy('remark')->get('remark');
         $perPage = $request->get('per_page', 25);
+        $excludeOderType = ['order_sell', 'order_buy'];
         $transactions = Transaction::with([
             'wallet.currency',
             'user'
         ])
         ->whereHas('user')
         // ->whereNull('hid_at')
+        ->whereNotIn('remark', $excludeOderType)
         ->when($request->get('lead_code'), function ($query) use ($request) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('lead_code', $request->lead_code);
@@ -54,7 +61,29 @@ class ReportController extends Controller
         ->paginate($perPage);
 
         $currencies   = Currency::active()->rankOrdering()->get();
-        return view('admin.reports.transactions', compact('pageTitle', 'transactions', 'remarks', 'currencies', 'perPage'));
+
+        $totalTransactions = new stdClass();
+
+        $totalTransactions->deposits = Deposit::with(['user', 'gateway', 'currency','wallet.currency'])
+                            ->whereHas('user')
+                            ->join('currencies', 'deposits.currency_id', 'currencies.id')
+                            ->where('deposits.status', Status::PAYMENT_SUCCESS)
+                            ->dateFilterNew()
+                            ->sum(DB::raw('currencies.rate * deposits.amount'));
+
+        $totalTransactions->withdraws =  Withdrawal::with(['user','method'])
+                        ->where('withdrawals.status',Status::PAYMENT_SUCCESS)
+                        ->join('currencies', 'withdrawals.currency', 'currencies.symbol')
+                        ->whereHas('user')
+                        ->dateFilterNew()
+                        ->sum(DB::raw('currencies.rate * withdrawals.amount'));
+
+        $totalTransactions->balance = Transaction::whereHas('user')
+                                        ->where('remark', 'balance_add')
+                                        ->dateFilterNew()
+                                        ->sum('amount');
+
+        return view('admin.reports.transactions', compact('pageTitle', 'transactions', 'remarks', 'currencies', 'perPage', 'totalTransactions'));
     }
 
     public function loginHistory(Request $request)
