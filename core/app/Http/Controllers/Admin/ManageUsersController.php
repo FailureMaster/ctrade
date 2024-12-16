@@ -219,7 +219,7 @@ class ManageUsersController extends Controller
         return $this->userList($request, $pageTitle, 'mobileVerified');
     }
 
-    protected function userData($columnName, $orderDirection, $scope = null, $startDate = null, $endDate = null)
+    protected function userData($columnName, $orderDirection, $scope = null, $startDate = null, $endDate = null, $is_online = 0)
     {
         if ($scope) {
             $users = User::$scope();
@@ -256,8 +256,16 @@ class ManageUsersController extends Controller
         }else{
             $orderDirection = 'asc';
         }
-        
 
+        if( $is_online ){
+            // Get current time
+            $currentTime = Carbon::now();
+
+            // Calculate the time 2 minutes ago
+            $timeThreshold = $currentTime->subMinutes(5);
+
+            $users = $users->where('users.last_request', '>=', $timeThreshold);
+        }
 
         // $users = $users->join('comments', 'users.id', '=', 'comments.user_id');
         
@@ -279,7 +287,7 @@ class ManageUsersController extends Controller
         ->leftJoin('comments', 'latest_comments.latest_comment_id', '=', 'comments.id');
 
         return $users->with('owner')
-            ->with('comments.commentor')
+            ->with('comments.commentor', 'loginLogs')
             ->when(request()->get('name'), function ($query, $name) {
                 $query->where('firstname', 'LIKE', "%{$name}%")
                     ->orWhere('lastname', 'LIKE', "%{$name}%");
@@ -320,10 +328,10 @@ class ManageUsersController extends Controller
                 'comments.updated_at',
                 'lead_source',
                 'users.owner_id',
-                'users.user_source'
+                'users.user_source',
+                'users.last_request'
             ])
             ->orderBy($tblName.'.'.$columnName, $orderDirection);
-        
         // ->paginate(getPaginate());
     }
 
@@ -1171,7 +1179,7 @@ class ManageUsersController extends Controller
 
         $pageTitle = "Online Leads";
 
-        $users = $this->userData('id', 'desc', $scope = null, $startDate = null, $endDate = null)->paginate($perPage);
+        $users = $this->userData('id', 'desc', $scope = null, $startDate = null, $endDate = null, 1)->paginate($perPage);
 
         return view('admin.reports.all_leads.index', compact('users', 'perPage', 'pageTitle'));
     }

@@ -8,7 +8,7 @@
             <div class="card b-radius--10 ">
                 <div class="card-body p-0">
                     <div class="table-responsive--md  table-responsive">
-                        <table class="table table--light style--two highlighted-table">
+                        <table class="table table--light text-center">
                             <thead>
                                 <tr>
                                     <th>@lang('Online Status')</th>
@@ -21,9 +21,17 @@
                             </thead>
                             <tbody>
                                 @foreach( $users as $u )
+                                    @php
+                                        $now      = \Carbon\Carbon::now();
+                                        $lq       = \Carbon\Carbon::parse($u->last_request);
+                                        $min      = $now->diffInMinutes($lq);
+                                        $isActive = 0;
+
+                                        if( $u->last_request <> null && $min < 2 ) $isActive = 1;
+                                    @endphp
                                     <tr>
                                         <td>
-
+                                            <span class="fas fa-circle {{$isActive ? 'text-success' : 'text-danger'}}"></span>
                                         </td>
                                         <td>
                                             {{ $u->lead_code }}
@@ -38,7 +46,7 @@
                                              {{ $u->email }}
                                         </td>
                                         <td>
-                                             {{-- {{ $u->lead_code }} --}}
+                                             {{ @$u->loginLogs->sortByDesc('id')->first()->created_at ?? "-"}}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -90,6 +98,10 @@
             </div>
         </div>
     </div>
+
+    @if( $users->count() < 1 )
+        <h6 class="text-center mt-1">No active leads</h6>
+    @endif
 @endsection
 
 @push('script')
@@ -345,6 +357,11 @@
 
         table.table--light.style--two tbody td {
             padding: 4px 0px;
+        }
+
+        table td:last-child,
+        table th:last-child {
+            text-align: center;
         }
     </style>
 @endpush
