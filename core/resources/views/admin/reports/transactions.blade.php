@@ -75,7 +75,7 @@
     <div class="col-lg-12">
         <div class="card b-radius--10">
             <div class="card-body p-0">
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
                     <div class="p-3">
                         <small>
                             @if ($transactions->firstItem())
@@ -85,23 +85,29 @@
                     </div>
                     <div class="card mx-2">
                         <div class="card-body d-flex">
-                            <p class="mx-2">Total Deposits: </p>
-                            <p>{{ showAmount($totalTransactions->deposits) }}$</p>
+                            <div class="widget-two box--shadow2 b-radius--5 bg--success m-0 p-2 text-white">
+                                <p class="mx-2">Total Deposits: </p>
+                                <p>{{ showAmount($totalTransactions->deposits) }}$</p>
+                            </div> 
                         </div>
                     </div>
                     <div class="">
                         <div class="card">
                             <div class="card-body d-flex">
-                                <p class="mx-2">Total Withdraw: </p>
-                                <p>{{ showAmount($totalTransactions->withdraws) }}$</p>
+                                <div class="widget-two box--shadow2 b-radius--5 bg--warning m-0 p-2 text-white">
+                                    <p class="mx-2">Total Withdraw: </p>
+                                    <p>{{ showAmount($totalTransactions->withdraws) }}$</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="mx-2">
                         <div class="card">
                             <div class="card-body d-flex">
-                                <p class="mx-2">Balance added manually:</p>
-                                <p>{{ showAmount($totalTransactions->balance) }}$</p>
+                                <div class="widget-two box--shadow2 b-radius--5 bg--pink m-0 p-2 text-white">
+                                    <p class="mx-2">Balance added manually:</p>
+                                    <p>{{ showAmount($totalTransactions->balance) }}$</p>
+                                </div>
                             </div>
                         </div>
                     </div>
