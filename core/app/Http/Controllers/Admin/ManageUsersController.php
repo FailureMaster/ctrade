@@ -998,13 +998,27 @@ class ManageUsersController extends Controller
                     } else {
                         // Get the country code from the row and look up the country and dial code
                         $countryCode = $row[4];
-                        $country = $countryData[$countryCode]['country'] ?? null;
-                        $dialCode = $countryData[$countryCode]['dial_code'] ?? null;
-    
+                        $country     = null;
+                        $dialCode    = null;
+                        
+                        if( isset($countryData[$countryCode])){
+                            $country     = $countryData[$countryCode]['country'] ?? null;
+                            $dialCode    = $countryData[$countryCode]['dial_code'] ?? null;
+                        }
+                        else{
+                            foreach(  $countryData as $code => $c ){
+                                if(strtolower($c['country']) == strtolower($countryCode) ){
+                                    $countryCode = $code;
+                                    $country  = $c['country'];
+                                    $dialCode = $code;
+                                }
+                            }
+                        }
+                 
                         if (!$country || !$dialCode) {
                             $errors[] = "Row $rowNumber: Invalid country code '{$countryCode}'.";
                         } else {
-                            $user = DB::transaction(function () use ($row, $country, $dialCode) {
+                            $user = DB::transaction(function () use ($row, $country, $dialCode, $countryCode) {
                                 return User::create([
                                     'firstname' => $row[0],
                                     'lastname' => $row[1],
@@ -1017,7 +1031,7 @@ class ManageUsersController extends Controller
                                         'country' => $country,
                                         'city' => ''
                                     ],
-                                    'country_code' => $row[4],
+                                    'country_code' => $countryCode,
                                     'account_type' => $row[5],
                                     'lead_source' => $row[6],
                                     'password' => Hash::make('123456'),
