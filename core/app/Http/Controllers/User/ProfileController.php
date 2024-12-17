@@ -96,18 +96,27 @@ class ProfileController extends Controller
         }
 
         $this->validate($request, [
-            'current_password' => 'required',
+            // 'current_password' => 'required',
             'password' => ['required', 'confirmed', $passwordValidation]
         ]);
 
         $user = auth()->user();
-        if (Hash::check($request->current_password, $user->password)) {
+
+        if( $request->has('current_password') ){
+            if (Hash::check($request->current_password, $user->password)) {
+                $password = Hash::make($request->password);
+                $user->password = $password;
+                $user->save();
+                return response()->json(['success' => 'success', 'message' => 'Password changes successfully'], 200);
+            } else {
+                return response()->json(['success' => 'error', 'message' => 'The password doesn\'t match!'], 200);
+            }
+        }
+        else{
             $password = Hash::make($request->password);
             $user->password = $password;
             $user->save();
             return response()->json(['success' => 'success', 'message' => 'Password changes successfully'], 200);
-        } else {
-            return response()->json(['success' => 'error', 'message' => 'The password doesn\'t match!'], 200);
         }
     }
 
