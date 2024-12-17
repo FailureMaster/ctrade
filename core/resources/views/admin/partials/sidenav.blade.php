@@ -793,6 +793,35 @@
                     </li>
                 @endif
 
+                <li class="sidebar-menu-item sidebar-dropdown">
+                    <a href="javascript:void(0)" class="{{ menuActive('admin.frontend*', 3) }}">
+                        <i class="menu-icon la la-server"></i>
+                        <span class="menu-title">@lang('Templates')</span>
+                    </a>
+                    <div class="sidebar-submenu {{ menuActive('admin.frontend*', 2) }} ">
+                        <ul>
+                            <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
+                                <a href="{{ route('admin.frontend.sections', 'login') }}" class="nav-link">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">@lang('Login')</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
+                                <a href="{{ route('admin.frontend.sections', 'register') }}" class="nav-link">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">@lang('Register')</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
+                                <a href="{{ route('admin.frontend.sections', 'account_recovery') }}" class="nav-link">
+                                    <i class="menu-icon las la-dot-circle"></i>
+                                    <span class="menu-title">@lang('Account Recovery')</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 @if (can_access('application|server|cache'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive('admin.system*', 3) }}">
