@@ -380,16 +380,16 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-4 @if ($user->account_type == 'demo') d-flex @endif">
+                        <div class="col-md-2 @if ($user->account_type == 'demo') d-flex @endif">
 
-                            <div class="form-group" @if ($user->account_type == 'demo') style="width:75%;" @endif>
-                                <label>@lang('ID')</label>
+                            <div class="form-group" @if ($user->account_type == 'demo') style="width:50%;" @endif>
+                                <label>@lang('Account')</label>
                                 <input class="form-control" type="text" name="lead_code"
                                     value="{{ $user->lead_code }}" readonly>
                             </div>
 
                             @if ($user->account_type == 'demo')
-                                <div class="form-group" style="width:25%; margin-left:1rem;">
+                                <div class="form-group" style="width:50%; margin-left:1rem;">
                                     <label>@lang('Lead Type')</label>
                                     <select name="lead_type" class="form-control">
                                         <option value="demo">Demo</option>
@@ -409,6 +409,23 @@
                                         <option value="{{ $status }}"
                                             {{ $status == $user->sales_status ? 'selected' : '' }}>
                                             {{ $status }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>@lang('Owner')</label>
+                                <select name="owner_id" class="form-control">
+                                    <option value="" disabled>@lang('Select One')</option>
+                                    <option value="19">No Owner</option>
+                                    @foreach ($admins as $admin)
+                                        @if ($admin->id !== 19)
+                                            <option value="{{ $admin->id }}" @selected($user->owner_id == $admin->id)>
+                                                {{ __(keyToTitle($admin->name)) }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                             </div>
