@@ -55,7 +55,8 @@ class ReportController extends Controller
             'remark',
             'wallet.currency:symbol',
         ])
-        ->dateFilter()
+        // ->dateFilter()
+        ->dateFilterNew()
         ->orderBy('id', 'desc')
         ->with('user')
         ->paginate($perPage);
@@ -72,7 +73,7 @@ class ReportController extends Controller
                             ->sum(DB::raw('currencies.rate * deposits.amount'));
 
         $totalTransactions->withdraws =  Withdrawal::with(['user','method'])
-                        ->where('withdrawals.status',Status::PAYMENT_SUCCESS)
+                        ->whereIn('withdrawals.status',[Status::PAYMENT_SUCCESS,Status::PAYMENT_PENDING])
                         ->join('currencies', 'withdrawals.currency', 'currencies.symbol')
                         ->whereHas('user')
                         ->dateFilterNew()
