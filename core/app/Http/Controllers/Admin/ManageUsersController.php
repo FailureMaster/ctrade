@@ -372,7 +372,10 @@ class ManageUsersController extends Controller
         $marketCurrencyWallet = Wallet::where('user_id', $user->id)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID /* $pair->market->currency->id */)->spot()->first();
         $requiredMarginTotal = Order::where('user_id', $user->id)->open()->sum('required_margin');
 
-        return view('admin.users.detail', compact('pageTitle', 'user', 'previousUser', 'nextUser', 'widget', 'countries', 'currencies', 'marketCurrencyWallet', 'requiredMarginTotal'));
+        // Get the list of admins
+        $admins = $this->getAdmins();
+
+        return view('admin.users.detail', compact('pageTitle', 'user', 'previousUser', 'nextUser', 'widget', 'countries', 'currencies', 'marketCurrencyWallet', 'requiredMarginTotal', 'admins'));
     }
 
 
@@ -479,6 +482,8 @@ class ManageUsersController extends Controller
         $user->ev = $request->ev ? Status::VERIFIED : Status::UNVERIFIED;
         $user->sv = $request->sv ? Status::VERIFIED : Status::UNVERIFIED;
         $user->ts = $request->ts ? Status::ENABLE : Status::DISABLE;
+        $user->owner_id = $request->owner_id;
+        
         if (!$request->kv) {
             $user->kv = 0;
             if ($user->kyc_data) {
@@ -530,6 +535,9 @@ class ManageUsersController extends Controller
 
         $transaction = new Transaction();
 
+        // Empty array
+        $addType = [];
+
         if ($request->act == 'add') {
             if (!$wallet) {
 
@@ -557,6 +565,16 @@ class ManageUsersController extends Controller
             $transaction->remark = 'balance_add';
             $notifyTemplate = 'BAL_ADD';
 
+            if( $amount ){
+                array_push($addType, ['balance_add' => $amount]);
+            }
+            if( $bonus ){
+                array_push($addType, ['bonus_add' => $bonus]);
+            }
+            if( $credit ){
+                array_push($addType, ['credit_add' => $credit]);
+            }
+
             $notify[] = ['success', gs('cur_sym') . $amount . ' added successfully'];
         } else {
             if ($amount > $wallet->balance) {
@@ -578,15 +596,34 @@ class ManageUsersController extends Controller
 
         $user->save();
 
-        $transaction->user_id = $user->id;
-        $transaction->wallet_id = $wallet->id;
-        $transaction->amount = $totalTransactionAmount;
-        $transaction->post_balance = $wallet->balance;
-        $transaction->charge = 0;
-        $transaction->trx = $trx;
-        $transaction->details = $request->remark;
-        $transaction->save();
-
+        //check 
+        if( !empty($addType) ){
+            foreach( $addType as $at ){
+                foreach( $at as $key => $a ){
+                    $transaction = new Transaction();
+                    $transaction->trx_type = '+';
+                    $transaction->remark = $key;
+                    $transaction->user_id = $user->id;
+                    $transaction->wallet_id = $wallet->id;
+                    $transaction->amount = $a;
+                    $transaction->post_balance = $wallet->balance;
+                    $transaction->charge = 0;
+                    $transaction->trx = $trx;
+                    $transaction->details = $request->remark;
+                    $transaction->save();
+                }
+            }
+        }
+        else{
+            $transaction->user_id = $user->id;
+            $transaction->wallet_id = $wallet->id;
+            $transaction->amount = $totalTransactionAmount;
+            $transaction->post_balance = $wallet->balance;
+            $transaction->charge = 0;
+            $transaction->trx = $trx;
+            $transaction->details = $request->remark;
+            $transaction->save();
+        }
 
         notify($user, $notifyTemplate, [
             'trx' => $trx,
