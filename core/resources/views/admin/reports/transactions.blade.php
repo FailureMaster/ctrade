@@ -123,6 +123,7 @@
                                 <th>@lang('Transacted')</th>
                                 <th>@lang('Amount')</th>
                                 <th>@lang('Post Balance')</th>
+                                <th>@lang('Type')</th>
                                 <th>@lang('Details')</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -157,6 +158,9 @@
                                     </td>
                                     <td class="budget">
                                         {{ showAmount($trx->post_balance) }} {{ __(@$trx->wallet->currency->symbol) }}
+                                    </td>
+                                    <td>
+                                        {{ str_replace("_"," ",$trx->remark) }}
                                     </td>
                                     <td>{{ __($trx->details) }}</td>
                                     <td class="text-center">
