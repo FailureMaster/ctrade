@@ -24,7 +24,11 @@
                     </b> @lang('for successful payment')
                 </p>
             @else
-                <p>{{ $data->gateway->message }}</p>
+                @if (App::getLocale() != 'ar')
+                    <p>{{ $data->gateway->message }}</p>
+                @else
+                    <p>{{ $data->gateway->message_arabic }}</p>
+                @endif
             @endif
             <h4 class="text-center my-4">@lang('Please follow the instruction below')</h4>
             <p class="my-4 text-center">@php echo  $data->gateway->description @endphp</p>
