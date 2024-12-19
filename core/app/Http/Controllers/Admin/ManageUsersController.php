@@ -115,9 +115,9 @@ class ManageUsersController extends Controller
         }else{
             $columnName = 'id';
         }
-
+       
         $users = $this->userData($columnName, $orderDirection, $userType, $startDate, $endDate)->paginate($perPage);
-        
+
         Session::put('users_data', $users);
     
         // Get the list of admins
@@ -482,7 +482,8 @@ class ManageUsersController extends Controller
         $user->ev = $request->ev ? Status::VERIFIED : Status::UNVERIFIED;
         $user->sv = $request->sv ? Status::VERIFIED : Status::UNVERIFIED;
         $user->ts = $request->ts ? Status::ENABLE : Status::DISABLE;
-        $user->owner_id = $request->owner_id;
+
+        if( $request->has('owner_id') )  $user->owner_id = $request->owner_id;
         
         if (!$request->kv) {
             $user->kv = 0;
