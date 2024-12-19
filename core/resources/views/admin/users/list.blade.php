@@ -157,6 +157,11 @@
                                                         <option value="real">
                                                             Real
                                                         </option>
+                                                        @if (can_access('allow-user-type-test'))
+                                                            <option value="test">
+                                                                Test
+                                                            </option>
+                                                        @endif
                                                     </select>
                                                 </div>
                                             </li>
@@ -289,7 +294,8 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if (can_access('change-user-type'))
+                                            {{-- @if (can_access('change-user-type')) --}}
+                                            @if (1 == 2)
                                                 <form id="userTypeForm"
                                                     action="{{ route('admin.users.toggle.type', $user->id) }}"
                                                     method="POST">
@@ -298,15 +304,19 @@
                                                         style="background: none; border: none; cursor: pointer;">
                                                         @if ($user->account_type == 'real')
                                                             <span class="badge-userstatus badge-online">Real</span>
-                                                        @else
+                                                        @elseif( $user->account_type == 'demo' )
                                                             <span class="badge-userstatus badge-offline">Demo</span>
+                                                        @else
+                                                            <span class="badge-userstatus badge-offline">Test</span>
                                                         @endif
                                                     </button>
                                                 </form>
                                             @elseif ($user->account_type == 'real')
                                                 <span class="badge-userstatus badge-online">Real</span>
-                                            @else
+                                            @elseif( $user->account_type == 'demo' )
                                                 <span class="badge-userstatus badge-offline">Demo</span>
+                                            @else
+                                                <span class="badge-userstatus badge-offline">Test</span>
                                             @endif
                                         </td>
                                         <td>
