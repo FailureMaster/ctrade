@@ -4,24 +4,26 @@
 
 @if(can_access('manage-users'))
 <div class="row mb-none-30 mb-3 align-items-center gy-4">
-    <div class="col-xxl-3 col-sm-6">
+    <div class="col-xxl-{{ auth('admin')->user()->group->id != 37 ? 3 : 6 }} col-sm-6">
         <x-widget style="2" link="{{ route('admin.users.all', ['filter' => 'this_month']) }}" icon="las la-users " icon_style="false"
             title="Total Lead" value="{{$widget['total_users']}}" color="primary" />
     </div><!-- dashboard-w1 end -->
-    <div class="col-xxl-3 col-sm-6">
+    <div class="col-xxl-{{ auth('admin')->user()->group->id != 37 ? 3 : 6 }} col-sm-6">
         <x-widget style="2" link="{{route('admin.users.active', ['filter' => 'this_month'])}}" icon="las la-user-check "
             title="Active Users" icon_style="false" value="{{$widget['verified_users']}}" color="success" />
     </div>
-    <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'this_month'])}}" icon="lar la-envelope "
-            icon_style="false" title="Email Unverified Users" value="{{$widget['email_unverified_users']}}"
-            color="danger" />
-    </div>
-    <div class="col-xxl-3 col-sm-6">
-        <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'this_month'])}}"
-            icon="las la-comment-slash " title="Mobile Unverified Users"
-            value="{{$widget['mobile_unverified_users']}}" color="red" />
-    </div>
+    @if(auth('admin')->user()->group->id != 37)
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget style="2" link="{{route('admin.users.email.unverified', ['filter' => 'this_month'])}}" icon="lar la-envelope "
+                icon_style="false" title="Email Unverified Users" value="{{$widget['email_unverified_users']}}"
+                color="danger" />
+        </div>
+        <div class="col-xxl-3 col-sm-6">
+            <x-widget style="2" icon_style="false" link="{{route('admin.users.mobile.unverified', ['filter' => 'this_month'])}}"
+                icon="las la-comment-slash " title="Mobile Unverified Users"
+                value="{{$widget['mobile_unverified_users']}}" color="red" />
+        </div>
+    @endif
 </div>
 @endif
 
