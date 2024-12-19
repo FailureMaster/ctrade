@@ -50,8 +50,9 @@ class ManualGatewayController extends Controller
         $method->description = $request->instruction;
 
         // New 
-        $method->message   = $request->message;
-        $method->allow_pay = $request->has('allow_pay') ? 1 : 0;
+        $method->message          = $request->message;
+        $method->message_arabic   = $request->message_arabic;
+        $method->allow_pay        = $request->has('allow_pay') ? 1 : 0;
 
         $method->save();
 
@@ -97,8 +98,9 @@ class ManualGatewayController extends Controller
         $method->form_id = @$generate->id ?? 0;
 
         // New 
-        $method->message   = $request->message;
-        $method->allow_pay = $request->has('allow_pay') ? 1 : 0;
+        $method->message          = $request->message;
+        $method->message_arabic   = $request->message_arabic;
+        $method->allow_pay        = $request->has('allow_pay') ? 1 : 0;
         $method->save();
 
         $singleCurrency = $method->singleCurrency;
