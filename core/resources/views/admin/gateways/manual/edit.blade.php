@@ -77,7 +77,12 @@
                                             <h5 class="card-header bg--primary">@lang('Deposit Message')</h5>
                                             <div class="card-body">
                                                 <div class="form-group">
+                                                    <label for="">English Confirmation Message</label>
                                                     <textarea rows="8" class="form-control border-radius-5" name="message" id="message">{{ __(@$method->message)  }}</textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="">Arabic Confirmation Message</label>
+                                                    <textarea rows="8" class="form-control border-radius-5" name="message_arabic" id="message_arabic">{{ __(@$method->message_arabic)  }}</textarea>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Enable Pay button</label>
