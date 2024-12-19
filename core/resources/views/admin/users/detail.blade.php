@@ -2,7 +2,7 @@
 @section('panel')
     <div class="row">
         <div class="col-12">
-            @if ($user->account_type != 'demo')
+            @if ($user->account_type == 'real')
                 <div class="row g-3 parent-row">
                     <!-- Open Orders -->
                     <div class="col-md-3">
@@ -370,7 +370,7 @@
         @endif
 
 
-        <div class="card @if ($user->account_type != 'demo') mt-30 @else mt-15 @endif">
+        <div class="card @if ($user->account_type == 'real') mt-30 @else mt-15 @endif">
             {{-- <div class="card-header">
                 <h5 class="card-title mb-0">@lang('Information of') {{ $user->fullname }}</h5>
             </div> --}}
@@ -380,26 +380,29 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-2 @if ($user->account_type == 'demo') d-flex @endif">
+                        <div class="col-md-{{ !can_access('change-owner') ? 3 : 2 }} @if ($user->account_type == 'demo' || $user->account_type == 'test') d-flex @endif">
 
-                            <div class="form-group" @if ($user->account_type == 'demo') style="width:50%;" @endif>
+                            <div class="form-group" @if ($user->account_type == 'demo' || $user->account_type == 'test' ) style="@if ( ($user->account_type == 'demo' || $user->account_type == 'test' ) && can_access('change-user-type') ) width:50%; @else width:100%; @endif" @endif>
                                 <label>@lang('Account')</label>
                                 <input class="form-control" type="text" name="lead_code"
                                     value="{{ $user->lead_code }}" readonly>
                             </div>
 
-                            @if ($user->account_type == 'demo')
+                            @if (( $user->account_type == 'demo' || $user->account_type == 'test' ) && can_access('change-user-type') )
                                 <div class="form-group" style="width:50%; margin-left:1rem;">
                                     <label>@lang('Lead Type')</label>
                                     <select name="lead_type" class="form-control">
-                                        <option value="demo">Demo</option>
-                                        <option value="real">Real</option>
+                                        <option value="demo" {{ $user->account_type == 'demo' ? "selected" : ""}}>Demo</option>
+                                        <option value="real" {{ $user->account_type == 'real' ? "selected" : ""}}>Real</option>
+                                        @if (can_access('allow-user-type-test'))
+                                            <option value="test" {{ $user->account_type == 'test' ? "selected" : ""}}>Test</option>
+                                        @endif
                                     </select>
                                 </div>
                             @endif
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-md-{{ !can_access('change-owner') ? 3 : 2 }}">
                             <div class="form-group">
                                 <label>@lang('Status')</label>
                                 <select class="form-control" name="status" id="userStatusInline"
@@ -414,22 +417,24 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label>@lang('Owner')</label>
-                                <select name="owner_id" class="form-control">
-                                    <option value="" disabled>@lang('Select One')</option>
-                                    <option value="19">No Owner</option>
-                                    @foreach ($admins as $admin)
-                                        @if ($admin->id !== 19)
-                                            <option value="{{ $admin->id }}" @selected($user->owner_id == $admin->id)>
-                                                {{ __(keyToTitle($admin->name)) }}
-                                            </option>
-                                        @endif
-                                    @endforeach
-                                </select>
+                        @if ( can_access('change-owner') )
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>@lang('Owner')</label>
+                                    <select name="owner_id" class="form-control">
+                                        <option value="" disabled>@lang('Select One')</option>
+                                        <option value="19">No Owner</option>
+                                        @foreach ($admins as $admin)
+                                            @if ($admin->id !== 19)
+                                                <option value="{{ $admin->id }}" @selected($user->owner_id == $admin->id)>
+                                                    {{ __(keyToTitle($admin->name)) }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="col-md-3">
                             <div class="form-group">
@@ -828,7 +833,7 @@
 {{-- @dd({{ $user->mobile }}) --}}
 
 @push('style')
-    @if ($user->account_type == 'demo')
+    @if ($user->account_type == 'demo' || $user->account_type == 'test')
         <style>
             .b-crumbs {
                 margin-bottom: 0 !important;
