@@ -40,11 +40,20 @@
                                 <input type="text" name="name" value="{{ request()->name }}" class="form-control">
                             </div>
                             <div class="flex-grow-1">
-                                <label>@lang('Type')</label>
+                                <label>@lang('Amount')</label>
                                 <select name="trx_type" class="form-control">
                                     <option value="">@lang('All')</option>
                                     <option value="+" @selected(request()->trx_type == '+')>@lang('Plus')</option>
                                     <option value="-" @selected(request()->trx_type == '-')>@lang('Minus')</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow-1">
+                                <label>@lang('Type')</label>
+                                <select name="remark" class="form-control">
+                                    <option value="">@lang('All')</option>
+                                    @foreach($remarks as $remark)-->
+                                        <option value="{{ $remark->remark }}" @selected(request()->remark == $remark->remark)>{{ __(keyToTitle($remark->remark)) }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="flex-grow-1">

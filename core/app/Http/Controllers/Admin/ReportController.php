@@ -58,8 +58,9 @@ class ReportController extends Controller
         // ->dateFilter()
         ->dateFilterNew()
         ->orderBy('id', 'desc')
-        ->with('user')
-        ->paginate($perPage);
+        ->with('user');
+
+        $transactions = (clone $transactions)->paginate($perPage);
 
         $currencies   = Currency::active()->rankOrdering()->get();
 
