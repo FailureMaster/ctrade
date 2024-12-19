@@ -568,7 +568,7 @@
                     </li>
                 @endif
 
-                @if (can_access('notifications|logins'))
+                @if (can_access('notifications|logins|email-notifications|online-leads'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history', 'admin.notifications'], 3) }}">
                             <i class="menu-icon la la-list"></i>
@@ -576,7 +576,7 @@
                         </a>
                         <div class="sidebar-submenu {{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history', 'admin.notifications'], 2) }} ">
                             <ul>
-                                @if (can_access('notifications'))
+                                @if (can_access('email-notifications'))
                                     <li class="sidebar-menu-item {{ menuActive('admin.report.notification.history') }}">
                                         <a href="{{ route('admin.report.notification.history') }}"
                                             class="nav-link">
@@ -606,7 +606,7 @@
                                     </li>
                                 @endif
 
-                                {{-- @if (can_access('logins')) --}}
+                                @if (can_access('online-leads'))
                                     <li class="sidebar-menu-item {{ menuActive(['']) }}">
                                         <a href="{{ route('admin.users.online.leads') }}"
                                             class="nav-link">
@@ -614,7 +614,7 @@
                                             <span class="menu-title">@lang('Online Leads')</span>
                                         </a>
                                     </li>
-                                {{-- @endif --}}
+                                @endif
                             </ul>
                         </div>
                     </li>
@@ -793,34 +793,36 @@
                     </li>
                 @endif
 
-                <li class="sidebar-menu-item sidebar-dropdown">
-                    <a href="javascript:void(0)" class="{{ menuActive('admin.frontend*', 3) }}">
-                        <i class="menu-icon la la-server"></i>
-                        <span class="menu-title">@lang('Templates')</span>
-                    </a>
-                    <div class="sidebar-submenu {{ menuActive('admin.frontend*', 2) }} ">
-                        <ul>
-                            <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
-                                <a href="{{ route('admin.frontend.sections', 'login') }}" class="nav-link">
-                                    <i class="menu-icon las la-dot-circle"></i>
-                                    <span class="menu-title">@lang('Login')</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
-                                <a href="{{ route('admin.frontend.sections', 'register') }}" class="nav-link">
-                                    <i class="menu-icon las la-dot-circle"></i>
-                                    <span class="menu-title">@lang('Register')</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
-                                <a href="{{ route('admin.frontend.sections', 'account_recovery') }}" class="nav-link">
-                                    <i class="menu-icon las la-dot-circle"></i>
-                                    <span class="menu-title">@lang('Account Recovery')</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                @if (can_access('modify-templates'))
+                    <li class="sidebar-menu-item sidebar-dropdown">
+                        <a href="javascript:void(0)" class="{{ menuActive('admin.frontend*', 3) }}">
+                            <i class="menu-icon la la-server"></i>
+                            <span class="menu-title">@lang('Templates')</span>
+                        </a>
+                        <div class="sidebar-submenu {{ menuActive('admin.frontend*', 2) }} ">
+                            <ul>
+                                <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
+                                    <a href="{{ route('admin.frontend.sections', 'login') }}" class="nav-link">
+                                        <i class="menu-icon las la-dot-circle"></i>
+                                        <span class="menu-title">@lang('Login')</span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
+                                    <a href="{{ route('admin.frontend.sections', 'register') }}" class="nav-link">
+                                        <i class="menu-icon las la-dot-circle"></i>
+                                        <span class="menu-title">@lang('Register')</span>
+                                    </a>
+                                </li>
+                                <li class="sidebar-menu-item {{ menuActive('admin.frontend.sections') }} ">
+                                    <a href="{{ route('admin.frontend.sections', 'account_recovery') }}" class="nav-link">
+                                        <i class="menu-icon las la-dot-circle"></i>
+                                        <span class="menu-title">@lang('Account Recovery')</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                @endif
 
                 @if (can_access('application|server|cache'))
                     <li class="sidebar-menu-item sidebar-dropdown">
