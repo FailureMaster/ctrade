@@ -328,10 +328,7 @@
                 mobileElement.text(`+${$('select[name=country] :selected').data('mobile_code')}`);
             });
 
-            $('select[name=country]').val('{{@$user->country_code}}');
-
             let dialCode = $('select[name=country] :selected').data('mobile_code');
-            let mobileNumber = `{{ $user->mobile }}`;
 
             mobileNumber = mobileNumber.replace(dialCode, '');
             $('input[name=mobile]').val(mobileNumber);
