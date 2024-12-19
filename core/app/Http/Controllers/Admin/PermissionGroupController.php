@@ -875,6 +875,12 @@ class PermissionGroupController extends Controller
 
         'reports' => [
             [
+              'name' => 'email-notifications',
+              'label' => 'Email Notifications',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
               'name' => 'notifications',
               'label' => 'Notifications',
               'group' => $group[1],
@@ -885,7 +891,13 @@ class PermissionGroupController extends Controller
               'label' => 'Logins',
               'group' => $group[1],
               'value' => false,
-            ]
+            ],
+            [
+              'name' => 'online-leads',
+              'label' => 'Online Leads',
+              'group' => $group[1],
+              'value' => false,
+            ],
         ],
 
         'support ticket' => [
@@ -1060,6 +1072,24 @@ class PermissionGroupController extends Controller
             [
               'name' => 'remove-manual-gateway',
               'label' => 'Delete Manual Gateway',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'change-owner',
+              'label' => 'Change Owner',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'modify-templates',
+              'label' => 'Modify Templates',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'allow-user-type-test',
+              'label' => 'Allow user type to test',
               'group' => $group[1],
               'value' => false,
             ],
@@ -1387,18 +1417,30 @@ class PermissionGroupController extends Controller
         ],
 
         'reports' => [
-            [
-              'name' => 'notifications',
-              'label' => 'Notifications',
-              'group' => $group[1],
-              'value' => false,
-            ],
-            [
-              'name' => 'logins',
-              'label' => 'Logins',
-              'group' => $group[1],
-              'value' => false,
-            ]
+          [
+            'name' => 'email-notifications',
+            'label' => 'Email Notifications',
+            'group' => $group[1],
+            'value' => false,
+          ],
+          [
+            'name' => 'notifications',
+            'label' => 'Notifications',
+            'group' => $group[1],
+            'value' => false,
+          ],
+          [
+            'name' => 'logins',
+            'label' => 'Logins',
+            'group' => $group[1],
+            'value' => false,
+          ],
+          [
+            'name' => 'online-leads',
+            'label' => 'Online Leads',
+            'group' => $group[1],
+            'value' => false,
+          ],
         ],
 
         'support ticket' => [
@@ -1633,6 +1675,24 @@ class PermissionGroupController extends Controller
             [
               'name' => 'remove-manual-gateway',
               'label' => 'Delete Manual Gateway',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'change-owner',
+              'label' => 'Change Owner',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'modify-templates',
+              'label' => 'Modify Templates',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'allow-user-type-test',
+              'label' => 'Allow user type to test',
               'group' => $group[1],
               'value' => false,
             ],
