@@ -20,7 +20,7 @@ class PaymentController extends Controller
     public function depositInsert(Request $request)
     {
         $walletTypes = gs('wallet_types');
-        
+
         $request->validate([
             'amount'      => 'required|numeric|gt:0',
             'gateway'     => 'required',
@@ -79,6 +79,7 @@ class PaymentController extends Controller
         $data->btc_amo         = 0;
         $data->btc_wallet      = "";
         $data->trx             = getTrx();
+        $data->status          = Status::PAYMENT_PENDING;
         $data->save();
 
         session()->put('Track', $data->trx);
@@ -90,7 +91,13 @@ class PaymentController extends Controller
     public function depositConfirm()
     {
         $track   = session()->get('Track');
-        $deposit = Deposit::where('trx', $track)->where('status', Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
+        // $deposit = Deposit::where('trx', $track)->where('status', Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
+        $deposit =  Deposit::with('gateway')->where('trx', $track)->where(function($query){
+            $query->where('status', Status::PAYMENT_INITIATE);
+            $query->orWhere('status', Status::PAYMENT_PENDING);
+        })
+        ->orderBy('id', 'DESC')->with('gateway')
+        ->firstOrFail();
 
         if ($deposit->method_code >= 1000) {
             return to_route('user.deposit.manual.confirm');
@@ -177,7 +184,13 @@ class PaymentController extends Controller
     public function manualDepositConfirm()
     {
         $track = session()->get('Track');
-        $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+        // $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+
+        $data =  Deposit::with('gateway')->where('trx', $track)->where(function($query){
+            $query->where('status', Status::PAYMENT_INITIATE);
+            $query->orWhere('status', Status::PAYMENT_PENDING);
+        })
+        ->first();
 
         if (!$data) {
             return to_route(gatewayRedirectUrl());
@@ -194,7 +207,13 @@ class PaymentController extends Controller
     public function manualDepositUpdate(Request $request)
     {
         $track = session()->get('Track');
-        $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+        // $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+
+        $data =  Deposit::with('gateway')->where('trx', $track)->where(function($query){
+            $query->where('status', Status::PAYMENT_INITIATE);
+            $query->orWhere('status', Status::PAYMENT_PENDING);
+        })
+        ->first();
 
         if (!$data) {
             return to_route(gatewayRedirectUrl());
@@ -303,6 +322,7 @@ class PaymentController extends Controller
             $data->btc_amo         = 0;
             $data->btc_wallet      = "";
             $data->trx             = getTrx();
+            $data->status          = Status::PAYMENT_PENDING;
 
             if( $data->save() ) {
 
@@ -312,7 +332,13 @@ class PaymentController extends Controller
                 session()->save();
                 $trx = Crypt::encrypt($newDeposit->trx);
                 
-                $deposit = Deposit::where('trx', $newDeposit->trx)->where('status', Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
+                // $deposit = Deposit::where('trx', $newDeposit->trx)->where('status', Status::PAYMENT_INITIATE)->orderBy('id', 'DESC')->with('gateway')->firstOrFail();
+
+                $deposit =  Deposit::with('gateway')->where('trx', $newDeposit->trx)->where(function($query){
+                    $query->where('status', Status::PAYMENT_INITIATE);
+                    $query->orWhere('status', Status::PAYMENT_PENDING);
+                })
+                ->firstOrFail();
 
                 if ($deposit->method_code >= 1000) {
 
@@ -337,7 +363,13 @@ class PaymentController extends Controller
         // $track = session()->get('Track');
         $track = Crypt::decrypt($request->trx);
         
-        $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+        // $data  = Deposit::with('gateway')->where('status', Status::PAYMENT_INITIATE)->where('trx', $track)->first();
+
+        $data =  Deposit::with('gateway')->where('trx', $track)->where(function($query){
+            $query->where('status', Status::PAYMENT_INITIATE);
+            $query->orWhere('status', Status::PAYMENT_PENDING);
+        })
+        ->first();
         
         if (!$data) {
             return response()->json(['success' => 0, 'message' => 'Failed! Transaction not found.', 'trx' => $track], 200);

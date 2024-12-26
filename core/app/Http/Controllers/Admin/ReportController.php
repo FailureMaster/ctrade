@@ -20,7 +20,7 @@ class ReportController extends Controller
     public function transaction(Request $request)
     {
         $pageTitle    = 'Transaction Logs';
-        $remarks      = Transaction::distinct('remark')->orderBy('remark')->get('remark');
+        $remarks      = Transaction::whereNotIn('remark', ['order_buy', 'order_sell'])->distinct('remark')->orderBy('remark')->get('remark');
         $perPage = $request->get('per_page', 25);
         $excludeOderType = ['order_sell', 'order_buy'];
         $transactions = Transaction::with([
@@ -84,6 +84,16 @@ class ReportController extends Controller
                                         ->where('remark', 'balance_add')
                                         ->dateFilterNew()
                                         ->sum('amount');
+
+        $totalTransactions->credit  = Transaction::whereHas('user')
+                            ->where('remark', 'credit_add')
+                            ->dateFilterNew()
+                            ->sum('amount');
+
+        $totalTransactions->bonus  = Transaction::whereHas('user')
+                            ->where('remark', 'bonus_add')
+                            ->dateFilterNew()
+                            ->sum('amount');
 
         return view('admin.reports.transactions', compact('pageTitle', 'transactions', 'remarks', 'currencies', 'perPage', 'totalTransactions'));
     }

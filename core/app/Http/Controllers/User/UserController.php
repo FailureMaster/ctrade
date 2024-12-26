@@ -82,7 +82,7 @@ class UserController extends Controller
     {
         $pageTitle = 'Deposit Logs';
 
-        $deposits  = auth()->user()->deposits()->searchable(['trx', 'currency:symbol'])->with(['gateway', 'wallet.currency'])->orderBy('id', 'desc');
+        $deposits  = auth()->user()->deposits()->where('status', '!=', Status::PAYMENT_PENDING)->searchable(['trx', 'currency:symbol'])->with(['gateway', 'wallet.currency'])->orderBy('id', 'desc');
         // Newly added
         $filter = $request->get('filter');
 
