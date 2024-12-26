@@ -175,6 +175,8 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
         Route::get('online-leads', 'onlineLeads')->name('online.leads');
 
         Route::post('bulk/export', 'bulkRecordExport')->name('bulk.record.export');
+
+        Route::post('fetch/user-history', 'fetchHistory')->name('fetch.user-history');
     });
 
     // Subscriber
