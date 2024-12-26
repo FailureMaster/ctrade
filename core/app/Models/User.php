@@ -12,6 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Models\Wallet;
 use App\Scopes\ExcludeUserScope;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -70,8 +71,25 @@ class User extends Authenticatable
         $this->save();
     }
 
+    // public function comments()
+    // {
+    //     return $this->hasMany(Comment::class);
+    // }
     public function comments()
     {
+        // Check if the user is a super admin (id = 1)
+        if (Auth::guard('admin')->user()->id == 1 || Auth::guard('admin')->user()->permission_group_id == 1 ) {
+            return $this->hasMany(Comment::class);
+        }
+
+        // Check the show_commentor_comments column
+        if ( $this->show_commentor_comments == 0) {
+            // If show_commentor_comments is 0, only allow the user to see their own comments
+            return $this->hasMany(Comment::class)
+                        ->where('commented_by', Auth::guard('admin')->user()->id); // Assuming 'comment_by' is the user who made the comment
+        }
+
+        // If show_commentor_comments is 1, return all comments
         return $this->hasMany(Comment::class);
     }
 
@@ -218,5 +236,10 @@ class User extends Authenticatable
     public function approvedDeposits()
     {
         return $this->hasMany(Deposit::class)->where('status', Status::PAYMENT_SUCCESS);
+    }
+
+    public function userDetailHistory()
+    {
+        return $this->hasMany(UserDetailsHistory::class, 'user_id');
     }
 }
