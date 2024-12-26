@@ -11,10 +11,35 @@
                     <div>
                         <form action="{{ url()->current() }}">
                             @foreach (request()->query() as $key => $value)
-                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                @if( $key == "filter" || $key == "customfilter" )
+                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                @endif
                             @endforeach
                             <div class="d-flex gap-2">
                                 <div class="flex-grow-1">
+                                    <label>@lang('Search By')</label>
+                                    <select name="muliple_search" class="form-control">
+                                        <option value="">@lang('Select One')</option>
+                                        <option value="id" {{ request()->muliple_search  == 'id' ? "selected": ""}}>@lang('ID')</option>
+                                        <option value="name" {{ request()->muliple_search == 'name' ? "selected": ""}}>@lang('Name')</option>
+                                        <option value="email" {{ request()->muliple_search == 'email' ? "selected": ""}}>@lang('Email')</option>
+                                        <option value="mobile" {{ request()->muliple_search == 'mobile' ? "selected": ""}}>@lang('Mobile')</option>
+                                    </select>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>@lang('Enter search item')</label>
+                                    <input type="text" name="search_by_value" value="{{ request()->search_by_value }}"
+                                        class="form-control">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <label>@lang('Comments')</label>
+                                    <select name="comments" class="form-control">
+                                        <option value="">@lang('Select One')</option>
+                                        <option value="has_comment" {{ request()->comments == 'has_comment' ? "selected": ""}}>@lang('Has Comment')</option>
+                                        <option value="no_comment" {{ request()->comments == 'no_comment' ? "selected": ""}}>@lang('No Comment')</option>
+                                    </select>
+                                </div>
+                                {{-- <div class="flex-grow-1">
                                     <label>@lang('ID')</label>
                                     <input type="number" name="lead_code" value="{{ request()->lead_code }}"
                                         class="form-control">
@@ -32,7 +57,7 @@
                                     <label>@lang('mobile')</label>
                                     <input type="number" name="mobile" value="{{ request()->mobile }}"
                                         class="form-control">
-                                </div>
+                                </div> --}}
 
                                 <div class="flex-grow-1">
                                     <label>@lang('Country')</label>
@@ -60,7 +85,7 @@
                                     <label>@lang('Owner')</label>
                                     <select name="owner_id" class="form-control">
                                         <option value="">@lang('Select One')</option>
-                                        <option value="19">No Owner</option>
+                                        <option value="0" @selected(request()->owner_id <> null && request()->owner_id == 0)>No Owner</option>
                                         @foreach ($admins as $admin)
                                             @if ($admin->id !== 19)
                                                 <option value="{{ $admin->id }}" @selected(request()->owner_id == $admin->id)>
@@ -88,8 +113,9 @@
                                     </button>
                                 </div>
                                 <div class="flex-grow-1 align-self-end">
-                                    <a href="{{ route('admin.users.active', ['filter' => 'this_month']) }}"
-                                        class="btn btn--secondary w-100 h-45 d-flex align-items-center"
+                                    {{-- <a href="{{ route('admin.users.active', ['filter' => 'this_month']) }}" --}}
+                                    <a href="{{ url()->current() }}"
+                                        class="btn btn--secondary w-100 h-45 d-flex align-items-center justify-content-center"
                                         data-bs-placement="top" title="Clear Search">
                                         <i class="la la-refresh"></i>
                                     </a>
@@ -103,7 +129,7 @@
         <div class="col-lg-12">
             <div class="card b-radius--10 ">
                 <div class="card-body p-0">
-                    <div class="table-responsive--md  table-responsive">
+                    <div class="table-responsive--md  table-responsive" style="min-height: 400px;">
                         <div class="d-flex align-items-center p-3">
                             <small>
                                 @if ($users->firstItem())
@@ -114,11 +140,26 @@
                             @if (can_access('bulk-update-leads'))
                                 <div class="dropdown mx-2 bulk-action">
                                     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                        aria-expanded="false">
+                                        aria-expanded="false"
+                                        data-bs-auto-close="outside">
                                         Selected Leads:
                                         <span class="selected-leads-count text-white"></span>
                                     </button>
                                     <ul class="dropdown-menu px-2" style="width: 220px">
+                                        @if (can_access('hide-unhide-comments'))
+                                            <li>
+                                                <div>
+                                                    <input type="radio" name="hide_comments" id="hide_comments" value="0">
+                                                    <label for="hide_comments">@lang('Hide Comments')</label>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div>
+                                                    <input type="radio" name="hide_comments" id="unhide_comments" value="1">
+                                                    <label for="unhide_comments">@lang('Unhide Comments')</label>
+                                                </div>
+                                            </li>
+                                        @endif
                                         <li>
                                             <div>
                                                 <label>@lang('Owner')</label>
@@ -176,7 +217,7 @@
                                 </div>
                             @endif
 
-                            @if (can_access('export-user'))
+                            @if (can_access('export-leads'))
                                 <button class="btn btn-success btn-md export-action">
                                     Export:
                                     <span class="selected-leads-count text-white"></span>
@@ -239,6 +280,7 @@
                                     @if (auth()->guard('admin')->user()->id === 1)
                                         <th>@lang('Source Type')</th>
                                     @endif
+                                    <th>History</th>
                                     @if (can_access('manage-sales-leads|manage-retention-leads'))
                                         <th>@lang('IP')</th>
                                     @endif
@@ -411,6 +453,11 @@
                                                     <i class="fas fa-info"></i>
                                                 </button></td>
                                         @endif
+                                        <td>
+                                            <button type="button" class="btn--primary btnShowHistory" data-id="{{ $user->id }}" title="{{ $user->userDetailHistory->count() }}">
+                                                <i class="fas fa-info"></i>
+                                            </button>
+                                        </td>
                                         @if (can_access('manage-sales-leads|manage-retention-leads'))
                                             <td>
                                                 <span class="d-block">
@@ -434,6 +481,7 @@
                                                 @endif
 
                                                 @php
+                                                    // dump($user);
                                                     if (
                                                         $user->comments->last() != null &&
                                                         $user->comments->last()->comment != null
@@ -453,6 +501,7 @@
                                                     class="btn {{ $commentvar == 'No comment' ? 'btn-outline--primary' : 'btn--primary' }} edit-comment-btn"
                                                     data-toggle="modal" data-comment="{{ $commentvar }}"
                                                     data-userid="{{ $user->id }}" data-bs-placement="top"
+                                                    data-showcomment="{{$user->show_commentor_comments}}"
                                                     title="Comments" if>
                                                     <i class="far fa-comments"></i>
                                                 </button>
@@ -563,14 +612,28 @@
                     </div>
                     <div class="modal-body">
                         <form id="editCommentForm" action="" method="post">
+                            @if( can_access('hide-unhide-comments') )
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <input type="radio" class="hideComments" name="hide_comments" id="hide_comments2" value="0">
+                                        <label for="hide_comments2">@lang('Hide Comments')</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" class="hideComments" name="hide_comments" id="unhide_comments2" value="1">
+                                        <label for="unhide_comments2">@lang('Unhide Comments')</label>
+                                    </div>
+                                </div>
+                            @endif
                             @csrf
                             <input type="hidden" id="commentUserId" name="userId" value="">
                             <div class="form-group">
                                 <label for="userComment" class="col-form-label">Comment:</label>
                                 <textarea class="form-control" placeholder="@lang('Comment')" name="comment" type="text" rows="4"
-                                    id="userComment" value="" readonly></textarea>
+                                    id="userComment" value="" disabled></textarea>
                             </div>
-                            <!--<button type="submit" class="btn btn-primary">Save changes</button>-->
+                            @if( can_access('hide-unhide-comments') )
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            @endif
                         </form>
                     </div>
                 </div>
@@ -644,6 +707,24 @@
                 </div>
             </div>
         </div>
+
+          {{-- User History MODAL --}}
+        <div class="modal fade" id="userHistoryModal" tabindex="-1" role="dialog" aria-labelledby="userHistoryModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="userHistoryModalLabel">User Details History</h5>
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                        <p>No available data</p>
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
 @endsection
 
@@ -661,13 +742,16 @@
                     button.addEventListener('click', function() {
                         const comment = button.getAttribute('data-comment');
                         const userId = button.getAttribute('data-userid');
+                        const isHide = button.getAttribute('data-showcomment');
 
                         document.getElementById('userComment').value = comment;
                         document.getElementById('commentUserId').value = userId;
-
+                        
                         if (document.getElementById('userComment').value == "") {
                             document.getElementById('userComment').value = 'No comments';
                         }
+                
+                        $('.hideComments[value="'+isHide+'"]').prop('checked', true);
 
                         const form = document.getElementById('editCommentForm');
                         form.action = '/admin/users/update-comment/' + userId;
@@ -784,6 +868,7 @@
                         owner_id: parseInt($('.owner_id').val()),
                         sales_status: $('.sales_status').val(),
                         account_type: $('.account_type').val(),
+                        hide_comments: $('input[name="hide_comments"]:checked').val(),
                         selected_ids: selectedIds,
                         _token: "{{ csrf_token() }}"
                     };
@@ -930,7 +1015,33 @@
 
                 })
 
+                $(document).on('click', '.btnShowHistory', function(){
+                    let id = $(this).attr('data-id');
 
+                    $.ajax({
+                        url: "{{ route('admin.users.fetch.user-history') }}",
+                        type: 'POST',
+                        data: {
+                            id: id,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if( response.success == 1 ){
+                               if( response.html != "" ){
+                                    $('#userHistoryModal .modal-body').html( response.html );
+                                    $('#userHistoryModal').modal('show');
+                               }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error:', error);
+                        }
+                    });
+                });
+
+                $(document).on('click', '.bulk-action .dropdown-menu', function (e) {
+                    e.stopPropagation();
+                });
             });
         })(jQuery);
     </script>
