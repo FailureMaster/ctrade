@@ -16,83 +16,85 @@
                     </a>
                 </h4>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-bordered mb-0">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Name of Group</th>
-                            <th>Users</th>
-                            <th>Symbols</th>
-                            <th>Spread</th>
-                            <th>Lots</th>
-                            <th>Leverage</th>
-                            <th>Level</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($groups as $group)
+            <div class="card-body p-0 ">
+                <div class="table-responsive"> 
+                    <table class="table table-bordered mb-0">
+                        <thead class="thead-dark">
                             <tr>
-                                <td>{{ $group->name }}</td>
-                                
-                                <!-- List all users in the group -->
-                                <td>
-                                    @foreach($group->groupUsers as $groupUser)
-                                        @if( $groupUser->user == null ) @continue @endif
-                                        {{ $groupUser->user->firstname }}@if (!$loop->last), @endif
-                                    @endforeach
-                                </td>
-
-                                <!-- List all symbols and display their settings -->
-                                <td>
-                                   @php
-                                        $arr = [];
-                                        $groupSettings = $group->settings->pluck('symbol')->toArray();
-                                        // var_dump($groupSettings);
-
-                                        foreach ($symbols as $symbol){
-                                            if (in_array($symbol->id,$groupSettings )) {
-                                                array_push($arr, $symbol->symbol);
-                                            }
-                                        }
-                                   @endphp
-                                    {{ implode(', ', $arr) }}
-                                </td>
-
-                                <td>{{ rtrim(rtrim(number_format($group->settings->first()->spread ?? 0, 10), '0'), '.') }}</td>
-                                <td>{{ $group->settings->first()->lots ?? 0 }}</td>
-                                <td>{{ $group->settings->first()->leverage ?? 0 }}</td>
-                                <td>{{ $group->settings->first()->level ?? 0 }}</td>
-
-                                
-                                <td>
-                                    <a 
-                                        class               ="btn btn-primary btn-sm btn-edit" 
-                                        data-id             ="{{ $group->id }}" 
-                                        data-group-name     ="{{ $group->name }}"
-                                        data-users          ="{{ implode(',', $group->groupUsers->pluck('user_id')->toArray()) }}" 
-                                        data-symbols        ="{{ implode(',', $group->settings->pluck('symbol')->toArray()) }}" 
-                                        data-spread         ="{{ $group->settings->first()->spread ?? '' }}"
-                                        data-lots           ="{{ $group->settings->first()->lots ?? '' }}"
-                                        data-leverage       ="{{ $group->settings->first()->leverage ?? '' }}"
-                                        data-level          ="{{ $group->settings->first()->level ?? '' }}"
-                                          
-                                    >
-                                        Edit
-                                    </a>
-
-                                    <a href="#" 
-                                        class="btn btn-danger btn-sm btn-delete" 
-                                        data-id="{{ $group->id }}" 
-                                        data-name="{{ $group->name }}"
-                                    >
-                                        Delete
-                                    </a>
-                                </td>
+                                <th>Name of Group</th>
+                                <th>Users</th>
+                                <th>Symbols</th>
+                                <th>Spread</th>
+                                <th>Lots</th>
+                                <th>Leverage</th>
+                                <th>Level</th>
+                                <th>Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach($groups as $group)
+                                <tr>
+                                    <td>{{ $group->name }}</td>
+                                    
+                                    <!-- List all users in the group -->
+                                    <td>
+                                        @foreach($group->groupUsers as $groupUser)
+                                            @if( $groupUser->user == null ) @continue @endif
+                                            {{ $groupUser->user->firstname }}@if (!$loop->last), @endif
+                                        @endforeach
+                                    </td>
+
+                                    <!-- List all symbols and display their settings -->
+                                    <td style="white-space: wrap;">
+                                    @php
+                                            $arr = [];
+                                            $groupSettings = $group->settings->pluck('symbol')->toArray();
+                                            // var_dump($groupSettings);
+
+                                            foreach ($symbols as $symbol){
+                                                if (in_array($symbol->id,$groupSettings )) {
+                                                    array_push($arr, $symbol->symbol);
+                                                }
+                                            }
+                                    @endphp
+                                        {{ implode(', ', $arr) }}
+                                    </td>
+
+                                    <td>{{ rtrim(rtrim(number_format($group->settings->first()->spread ?? 0, 10), '0'), '.') }}</td>
+                                    <td>{{ $group->settings->first()->lots ?? 0 }}</td>
+                                    <td>{{ $group->settings->first()->leverage ?? 0 }}</td>
+                                    <td>{{ $group->settings->first()->level ?? 0 }}</td>
+
+                                    
+                                    <td>
+                                        <a 
+                                            class               ="btn btn-primary btn-sm btn-edit" 
+                                            data-id             ="{{ $group->id }}" 
+                                            data-group-name     ="{{ $group->name }}"
+                                            data-users          ="{{ implode(',', $group->groupUsers->pluck('user_id')->toArray()) }}" 
+                                            data-symbols        ="{{ implode(',', $group->settings->pluck('symbol')->toArray()) }}" 
+                                            data-spread         ="{{ $group->settings->first()->spread ?? '' }}"
+                                            data-lots           ="{{ $group->settings->first()->lots ?? '' }}"
+                                            data-leverage       ="{{ $group->settings->first()->leverage ?? '' }}"
+                                            data-level          ="{{ $group->settings->first()->level ?? '' }}"
+                                            
+                                        >
+                                            Edit
+                                        </a>
+
+                                        <a href="#" 
+                                            class="btn btn-danger btn-sm btn-delete" 
+                                            data-id="{{ $group->id }}" 
+                                            data-name="{{ $group->name }}"
+                                        >
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
