@@ -38,4 +38,9 @@ class Transaction extends Model
             'wallet' => [Wallet::class,'combineValue']
         ];
     }
+
+    public function madeBy()
+    {
+        return $this->belongsTo(User::class, 'made_by');
+    }
 }
