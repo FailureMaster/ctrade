@@ -1093,6 +1093,18 @@ class PermissionGroupController extends Controller
               'group' => $group[1],
               'value' => false,
             ],
+            [
+              'name' => 'export-leads',
+              'label' => 'Export Leads',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'hide-unhide-comments',
+              'label' => 'Allow user to hide or unhide comments',
+              'group' => $group[1],
+              'value' => false,
+            ],
         ],
       ]);
 
@@ -1693,6 +1705,18 @@ class PermissionGroupController extends Controller
             [
               'name' => 'allow-user-type-test',
               'label' => 'Allow user type to test',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'export-leads',
+              'label' => 'Export Leads',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'hide-unhide-comments',
+              'label' => 'Allow user to hide or unhide comments',
               'group' => $group[1],
               'value' => false,
             ],
