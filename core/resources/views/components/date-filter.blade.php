@@ -1,5 +1,10 @@
 <div class="mb-4">
     <form method="GET" action="{{ $currentUrl }}">
+        @foreach (request()->query() as $key => $value)
+            @if( $key != "filter" && $key != "customfilter" )
+                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+            @endif
+        @endforeach
         <div class="btn-group d-flex w-100 mb-2 @if(App::getLocale() == 'ar') flex-row-reverse @endif" role="group" aria-label="Basic example">
             <button
                 type="submit"
@@ -95,6 +100,11 @@
                             value="{{ request()->date }}"
                             >
                     </div>
+                    @foreach (request()->query() as $key => $value)
+                        @if( $key != "filter" && $key != "customfilter" )
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endif
+                    @endforeach
                     <div class="my-3">
                         <button type="submit" class="btn-lg btn-primary w-100">@lang('Start Filter')</button>
                     </div>
@@ -126,12 +136,16 @@
 @endpush
 
 @push('style-lib')
-    <link rel="stylesheet" href="{{asset('assets/admin/css/vendor/datepicker.min.css')}}">
+    {{-- <link rel="stylesheet" href="{{asset('assets/admin/css/vendor/datepicker.min.css')}}"> --}}
+    {{-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
 
 @push('script-lib')
-  <script src="{{ asset('assets/admin/js/vendor/datepicker.min.js') }}"></script>
-  <script src="{{ asset('assets/admin/js/vendor/datepicker.en.js') }}"></script>
+  {{-- <script src="{{ asset('assets/admin/js/vendor/datepicker.min.js') }}"></script> --}}
+  {{-- <script src="{{ asset('assets/admin/js/vendor/datepicker.en.js') }}"></script> --}}
+  {{-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> --}}
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 @endpush
 
 @push('script')
@@ -139,7 +153,17 @@
         (function($){
             "use strict";
             if(!$('.customDateFilterInput').val()){
-                $('.customDateFilterInput').datepicker();
+                // $('.customDateFilterInput').datepicker();
+
+                flatpickr(".customDateFilterInput", {
+                    mode: "range", // For single date selection
+                    inline: false,   // Display inline calendar
+                    showMonths: 2,  // Show two months side by side
+                    dateFormat: 'm/d/Y',
+                    locale: {
+                        rangeSeparator: " - ",  // Replace "to" with " - "
+                    }
+                });
             }
         })(jQuery)
     
