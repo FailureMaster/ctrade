@@ -72,9 +72,9 @@
                                         <option value="1" @selected(request()->status == 1)>
                                             @lang('Approved')
                                         </option>
-                                        <option value="2" @selected(request()->status == 2)>
+                                        {{-- <option value="2" @selected(request()->status == 2)>
                                             @lang('Pending')
-                                        </option>
+                                        </option> --}}
                                         <option value="3" @selected(request()->status == 3)>
                                             @lang('Rejected')
                                         </option>
@@ -129,7 +129,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mx-2 d-container">
+            {{-- <div class="mx-2 d-container">
                 <div class="dashboard-card skeleton">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="dashboard-card__content">
@@ -144,7 +144,7 @@
                         <h6 class="dashboard-card__coin-title">{{ $depositsData->where('status', 2)->count() }}</h6>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="mx-2 d-container">
                 <div class="dashboard-card skeleton">
                     <div class="d-flex justify-content-between align-items-center">
