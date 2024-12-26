@@ -283,7 +283,7 @@
                         @auth
                             <span id="bonus-span {{ @$marketCurrencyWallet->bonus < 0 ? 'text-danger' : 'text-success'}}">
                                 <label class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success'}}">
-                                    {{ showAmount(@$marketCurrencyWallet->balance) }} $
+                                    {{ showAmount(@$marketCurrencyWallet->Bonus) }} $
                                 </labe>
                             </span>
                         @else
