@@ -423,10 +423,11 @@
                                 <select class="form-control" name="status" id="userStatusInline"
                                     value="{{ $user->sales_status }}">
                                     <option disabled>@lang('Select One')</option>
-                                    @foreach (STATUS_OPTIONS as $status)
-                                        <option value="{{ $status }}"
-                                            {{ $status == $user->sales_status ? 'selected' : '' }}>
-                                            {{ $status }}</option>
+                                    @foreach ($salesStatuses as $status)
+                                        <option value="{{ $status->name }}"
+                                            {{ $status->name == $user->sales_status ? 'selected' : '' }}>
+                                            {{ $status->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

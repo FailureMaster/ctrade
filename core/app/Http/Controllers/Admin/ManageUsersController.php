@@ -407,7 +407,10 @@ class ManageUsersController extends Controller
         // Get the list of admins
         $admins = $this->getAdmins();
 
-        return view('admin.users.detail', compact('pageTitle', 'user', 'previousUser', 'nextUser', 'widget', 'countries', 'currencies', 'marketCurrencyWallet', 'requiredMarginTotal', 'admins'));
+        // Get all sales statuses
+        $salesStatuses = SalesStatus::all();
+
+        return view('admin.users.detail', compact('pageTitle', 'user', 'previousUser', 'nextUser', 'widget', 'countries', 'currencies', 'marketCurrencyWallet', 'requiredMarginTotal', 'admins', 'salesStatuses'));
     }
 
 
