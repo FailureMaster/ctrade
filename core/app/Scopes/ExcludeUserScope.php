@@ -36,7 +36,7 @@ class ExcludeUserScope implements Scope
             $excludedUserIds = User::withoutGlobalScopes()->where('account_type', 'test')->pluck('id')->toArray();
             
             if( $authUser->permission_group_id == 1 ){
-                $builder->whereNotIn($this->column, array_merge($excludedUserIds, [1]));
+                $builder->whereNotIn($this->column, [1]);
             }
             else{
                 $builder->whereNotIn($this->column, array_merge($excludedUserIds, [1]))->whereIn($this->column, $includeUserIds);
