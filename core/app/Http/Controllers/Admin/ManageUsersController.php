@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\User\StoreRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\User\SalesStatus\StoreRequest as SalesStatusStoreRequest;
+use App\Models\UserDetailsHistory;
 use Exception;
 use Illuminate\Validation\Rule;
 use Spatie\SimpleExcel\SimpleExcelWriter;
@@ -286,8 +287,13 @@ class ManageUsersController extends Controller
         )
         ->leftJoin('comments', 'latest_comments.latest_comment_id', '=', 'comments.id');
 
+        if( request()->has('owner_id') && request()->owner_id <> "" ){
+            $users = $users->where('owner_id', request()->owner_id);
+        }  
+     
         return $users->with('owner')
-            ->with('comments.commentor', 'loginLogs')
+            // ->with('comments.commentor', 'loginLogs', 'userDetailHistory', 'comments')
+            ->with('loginLogs', 'userDetailHistory')
             ->when(request()->get('name'), function ($query, $name) {
                 $query->where('firstname', 'LIKE', "%{$name}%")
                     ->orWhere('lastname', 'LIKE', "%{$name}%");
@@ -295,8 +301,33 @@ class ManageUsersController extends Controller
             ->when(request()->get('mobile'), function ($query, $mobile) {
                 $query->where('mobile', 'LIKE', "%{$mobile}%");
             })
-             ->when(request()->get('email'), function ($query, $email) {
+            ->when(request()->get('email'), function ($query, $email) {
                 $query->where('email', 'LIKE', "%{$email}%");
+            })
+            ->when(request()->get('comments'), function ($query, $email) {
+                if( request()->comments <> "" ){
+                    if( request()->comments == "has_comment") 
+                        $query->whereHas('comments');
+                    else
+                        $query->whereDoesntHave('comments');
+                }
+            })
+            
+            ->when(request()->get('muliple_search'), function ($query) {
+                if( request()->muliple_search <> "" && request()->search_by_value <> "" ){
+                    if( request()->muliple_search == "email" )
+                        $query->where('email', request()->search_by_value);
+                    if( request()->muliple_search == "name" ){
+                        $query->where('firstname', 'LIKE', "%".request()->search_by_value."%")
+                         ->orWhere('lastname', 'LIKE', "%".request()->search_by_value."%");
+                    }
+                    if( request()->muliple_search == "id" ){
+                        $query->where('users.lead_code', request()->search_by_value);
+                    }
+                    if( request()->muliple_search == "mobile" ){
+                        $query->where('mobile', request()->search_by_value);
+                    }
+                }
             })
             ->searchable([
                 'id',
@@ -310,7 +341,7 @@ class ManageUsersController extends Controller
             ->filter([
                 'lead_code',
                 'sales_status',
-                'owner_id',
+                // 'owner_id',
                 'country_code',
                 'lead_source'
             ])
@@ -329,7 +360,8 @@ class ManageUsersController extends Controller
                 'lead_source',
                 'users.owner_id',
                 'users.user_source',
-                'users.last_request'
+                'users.last_request',
+                'users.show_commentor_comments'
             ])
             ->orderBy($tblName.'.'.$columnName, $orderDirection);
         // ->paginate(getPaginate());
@@ -597,6 +629,8 @@ class ManageUsersController extends Controller
 
         $user->save();
 
+       
+
         //check 
         if( !empty($addType) ){
             foreach( $addType as $at ){
@@ -611,6 +645,7 @@ class ManageUsersController extends Controller
                     $transaction->charge = 0;
                     $transaction->trx = $trx;
                     $transaction->details = $request->remark;
+                    $transaction->made_by = Auth::guard('admin')->user()->id;
                     $transaction->save();
                 }
             }
@@ -623,6 +658,7 @@ class ManageUsersController extends Controller
             $transaction->charge = 0;
             $transaction->trx = $trx;
             $transaction->details = $request->remark;
+            $transaction->made_by = Auth::guard('admin')->user()->id;
             $transaction->save();
         }
 
@@ -811,8 +847,10 @@ class ManageUsersController extends Controller
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'comment' => 'required|string|max:1024',
+            // 'comment' => 'required|string|max:1024',
+            'hide_comments' => 'required',
         ]);
+
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
@@ -823,7 +861,8 @@ class ManageUsersController extends Controller
         }
 
         // Update the user's comment
-        $user->comment = $request->comment;
+        // $user->comment = $request->comment;
+        $user->show_commentor_comments = $request->hide_comments;
         $user->save();
 
         $notify[] = ['success', 'Comment updated successfully'];
@@ -852,6 +891,7 @@ class ManageUsersController extends Controller
             return back()->withNotify($notify);
         }
         $user = User::find($id);
+        $old_owner = $user->owner <> null ? $user->owner->name : "No Owner";
         if (!$user) {
             $notify[] = ['error', 'User not found'];
             return back()->withNotify($notify);
@@ -859,7 +899,15 @@ class ManageUsersController extends Controller
 
         // Update the user's comment
         $user->owner_id = $request->owner == 0 ? null : $owner->id;
-        $user->save();
+
+        if( $user->save() ){
+              // Save to history table
+              $userDetails = new UserDetailsHistory();
+              $userDetails->user_id = $user->id;
+              $userDetails->remarks = "Changed owner from $old_owner to ".( $request->owner == 0 ? "No Owner" : $owner->name );
+              $userDetails->updated_by = Auth::guard('admin')->user()->id;
+              $userDetails->save();
+        }
 
         $notify[] = ['success', 'User assigned to owner' . ($owner ? (' ' . $owner->name) : '')];
         return back()->withNotify($notify);
@@ -867,7 +915,7 @@ class ManageUsersController extends Controller
 
     public function updateSalesStatus(Request $request, $id)
     {
-
+   
         $salesStatuses = SalesStatus::all()
             ->pluck('name')
             ->toArray();
@@ -884,13 +932,24 @@ class ManageUsersController extends Controller
         }
         $validatedData = $request->validate($validatorSettings);
         $user = User::find($id);
+
+        $oldStatus = $user->sales_status;
+
         if (!$user) {
             $notify[] = ['error', 'User not found'];
             return back()->withNotify($notify);
         }
 
         $user->sales_status = $validatedData['status'];
-        $user->save();
+
+        if( $user->save() ){
+            // Save to history table
+            $userDetails = new UserDetailsHistory();
+            $userDetails->user_id = $user->id;
+            $userDetails->remarks = "Changed status from $oldStatus to ".$validatedData['status'];
+            $userDetails->updated_by = Auth::guard('admin')->user()->id;
+            $userDetails->save();
+        }
 
         $notify[] = ['success', 'Sales status updated successfully!'];
         return back()->withNotify($notify);
@@ -1183,8 +1242,8 @@ class ManageUsersController extends Controller
     public function bulkRecordUpdate(Request $request)
     {
         // Retrieve the validated data
-        $data = $request->only('owner_id', 'sales_status', 'account_type', 'selected_ids');
-        
+        $data = $request->only('owner_id', 'sales_status', 'account_type', 'selected_ids', 'hide_comments');
+
         // Prepare the update data
         $updateData = [];
         if ($data['owner_id'] !== null) {
@@ -1195,6 +1254,9 @@ class ManageUsersController extends Controller
         }
         if ($data['account_type'] !== null) {
             $updateData['account_type'] = $data['account_type'];
+        }
+        if ($request->has('hide_comments') && $data['hide_comments'] !== null) {
+            $updateData['show_commentor_comments'] = $data['hide_comments'];
         }
 
         // Perform the bulk update
@@ -1271,6 +1333,30 @@ class ManageUsersController extends Controller
             }
             catch( Exception $e ){
                 return response()->json(['message' => 'Bulk export failed'], 500);
+            }
+        }
+
+        abort(403, 'Unauthorized');
+    }
+
+    public function fetchHistory(Request $request){
+      
+        if ($request->ajax()) {
+
+            $data = $request->validate([
+                'id' => ['required']
+            ]);
+
+            try{
+                $data = UserDetailsHistory::with('updatedBy')->where('user_id', $request->id)->orderByDesc('id')->get();
+
+                $html = view('admin.users.modal_blade.user-details-history', compact('data'))->render();
+
+                return response()->json(['success' => 1, 'html' => $html ] ,200);
+            }
+            catch( Exception $e ){
+                dd($e->getMessage());
+                return response()->json(['message' => 'Failed'], 500);
             }
         }
 
