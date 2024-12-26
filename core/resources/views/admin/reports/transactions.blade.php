@@ -120,6 +120,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="">
+                        <div class="card">
+                            <div class="card-body d-flex">
+                                <div class="widget-two box--shadow2 b-radius--5 bg--dark m-0 p-2 text-white">
+                                    <p class="mx-2">Credit:</p>
+                                    <p>{{ showAmount($totalTransactions->credit) }}$</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mx-2">
+                        <div class="card">
+                            <div class="card-body d-flex">
+                                <div class="widget-two box--shadow2 b-radius--5 bg--danger m-0 p-2 text-white">
+                                    <p class="mx-2">Bonus:</p>
+                                    <p>{{ showAmount($totalTransactions->bonus) }}$</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="table-responsive--sm table-responsive">
                     <table class="table table--light style--two" style="margin-bottom: 0; padding: 0 3px !important">
@@ -133,6 +153,7 @@
                                 <th>@lang('Amount')</th>
                                 <th>@lang('Post Balance')</th>
                                 <th>@lang('Type')</th>
+                                <th>@lang('Made By')</th>
                                 <th>@lang('Details')</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -170,6 +191,9 @@
                                     </td>
                                     <td>
                                         {{ str_replace("_"," ",$trx->remark) }}
+                                    </td>
+                                    <td>
+                                        {{ @$trx->madeBy->fullname ?? "-" }}
                                     </td>
                                     <td>{{ __($trx->details) }}</td>
                                     <td class="text-center">
