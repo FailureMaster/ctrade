@@ -17,4 +17,9 @@ class Comment extends Model
     {
         return showDateTime($this->created_at);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
