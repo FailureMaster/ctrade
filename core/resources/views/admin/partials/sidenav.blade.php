@@ -6,7 +6,7 @@
                     src="{{ siteLogo() }}?v={{ time() }}"></a>
         </div>
         <div class="sidebar__menu-wrapper" id="sidebar__menuWrapper">
-            <ul class="sidebar__menu">
+            <ul class="sidebar__menu" style="min-height:650px;">
 
                 @if(can_access('dashboard'))
                     <li class="sidebar-menu-item {{ menuActive('admin.dashboard') }}">
