@@ -380,15 +380,15 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-{{ !can_access('change-owner') ? 3 : 2 }} @if ($user->account_type == 'demo' || $user->account_type == 'test') d-flex @endif">
-
-                            <div class="form-group" @if ($user->account_type == 'demo' || $user->account_type == 'test' ) style="@if ( ($user->account_type == 'demo' || $user->account_type == 'test' ) && can_access('change-user-type') ) width:50%; @else width:100%; @endif" @endif>
+                        {{-- <div class="col-md-{{ !can_access('change-owner') ? 3 : 2 }} @if ($user->account_type == 'demo' || $user->account_type == 'test') d-flex @endif"> --}}
+                        <div class="col-md-{{ can_access('change-user-type') ? 2 : 3 }}">
+                            <div class="form-group">
                                 <label>@lang('Account')</label>
                                 <input class="form-control" type="text" name="lead_code"
                                     value="{{ $user->lead_code }}" readonly>
                             </div>
-
-                            @if (( $user->account_type == 'demo' || $user->account_type == 'test' ) && can_access('change-user-type') )
+                            {{-- @if (( $user->account_type == 'demo' || $user->account_type == 'test' ) && can_access('change-user-type') ) --}}
+                            {{-- @if ( can_access('change-user-type') )
                                 <div class="form-group" style="width:50%; margin-left:1rem;">
                                     <label>@lang('Lead Type')</label>
                                     <select name="lead_type" class="form-control">
@@ -399,10 +399,25 @@
                                         @endif
                                     </select>
                                 </div>
-                            @endif
+                            @endif --}}
                         </div>
 
-                        <div class="col-md-{{ !can_access('change-owner') ? 3 : 2 }}">
+                        @if ( can_access('change-user-type') )
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>@lang('Lead Type')</label>
+                                    <select name="lead_type" class="form-control">
+                                        <option value="demo" {{ $user->account_type == 'demo' ? "selected" : ""}}>Demo</option>
+                                        <option value="real" {{ $user->account_type == 'real' ? "selected" : ""}}>Real</option>
+                                        @if (can_access('allow-user-type-test'))
+                                            <option value="test" {{ $user->account_type == 'test' ? "selected" : ""}}>Test</option>
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="col-md-{{ can_access('change-user-type') ? 2 : 3 }}">
                             <div class="form-group">
                                 <label>@lang('Status')</label>
                                 <select class="form-control" name="status" id="userStatusInline"
@@ -436,14 +451,14 @@
                             </div>
                         @endif
 
-                        <div class="col-md-3">
+                        <div class="col-md-{{ can_access('change-owner') ? 2 : 3 }}">
                             <div class="form-group">
                                 <label>@lang('Password') </label>
                                 <input class="form-control" type="password" name="password">
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-{{ can_access('change-owner') ? 2 : 3 }}">
                             <div class="form-group">
                                 <label>@lang('Source') </label>
                                 <input class="form-control" type="source" name="source"
