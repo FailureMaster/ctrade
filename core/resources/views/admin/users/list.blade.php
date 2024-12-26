@@ -437,7 +437,7 @@
                                         <td>
 
                                             @if ($user->comments->isNotEmpty())
-                                                <span>{{ showDateTime($user->comments->sortByDesc('updated_at')->first()->updated_at, 'd-m-y - H:i') }}</span>
+                                                <span>{{ showDateTime($user->comments->sortByDesc('id')->first()->created_at, 'd-m-y - H:i') }}</span>
                                             @else
                                                 <span>No comments</span>
                                             @endif

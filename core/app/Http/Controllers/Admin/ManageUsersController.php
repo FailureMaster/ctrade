@@ -242,7 +242,16 @@ class ManageUsersController extends Controller
         }
 
         if ($startDate && $endDate) {
-            $users->whereBetween('users.created_at', [$startDate, $endDate]);
+            if( request()->get('comments') <> null && request()->comments == "has_comment" ) {
+                if( request()->comments == "has_comment"){
+                    $users->whereHas('comments', function ($query) use ( $startDate, $endDate )
+                    {
+                            $query->whereBetween('comments.created_at', [$startDate, $endDate]);
+                    });
+                } 
+            }
+            else
+                $users->whereBetween('users.created_at', [$startDate, $endDate]);
         }
 
         // check teh order
