@@ -45,16 +45,16 @@ class ManageUsersController extends Controller
     {
         // Get the 'filter' parameter from the request
         $filter = $request->get('filter');
-    
+
         // If 'customfilter' is present in the request, set the filter to 'custom'
         if ($request->get('customfilter')) {
             $filter = 'custom';
         }
-    
+
         // Initialize start and end dates to null
         $startDate = null;
         $endDate = null;
-    
+
         // Determine the date range based on the filter
         switch ($filter) {
             case 'today':
@@ -99,40 +99,40 @@ class ManageUsersController extends Controller
                 $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
                 break;
         }
-    
+
         // Get the 'per_page' parameter from the request, defaulting to 25
         $perPage = $request->get('per_page', 25);
-    
+
         // Fetch the user data based on the user type and date range, then paginate
-      
-        
+
+
         $orderDirection = $request->query('direction');
         // dd($orderDirection);
-        
-        if( $request->query('orderby')=='created_at') {
+
+        if ($request->query('orderby') == 'created_at') {
             $columnName = 'created_at';
-        }elseif($request->query('orderby') == 'updated_at'){
+        } elseif ($request->query('orderby') == 'updated_at') {
             $columnName = 'updated_at';
-        }else{
+        } else {
             $columnName = 'id';
         }
-       
+
         $users = $this->userData($columnName, $orderDirection, $userType, $startDate, $endDate)->paginate($perPage);
 
         Session::put('users_data', $users);
-    
+
         // Get the list of admins
         $admins = $this->getAdmins();
-        
+
         // Get all sales statuses
         $salesStatuses = SalesStatus::all();
-        
+
         // Load and decode the countries from a JSON file
         $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')), true);
-    
+
         // Get the total number of user records
         $totalRecords = $users->total();
-    
+
         // Determine country codes and lead sources based on the user type
         if ($userType == 'active') {
             $countryCodes = User::where('account_type', 'real')->distinct()->pluck('country_code')->toArray();
@@ -141,26 +141,26 @@ class ManageUsersController extends Controller
             $countryCodes = User::where('account_type', 'demo')->distinct()->pluck('country_code')->toArray();
             $leadSources = User::where('account_type', 'demo')->whereNotNull('lead_source')->distinct()->pluck('lead_source');
         }
-    
+
         // Filter the countries based on the country codes
         $filteredCountries = array_filter($countries, function ($key) use ($countryCodes) {
             return in_array($key, $countryCodes);
         }, ARRAY_FILTER_USE_KEY);
-    
+
         // Get the total number of user records again (if needed)
         $totalRecords = $users->total();
 
         if ($orderDirection == null) {
             $orderDirection = 'desc';
             // dd('desc sa null');
-        }elseif($orderDirection == 'desc') {
+        } elseif ($orderDirection == 'desc') {
             // dd('desc');
             $orderDirection = 'asc';
-        }else{
+        } else {
             // dd('asc');
             $orderDirection = 'desc';
         }
-    
+
 
         // Return the 'admin.users.list' view with the provided data
         return view('admin.users.list', compact('pageTitle', 'users', 'admins', 'salesStatuses', 'filteredCountries', 'history', 'totalRecords', 'perPage', 'leadSources', 'orderDirection', 'columnName'));
@@ -242,32 +242,30 @@ class ManageUsersController extends Controller
         }
 
         if ($startDate && $endDate) {
-            if( request()->get('comments') <> null && request()->comments == "has_comment" ) {
-                if( request()->comments == "has_comment"){
-                    $users->whereHas('comments', function ($query) use ( $startDate, $endDate )
-                    {
-                            $query->whereBetween('comments.created_at', [$startDate, $endDate]);
+            if (request()->get('comments') <> null && request()->comments == "has_comment") {
+                if (request()->comments == "has_comment") {
+                    $users->whereHas('comments', function ($query) use ($startDate, $endDate) {
+                        $query->whereBetween('comments.created_at', [$startDate, $endDate]);
                     });
-                } 
-            }
-            else
+                }
+            } else
                 $users->whereBetween('users.created_at', [$startDate, $endDate]);
         }
 
         // check teh order
         // dd($orderDirection);
         // $orderDirection = ($orderDirection == 'desc') ? 'asc' : 'desc';
-        
+
 
         if ($orderDirection == null) {
             $orderDirection = 'desc';
-        }elseif($orderDirection == 'desc') {
+        } elseif ($orderDirection == 'desc') {
             $orderDirection = 'desc';
-        }else{
+        } else {
             $orderDirection = 'asc';
         }
 
-        if( $is_online ){
+        if ($is_online) {
             // Get current time
             $currentTime = Carbon::now();
 
@@ -278,13 +276,13 @@ class ManageUsersController extends Controller
         }
 
         // $users = $users->join('comments', 'users.id', '=', 'comments.user_id');
-        
+
         if ($columnName == 'id') {
             $tblName = 'users';
-        }else{
-            $tblName = ($columnName == 'created_at' ) ? 'users' : 'comments';
+        } else {
+            $tblName = ($columnName == 'created_at') ? 'users' : 'comments';
         }
-       // Optimized query for joining latest comments
+        // Optimized query for joining latest comments
         $users = $users->leftJoinSub(
             DB::table('comments')
                 ->select('user_id', DB::raw('MAX(id) as latest_comment_id'))
@@ -294,12 +292,12 @@ class ManageUsersController extends Controller
                 $join->on('users.id', '=', 'latest_comments.user_id');
             }
         )
-        ->leftJoin('comments', 'latest_comments.latest_comment_id', '=', 'comments.id');
+            ->leftJoin('comments', 'latest_comments.latest_comment_id', '=', 'comments.id');
 
-        if( request()->has('owner_id') && request()->owner_id <> "" ){
+        if (request()->has('owner_id') && request()->owner_id <> "") {
             $users = $users->where('owner_id', request()->owner_id);
-        }  
-     
+        }
+
         return $users->with('owner')
             // ->with('comments.commentor', 'loginLogs', 'userDetailHistory', 'comments')
             ->with('loginLogs', 'userDetailHistory')
@@ -314,26 +312,26 @@ class ManageUsersController extends Controller
                 $query->where('email', 'LIKE', "%{$email}%");
             })
             ->when(request()->get('comments'), function ($query, $email) {
-                if( request()->comments <> "" ){
-                    if( request()->comments == "has_comment") 
+                if (request()->comments <> "") {
+                    if (request()->comments == "has_comment")
                         $query->whereHas('comments');
                     else
                         $query->whereDoesntHave('comments');
                 }
             })
-            
+
             ->when(request()->get('muliple_search'), function ($query) {
-                if( request()->muliple_search <> "" && request()->search_by_value <> "" ){
-                    if( request()->muliple_search == "email" )
+                if (request()->muliple_search <> "" && request()->search_by_value <> "") {
+                    if (request()->muliple_search == "email")
                         $query->where('email', request()->search_by_value);
-                    if( request()->muliple_search == "name" ){
-                        $query->where('firstname', 'LIKE', "%".request()->search_by_value."%")
-                         ->orWhere('lastname', 'LIKE', "%".request()->search_by_value."%");
+                    if (request()->muliple_search == "name") {
+                        $query->where('firstname', 'LIKE', "%" . request()->search_by_value . "%")
+                            ->orWhere('lastname', 'LIKE', "%" . request()->search_by_value . "%");
                     }
-                    if( request()->muliple_search == "id" ){
+                    if (request()->muliple_search == "id") {
                         $query->where('users.lead_code', request()->search_by_value);
                     }
-                    if( request()->muliple_search == "mobile" ){
+                    if (request()->muliple_search == "mobile") {
                         $query->where('mobile', request()->search_by_value);
                     }
                 }
@@ -372,7 +370,7 @@ class ManageUsersController extends Controller
                 'users.last_request',
                 'users.show_commentor_comments'
             ])
-            ->orderBy($tblName.'.'.$columnName, $orderDirection);
+            ->orderBy($tblName . '.' . $columnName, $orderDirection);
         // ->paginate(getPaginate());
     }
 
@@ -387,14 +385,14 @@ class ManageUsersController extends Controller
             $index = $key;
         }
 
-        $previousUser   = ($index != 0) ? $user_data2[($index-1)] : 0 ;
-        $nextUser       =  isset($user_data2[($index+1)]) ? $user_data2[($index+1)] : null;
+        $previousUser   = ($index != 0) ? $user_data2[($index - 1)] : 0;
+        $nextUser       =  isset($user_data2[($index + 1)]) ? $user_data2[($index + 1)] : null;
 
         $user = User::findOrFail($id);
 
         $pageTitle = 'User Detail - ' . $user->fullname;
 
-        if( $user->account_type == "demo" ) $pageTitle = "";
+        if ($user->account_type == "demo") $pageTitle = "";
 
         $widget = [];
         $widget['total_trade'] = Trade::where('trader_id', $user->id)->count();
@@ -495,12 +493,11 @@ class ManageUsersController extends Controller
                     ->whereNull('deleted_at'),
             ],
             'country' => 'required|in:' . $countries,
-            'status' => 'nullable|in:NEW,CALLBACK,NA,UNDER_AGE,DENY_REGISTRATION,DEPOSIT,NOT_INTERESTED,VOICE_MAIL',
             'comment' => 'nullable|string|max:1024',
             'password' => 'sometimes',
         ]);
 
-         if ($request->comment <> null) {
+        if ($request->comment <> null) {
             Comment::create([
                 'user_id' => $id,
                 'comment' => $request->comment,
@@ -527,8 +524,8 @@ class ManageUsersController extends Controller
         $user->sv = $request->sv ? Status::VERIFIED : Status::UNVERIFIED;
         $user->ts = $request->ts ? Status::ENABLE : Status::DISABLE;
 
-        if( $request->has('owner_id') )  $user->owner_id = $request->owner_id;
-        
+        if ($request->has('owner_id'))  $user->owner_id = $request->owner_id;
+
         if (!$request->kv) {
             $user->kv = 0;
             if ($user->kyc_data) {
@@ -544,7 +541,7 @@ class ManageUsersController extends Controller
         }
 
         // lead type
-        if( $request->has('lead_type') ){
+        if ($request->has('lead_type')) {
             $user->account_type = $request->lead_type;
         }
 
@@ -554,7 +551,7 @@ class ManageUsersController extends Controller
         return back()->withNotify($notify);
     }
 
- public function addSubBalance(Request $request, $id)
+    public function addSubBalance(Request $request, $id)
     {
         // dd($request->all());
         $request->validate([
@@ -572,8 +569,8 @@ class ManageUsersController extends Controller
         $wallet = Wallet::where('user_id', $user->id)->$walletScope()->where('currency_id', $request->wallet)->first();
 
         $amount = isset($request->amount) ? $request->amount : 0;
-        $bonus  = isset($request->bonus) ? $request->bonus: 0;
-        $credit = isset($request->credit) ? $request->credit: 0;
+        $bonus  = isset($request->bonus) ? $request->bonus : 0;
+        $credit = isset($request->credit) ? $request->credit : 0;
         $totalTransactionAmount = $amount + $bonus + $credit;
         $trx = getTrx();
 
@@ -587,8 +584,8 @@ class ManageUsersController extends Controller
             if (!$wallet) {
 
                 $walletType = $request->wallet_type == 'spot' ? Status::WALLET_TYPE_SPOT : Status::WALLET_TYPE_FUNDING;
-                
-                $walletNew = New Wallet();
+
+                $walletNew = new Wallet();
                 $walletNew->currency_id = $request->wallet;
                 $walletNew->wallet_type = $walletType;
 
@@ -599,7 +596,7 @@ class ManageUsersController extends Controller
                 $walletNew->save();
 
                 $wallet = $walletNew->fresh();
-            }else{
+            } else {
                 $wallet->balance += $amount;
                 $wallet->bonus += $bonus;
                 $wallet->credit += $credit;
@@ -610,13 +607,13 @@ class ManageUsersController extends Controller
             $transaction->remark = 'balance_add';
             $notifyTemplate = 'BAL_ADD';
 
-            if( $amount ){
+            if ($amount) {
                 array_push($addType, ['balance_add' => $amount]);
             }
-            if( $bonus ){
+            if ($bonus) {
                 array_push($addType, ['bonus_add' => $bonus]);
             }
-            if( $credit ){
+            if ($credit) {
                 array_push($addType, ['credit_add' => $credit]);
             }
 
@@ -641,12 +638,12 @@ class ManageUsersController extends Controller
 
         $user->save();
 
-       
+
 
         //check 
-        if( !empty($addType) ){
-            foreach( $addType as $at ){
-                foreach( $at as $key => $a ){
+        if (!empty($addType)) {
+            foreach ($addType as $at) {
+                foreach ($at as $key => $a) {
                     $transaction = new Transaction();
                     $transaction->trx_type = '+';
                     $transaction->remark = $key;
@@ -661,8 +658,7 @@ class ManageUsersController extends Controller
                     $transaction->save();
                 }
             }
-        }
-        else{
+        } else {
             $transaction->user_id = $user->id;
             $transaction->wallet_id = $wallet->id;
             $transaction->amount = $totalTransactionAmount;
@@ -686,11 +682,11 @@ class ManageUsersController extends Controller
             'user_id' => $id,
             'currency_id' => Defaults::DEF_WALLET_CURRENCY_ID
         ])->join('currencies', 'wallets.currency_id', 'currencies.id')->spot()->sum(DB::raw('currencies.rate * wallets.balance'));
-        
+
         // dd($estimatedBalance);
         // Set up Pusher
         $pusher = new Pusher(
-        'c5afd2b879ff37c4a429',
+            'c5afd2b879ff37c4a429',
             'bc91ce796e70e0861721',
             '1688847',
             [
@@ -701,7 +697,7 @@ class ManageUsersController extends Controller
 
         // Data to send to Pusher
         $data = [
-        'balance' => $estimatedBalance
+            'balance' => $estimatedBalance
         ];
 
         // Trigger the event on Pusher
@@ -912,13 +908,13 @@ class ManageUsersController extends Controller
         // Update the user's comment
         $user->owner_id = $request->owner == 0 ? null : $owner->id;
 
-        if( $user->save() ){
-              // Save to history table
-              $userDetails = new UserDetailsHistory();
-              $userDetails->user_id = $user->id;
-              $userDetails->remarks = "Changed owner from $old_owner to ".( $request->owner == 0 ? "No Owner" : $owner->name );
-              $userDetails->updated_by = Auth::guard('admin')->user()->id;
-              $userDetails->save();
+        if ($user->save()) {
+            // Save to history table
+            $userDetails = new UserDetailsHistory();
+            $userDetails->user_id = $user->id;
+            $userDetails->remarks = "Changed owner from $old_owner to " . ($request->owner == 0 ? "No Owner" : $owner->name);
+            $userDetails->updated_by = Auth::guard('admin')->user()->id;
+            $userDetails->save();
         }
 
         $notify[] = ['success', 'User assigned to owner' . ($owner ? (' ' . $owner->name) : '')];
@@ -927,7 +923,7 @@ class ManageUsersController extends Controller
 
     public function updateSalesStatus(Request $request, $id)
     {
-   
+
         $salesStatuses = SalesStatus::all()
             ->pluck('name')
             ->toArray();
@@ -954,11 +950,11 @@ class ManageUsersController extends Controller
 
         $user->sales_status = $validatedData['status'];
 
-        if( $user->save() ){
+        if ($user->save()) {
             // Save to history table
             $userDetails = new UserDetailsHistory();
             $userDetails->user_id = $user->id;
-            $userDetails->remarks = "Changed status from $oldStatus to ".$validatedData['status'];
+            $userDetails->remarks = "Changed status from $oldStatus to " . $validatedData['status'];
             $userDetails->updated_by = Auth::guard('admin')->user()->id;
             $userDetails->save();
         }
@@ -1056,13 +1052,13 @@ class ManageUsersController extends Controller
     public function importView()
     {
         $pageTitle = 'Import Leads';
-    
+
         return view('admin.users.import_view', compact('pageTitle'));
     }
 
-    
-   public function import(Request $request)
-{
+
+    public function import(Request $request)
+    {
 
         Log::info('Import method accessed');
         $request->validate([
@@ -1070,22 +1066,22 @@ class ManageUsersController extends Controller
         ]);
 
         Log::info('File validated');
-    
-        
+
+
         $path = $request->file('filepond')->getRealPath();
         $data = array_map('str_getcsv', file($path));
-    
+
         // Skip the first row (headers)
         $data = array_slice($data, 1);
-    
+
         // Load country data from JSON
         $countryData = json_decode(file_get_contents(resource_path('views/partials/country.json')), true);
-    
+
         $columnNames = ['First Name', 'Last Name', 'Email', 'Mobile', 'Country Code', 'Account Type', 'Lead Source'];
         $errors = [];
         $rowNumber = 2; // Start from 2 because we skipped the header row
         $insertedCount = 0;
-    
+
         foreach ($data as $row) {
             if (count($row) < 6) { // Adjusted count to match new column count
                 $errors[] = "Row $rowNumber: Missing data in one or more columns.";
@@ -1101,7 +1097,7 @@ class ManageUsersController extends Controller
                 } else {
                     // Check for duplicates (e.g., using email as a unique identifier)
                     $existingUser = User::where('email', $row[2])->first();
-    
+
                     if ($existingUser) {
                         $errors[] = "Row $rowNumber: Duplicate entry found for email '{$row[2]}'.";
                     } else {
@@ -1109,21 +1105,20 @@ class ManageUsersController extends Controller
                         $countryCode = $row[4];
                         $country     = null;
                         $dialCode    = null;
-                        
-                        if( isset($countryData[$countryCode])){
+
+                        if (isset($countryData[$countryCode])) {
                             $country     = $countryData[$countryCode]['country'] ?? null;
                             $dialCode    = $countryData[$countryCode]['dial_code'] ?? null;
-                        }
-                        else{
-                            foreach(  $countryData as $code => $c ){
-                                if(strtolower($c['country']) == strtolower($countryCode) ){
+                        } else {
+                            foreach ($countryData as $code => $c) {
+                                if (strtolower($c['country']) == strtolower($countryCode)) {
                                     $countryCode = $code;
                                     $country  = $c['country'];
                                     $dialCode = $code;
                                 }
                             }
                         }
-                 
+
                         if (!$country || !$dialCode) {
                             $errors[] = "Row $rowNumber: Invalid country code '{$countryCode}'.";
                         } else {
@@ -1152,7 +1147,7 @@ class ManageUsersController extends Controller
                                     'added_by' => auth()->guard('admin')->user()->id
                                 ]);
                             });
-    
+
                             if ($user->wasRecentlyCreated) {
                                 $currencies = Currency::active()
                                     ->leftJoin('wallets', function ($q) use ($user) {
@@ -1161,11 +1156,11 @@ class ManageUsersController extends Controller
                                     ->whereNull('wallets.currency_id')
                                     ->select('currencies.*')
                                     ->get();
-    
+
                                 $wallets = [];
                                 $now = now();
                                 $walletTypes = gs('wallet_types');
-    
+
                                 foreach ($currencies as $currency) {
                                     foreach ($walletTypes as $walletType) {
                                         $wallets[] = [
@@ -1178,12 +1173,12 @@ class ManageUsersController extends Controller
                                         ];
                                     }
                                 }
-    
+
                                 if (count($wallets)) {
                                     DB::table('wallets')->insert($wallets);
                                 }
                             }
-    
+
                             $insertedCount++;
                         }
                     }
@@ -1191,17 +1186,17 @@ class ManageUsersController extends Controller
             }
             $rowNumber++;
         }
-    
+
         if (!empty($errors)) {
             Log::info('Errors found', $errors);
             return response()->json(['Success' => false, 'errors' => $errors, 'rowCount' => $insertedCount]);
         }
-    
+
         Log::info('Import successful');
         return response()->json(['Success' => true, 'rowCount' => $insertedCount]);
-}
-    
-    
+    }
+
+
     public function export()
     {
         $filename = 'leads-template.csv';
@@ -1218,15 +1213,15 @@ class ManageUsersController extends Controller
         $pageTitle = 'Sales Statutes';
         $perPage    = $request->get('per_page', 25);
         $salesStatuses = SalesStatus::paginate($perPage);
-    
-        return view('admin.users.sales_status.index', compact('pageTitle', 'salesStatuses', 'perPage')); 
+
+        return view('admin.users.sales_status.index', compact('pageTitle', 'salesStatuses', 'perPage'));
     }
 
     public function salesStatusCreateView()
     {
         $pageTitle = 'Create Sales Status';
-    
-        return view('admin.users.sales_status.create', compact('pageTitle')); 
+
+        return view('admin.users.sales_status.create', compact('pageTitle'));
     }
 
     public function salesStatusStore(SalesStatusStoreRequest $request)
@@ -1250,7 +1245,7 @@ class ManageUsersController extends Controller
 
         return returnBack('Sales status deleted successfully', 'success');
     }
-    
+
     public function bulkRecordUpdate(Request $request)
     {
         // Retrieve the validated data
@@ -1274,14 +1269,15 @@ class ManageUsersController extends Controller
         // Perform the bulk update
         User::whereIn('id', $data['selected_ids'])->update($updateData);
 
-        return response()->json(['success' => 1, 'message' => 'Successfully updated!' ], 200);
+        return response()->json(['success' => 1, 'message' => 'Successfully updated!'], 200);
 
         // Return a success response
         // return returnBack('Bulk update finished', 'success');
     }
 
-    public function bulkRecordDelete(Request $request){
-      
+    public function bulkRecordDelete(Request $request)
+    {
+
         if ($request->ajax()) {
             $data = $request->validate([
                 'ids' => ['required']
@@ -1300,7 +1296,8 @@ class ManageUsersController extends Controller
         abort(403, 'Unauthorized');
     }
 
-    public function onlineLeads( Request $request ){
+    public function onlineLeads(Request $request)
+    {
         $perPage = 25;
 
         $pageTitle = "Online Leads";
@@ -1310,21 +1307,22 @@ class ManageUsersController extends Controller
         return view('admin.reports.all_leads.index', compact('users', 'perPage', 'pageTitle'));
     }
 
-    public function bulkRecordExport(Request $request){
-      
+    public function bulkRecordExport(Request $request)
+    {
+
         if ($request->ajax()) {
 
             $data = $request->validate([
                 'ids' => ['required']
             ]);
 
-            try{
+            try {
                 $users = User::whereIn('id', $data['ids'])->get();
 
                 $fileName = 'users_' . now()->format('Y_m_d_H_i_s') . '.csv'; // Dynamic file name
-    
+
                 $filePath = storage_path("app/public/{$fileName}");
-    
+
                 $writer = SimpleExcelWriter::create($filePath, 'csv');
 
                 $users->each(function ($user) use ($writer) {
@@ -1342,8 +1340,7 @@ class ManageUsersController extends Controller
                 });
 
                 return response()->download($filePath)->deleteFileAfterSend();
-            }
-            catch( Exception $e ){
+            } catch (Exception $e) {
                 return response()->json(['message' => 'Bulk export failed'], 500);
             }
         }
@@ -1351,22 +1348,22 @@ class ManageUsersController extends Controller
         abort(403, 'Unauthorized');
     }
 
-    public function fetchHistory(Request $request){
-      
+    public function fetchHistory(Request $request)
+    {
+
         if ($request->ajax()) {
 
             $data = $request->validate([
                 'id' => ['required']
             ]);
 
-            try{
+            try {
                 $data = UserDetailsHistory::with('updatedBy')->where('user_id', $request->id)->orderByDesc('id')->get();
 
                 $html = view('admin.users.modal_blade.user-details-history', compact('data'))->render();
 
-                return response()->json(['success' => 1, 'html' => $html ] ,200);
-            }
-            catch( Exception $e ){
+                return response()->json(['success' => 1, 'html' => $html], 200);
+            } catch (Exception $e) {
                 dd($e->getMessage());
                 return response()->json(['message' => 'Failed'], 500);
             }
