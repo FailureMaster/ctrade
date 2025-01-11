@@ -260,9 +260,12 @@
                                     class="las la-times"></i></span>
                         </div>
                     </div>
+                    @php
+                        $manualComputedBalance = ( getAmount($widget['total_deposit']) + getAmount($widget['pl']) ) - getAmount($widget['total_withdraw']);
+                    @endphp
                     <div class="text-center mb-3 skeleton">
                         <h3 class="right-sidebar__number mb-0 pb-0" id="balanceOverview">
-                            {{ $general->cur_sym }}{{ showAmount($estimatedBalance) }}
+                            {{ $general->cur_sym }}{{ showAmount($manualComputedBalance) }}
                         </h3>
                         <span class="fs-14 mt-0">@lang('Estimated Total Balance')</span>
                     </div>
