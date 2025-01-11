@@ -2,8 +2,15 @@
     <button class="res-sidebar-close-btn"><i class="las la-times"></i></button>
     <div class="sidebar__inner">
         <div class="sidebar__logo">
+        {{-- <div class=""> --}}
             <a href="{{ route('admin.dashboard') }}" class="sidebar__main-logo"><img
                     src="{{ siteLogo() }}?v={{ time() }}"></a>
+            {{-- <a href="{{ route('admin.dashboard') }}" class="">
+                <div class="logo-container">
+                    <h3 class="text-white">WELCOME</h3>
+                    <small>TO TRADING ROOM</small>
+                </div>
+            </a> --}}
         </div>
         <div class="sidebar__menu-wrapper" id="sidebar__menuWrapper">
             <ul class="sidebar__menu" style="min-height:650px;">
@@ -11,7 +18,8 @@
                 @if(can_access('dashboard'))
                     <li class="sidebar-menu-item {{ menuActive('admin.dashboard') }}">
                         <a href="{{ route('admin.dashboard') }}" class="nav-link ">
-                            <i class="menu-icon las la-home"></i>
+                            {{-- <i class="menu-icon las la-home"></i> --}}
+                            <span class="menu-icon">🏠</span>
                             <span class="menu-title">@lang('Dashboard')</span>
                         </a>
                     </li>
@@ -20,7 +28,8 @@
                 @if(can_access('all-workers'))
                     <li class="sidebar-menu-item {{ menuActive('admin.manage_admins.admins') }}">
                         <a href="{{ route('admin.manage_admins.admins') }}" class="nav-link">
-                            <i class="menu-icon las la-users"></i>
+                            {{-- <i class="menu-icon las la-users"></i> --}}
+                            <span class="menu-icon">👥</span>
                             <span class="menu-title">@lang('All Workers')</span>
                         </a>
                     </li>
@@ -44,7 +53,8 @@
                                     $leads_settings,
                                     3,
                                 ) }}">
-                                <i class="menu-icon las la-users"></i>
+                                {{-- <i class="menu-icon las la-users"></i> --}}
+                                <span class="menu-icon">⚙️</span>
                                 <span class="menu-title">@lang('Leads Settings')</span>
                             </a>
                         <div
@@ -124,7 +134,8 @@
                     @endphp
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive($mworkers, 3) }}">
-                            <i class="menu-icon las la-file-invoice-dollar"></i>
+                            {{-- <i class="menu-icon las la-file-invoice-dollar"></i> --}}
+                            <span class="menu-icon">👥</span>
                             <span class="menu-title">@lang('Manager Groups')</span>
                         </a>
                         <div class="sidebar-submenu {{ menuActive($mworkers, 2) }}">
@@ -199,7 +210,8 @@
                     @endphp
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive($financeActive, 3) }}">
-                            <i class="menu-icon las la-file-invoice-dollar"></i>
+                            {{-- <i class="menu-icon las la-file-invoice-dollar"></i> --}}
+                            <span class="menu-icon">💰</span>
                             <span class="menu-title">@lang('Finance')</span>
                         </a>
                         <div class="sidebar-submenu {{ menuActive($financeActive, 2) }}">
@@ -439,7 +451,8 @@
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)"
                             class="{{ menuActive(['admin.order*', 'admin.coin.pair.*', 'admin.groups.index', 'admin.managelots*', 'admin.togleFee*'], 3) }}">
-                            <i class="menu-icon las la-file-invoice-dollar"></i>
+                            {{-- <i class="menu-icon las la-file-invoice-dollar"></i> --}}
+                            <span class="menu-icon">📈</span>
                             <span class="menu-title">@lang('Manager Trading')</span>
                         </a>
                         <div
@@ -518,7 +531,8 @@
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)"
                             class="{{ menuActive(['admin.users.all'], 3) }}">
-                            <i class="menu-icon las la-dot-circle"></i>
+                            {{-- <i class="menu-icon las la-dot-circle"></i> --}}
+                            <span class="menu-icon">💼</span>
                             <span class="menu-title">@lang('Sales')</span>
                         </a>
                         <div
@@ -545,7 +559,8 @@
                                 ],
                                 3,
                             ) }}">
-                            <i class="menu-icon las la-users"></i>
+                            {{-- <i class="menu-icon las la-users"></i> --}}
+                            <span class="menu-icon">🔄</span>
                             <span class="menu-title">@lang('Retention')</span>
                         </a>
                         <div
@@ -571,7 +586,8 @@
                 @if (can_access('notifications|logins|email-notifications|online-leads'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history', 'admin.notifications'], 3) }}">
-                            <i class="menu-icon la la-list"></i>
+                            {{-- <i class="menu-icon la la-list"></i> --}}
+                            <span class="menu-icon">📊</span>
                             <span class="menu-title">@lang('Reports') </span>
                         </a>
                         <div class="sidebar-submenu {{ menuActive(['admin.report.notification.history', 'admin.report.login.ipHistory', 'admin.report.login.history', 'admin.notifications'], 2) }} ">
@@ -623,7 +639,8 @@
                 @if (can_access('pending-ticket|closed-ticket|answered-ticket|all-ticket'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive('admin.ticket*', 3) }}">
-                            <i class="menu-icon la la-ticket"></i>
+                            {{-- <i class="menu-icon la la-ticket"></i> --}}
+                            <span class="menu-icon">🎫</span>
                             <span class="menu-title">@lang('Support Ticket') </span>
                             @if (0 < $pendingTicketCount)
                                 <span class="menu-badge pill bg--danger ms-auto">
@@ -685,7 +702,8 @@
                 @if (can_access('general-setting'))
                     <li class="sidebar-menu-item {{ menuActive('admin.setting.index') }}">
                         <a href="{{ route('admin.setting.index') }}" class="nav-link">
-                            <i class="menu-icon las la-life-ring"></i>
+                            {{-- <i class="menu-icon las la-life-ring"></i> --}}
+                            <span class="menu-icon">⚙️</span>
                             <span class="menu-title">@lang('General Setting')</span>
                         </a>
                     </li>
@@ -694,7 +712,8 @@
                 @if (can_access('seo-manager'))
                     <li class="sidebar-menu-item {{ menuActive('admin.seo') }}">
                         <a href="{{ route('admin.seo') }}" class="nav-link">
-                            <i class="menu-icon las la-tachometer-alt"></i>
+                            {{-- <i class="menu-icon las la-tachometer-alt"></i> --}}
+                            <span class="menu-icon">🔍</span>
                             <span class="menu-title">@lang('SEO')</span>
                         </a>
                     </li>
@@ -703,7 +722,8 @@
                 @if (can_access('logo-favicon'))
                     <li class="sidebar-menu-item {{ menuActive('admin.setting.logo.icon') }}">
                         <a href="{{ route('admin.setting.logo.icon') }}" class="nav-link">
-                            <i class="menu-icon las la-images"></i>
+                            {{-- <i class="menu-icon las la-images"></i> --}}
+                            <span class="menu-icon">🎨</span>
                             <span class="menu-title">@lang('Logo & Favicon')</span>
                         </a>
                     </li>
@@ -713,7 +733,8 @@
                     <li class="sidebar-menu-item  {{ menuActive(['admin.language.manage', 'admin.language.key']) }}">
                         <a href="{{ route('admin.language.manage') }}" class="nav-link"
                             data-default-url="{{ route('admin.language.manage') }}">
-                            <i class="menu-icon las la-language"></i>
+                            {{-- <i class="menu-icon las la-language"></i> --}}
+                            <span class="menu-icon">🌐</span>
                             <span class="menu-title">@lang('Language') </span>
                         </a>
                     </li>
@@ -723,7 +744,8 @@
                 @if (can_access('global-template|email-setting|sms-setting|notification-templates'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive('admin.setting.notification*', 3) }}">
-                            <i class="menu-icon las la-bell"></i>
+                            {{-- <i class="menu-icon las la-bell"></i> --}}
+                            <span class="menu-icon">🔔</span>
                             <span class="menu-title">@lang('Notification Setting')</span>
                         </a>
                         <div class="sidebar-submenu {{ menuActive('admin.setting.notification*', 2) }} ">
@@ -796,7 +818,8 @@
                 @if (can_access('modify-templates'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive('admin.frontend*', 3) }}">
-                            <i class="menu-icon la la-server"></i>
+                            {{-- <i class="menu-icon la la-server"></i> --}}
+                            <span class="menu-icon">📄</span>
                             <span class="menu-title">@lang('Templates')</span>
                         </a>
                         <div class="sidebar-submenu {{ menuActive('admin.frontend*', 2) }} ">
@@ -827,7 +850,8 @@
                 @if (can_access('application|server|cache'))
                     <li class="sidebar-menu-item sidebar-dropdown">
                         <a href="javascript:void(0)" class="{{ menuActive('admin.system*', 3) }}">
-                            <i class="menu-icon la la-server"></i>
+                            {{-- <i class="menu-icon la la-server"></i> --}}
+                            <span class="menu-icon">🔧</span>
                             <span class="menu-title">@lang('System')</span>
                         </a>
                         <div class="sidebar-submenu {{ menuActive('admin.system*', 2) }} ">
@@ -873,6 +897,38 @@
 </div>
 <!-- sidebar end -->
 
+@push('style')
+ <style>
+        .logo-container {
+            padding: 6px;
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .logo-container h3 {
+            margin: 0;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .logo-container small {
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .bg--dark {
+            background-color: #0A0E2C !important;
+        }
+
+        .icon {
+            width: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+ </style>
+@endpush
 @push('script')
     <script>
         if ($('li').hasClass('active')) {

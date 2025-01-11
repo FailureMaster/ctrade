@@ -1,6 +1,6 @@
 <!-- navbar-wrapper start -->
 <nav class="navbar-wrapper bg--dark">
-    <div class="navbar__left">
+    <div class="navbar__left align-items-center">
         <button type="button" class="res-sidebar-open-btn me-3"><i class="las la-bars"></i></button>
         <!-- <form class="navbar-search">
             <input type="search" name="#0" class="navbar-search-field" id="searchInput" autocomplete="off"
@@ -8,6 +8,9 @@
             <i class="las la-search"></i>
             <ul class="search-list"></ul>
         </form> -->
+        {{-- @if(@request()->route()->uri == 'admin/dashboard') --}}
+            <h6 class="page-title text-white">{{ __($pageTitle) }}</h6>
+        {{-- @endif --}}
     </div>
     <div class="navbar__right">
         <ul class="navbar__action-list">
