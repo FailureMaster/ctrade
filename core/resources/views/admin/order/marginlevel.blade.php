@@ -238,11 +238,11 @@
                                     <td class="text-center bonus{{$user->id}}" >
                                         {{ getAmount($balance->bonus) }}
                                     </td>
-                                    <td class="text-center deposit-amount{{$user->id}}" >
-                                        {{ getAmount($user->approvedWithdrawals->sum('amount')) }}
-                                    </td>
                                     <td class="text-center withdraw-amount{{$user->id}}" >
                                         {{ getAmount($user->approvedDeposits->sum('amount')) }}
+                                    </td>
+                                    <td class="text-center deposit-amount{{$user->id}}" >
+                                        {{ getAmount($user->approvedWithdrawals->sum('amount')) }}
                                     </td>
                                     <td class="text-center last-login{{$user->id}}" >
                                         {{ $loginLog->created_at }}
