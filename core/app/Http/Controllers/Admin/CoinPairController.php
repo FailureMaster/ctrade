@@ -66,9 +66,8 @@ class CoinPairController extends Controller
             ->orderBy('is_default', 'DESC')
             ->filter(['market_id'])
             ->groupBy('coin_pairs.id')
-            ->paginate(getPaginate($perPage));
-
-           
+            ->get();
+            // ->paginate(getPaginate($perPage));
 
         return view('admin.coin_pair.list', compact('pageTitle', 'pairs', 'perPage'));
     }
