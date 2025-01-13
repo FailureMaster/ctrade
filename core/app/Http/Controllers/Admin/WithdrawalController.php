@@ -180,7 +180,13 @@ class WithdrawalController extends Controller
         $withdraw                 = Withdrawal::where('id',$request->id)->where('status',Status::PAYMENT_PENDING)->with('user','wallet')->firstOrFail();
         $withdraw->status         = Status::PAYMENT_SUCCESS;
         $withdraw->admin_feedback = $request->details;
+
+        $wallet   = $withdraw->wallet;
+
         $withdraw->save();
+
+        $wallet->balance -= $withdraw->amount;
+        $wallet->save();
 
         notify($withdraw->user, 'WITHDRAW_APPROVE', [
             'method_name'     => $withdraw->method->name,
