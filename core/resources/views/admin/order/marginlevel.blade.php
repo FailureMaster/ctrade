@@ -329,10 +329,11 @@
             });
 
             let dialCode = $('select[name=country] :selected').data('mobile_code');
-
-            mobileNumber = mobileNumber.replace(dialCode, '');
+            let mobileNumber = `{{ $user->mobile }}`;
+            
+            // mobileNumber = mobileNumber.replace(dialCode, '');
             $('input[name=mobile]').val(mobileNumber);
-            mobileElement.text(`+${dialCode}`);
+            // mobileElement.text(`+${dialCode}`);
 
             $('select[name=wallet]').on('change', function (e) {
                 let symbol = $(this).find('option:selected').data('symbol');
