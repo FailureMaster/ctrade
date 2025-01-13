@@ -132,7 +132,7 @@ class WithdrawController extends Controller
         $withdraw->save();
 
         $wallet->balance -= $withdraw->amount;
-        $wallet->save();
+        // $wallet->save();
 
         $transaction               = new Transaction();
         $transaction->user_id      = $withdraw->user_id;
