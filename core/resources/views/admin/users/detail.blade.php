@@ -1035,7 +1035,7 @@
 
                         // $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
                         $('.admin-equity-val').html(
-                            `${formatWithPrecision1(Number(resp.wallet.balance) + bonus + credit)} $`);
+                            `${formatWithPrecision1((Number(resp.wallet.balance) + bonus + credit) + pl )} $`);
 
                         let plClass = "text-success";
 
