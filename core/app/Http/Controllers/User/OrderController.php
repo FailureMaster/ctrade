@@ -95,7 +95,7 @@ class OrderController extends Controller
             // $amount         = Fee::first()->status ?  $request->amount : 0;
 
             $amount         = $request->amount;
-
+            $amountWithFees = Fee::first()->status ?  $request->amount : 0;
             $requestRate    = $request->order_side ==  Status::BUY_SIDE_ORDER ? $request->buy_rate : $request->sell_rate;
             $rate           = $request->order_type == Status::ORDER_TYPE_LIMIT ? $requestRate : $pair->marketData->price;
             $totalAmount    = $amount * $rate;
@@ -155,10 +155,10 @@ class OrderController extends Controller
         
         if ($request->order_side ==  Status::BUY_SIDE_ORDER) {
             $details       = "Open order for buy on " . $pair->symbol. " ($request->order_volume_1, $request->order_volume_2)";
-            $walletBalance = $this->createTrx($wallet, 'order_buy', $amount, $charge, $details, $user);
+            $walletBalance = $this->createTrx($wallet, 'order_buy', $amountWithFees, $charge, $details, $user);
         } else {
             $details       = "Open order for sell on " . $pair->symbol. " ($request->order_volume_1, $request->order_volume_2)";
-            $walletBalance = $this->createTrx($wallet, 'order_sell', $amount, 0, $details, $user);
+            $walletBalance = $this->createTrx($wallet, 'order_sell', $amountWithFees, 0, $details, $user);
         }
 
 
