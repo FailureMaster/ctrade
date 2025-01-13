@@ -39,7 +39,7 @@ Route::controller("TradeController")->prefix('trade')->group(function () {
         Route::get('pairs', 'pairs')->name('trade.pairs');
         Route::get('history/{symbol}', 'history')->name('trade.history');
 
-        Route::get('order/marginlevel/{pairSym}/{status}', 'marginlevel')->name('trade.order.marginlevel');
+      
         Route::get('/', 'trade')->name('trade');
         Route::get('current-price/{type}/{symbol}', 'getCurrentPrice')->name('trade.current-price');
         Route::post('close/all/open/trade/', 'closeAllOrders')->name('close-all-orders');
@@ -53,6 +53,7 @@ Route::controller("TradeController")->prefix('trade')->group(function () {
     });
     
     Route::get('order/list/{pairSym}/{status}', 'orderList')->name('trade.order.list');
+    Route::get('order/marginlevel/{pairSym}/{status}', 'marginlevel')->name('trade.order.marginlevel');
 });
 
 Route::namespace('P2P')->group(function () {
