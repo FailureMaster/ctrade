@@ -76,7 +76,12 @@ class UserController extends Controller
         })->with('method:id,code,crypto')->get();
         $withdrawMethods = WithdrawMethod::active()->get();
 
-        return view($this->activeTemplate . 'user.dashboard', compact('pageTitle', 'user', 'pairs', 'wallets', 'currencies', 'widget', 'recentOrders', 'recentTransactions', 'estimatedBalance', 'gateways', 'withdrawMethods'));
+        $manualAddTransactionAdd      = Transaction::where('user_id', $user->id)->where('remark', 'balance_add')->sum('amount');
+        $manualAddTransactionSubtract = Transaction::where('user_id', $user->id)->where('remark', 'balance_subtract')->sum('amount');
+        $walletRecord                 = Wallet::where('user_id', $user->id)->orderBy('id')->first();
+        $additionalDemoBal            = $walletRecord <> null && $walletRecord->balance == 1000 ? 1000 : 0;
+   
+        return view($this->activeTemplate . 'user.dashboard', compact('pageTitle', 'user', 'pairs', 'wallets', 'currencies', 'widget', 'recentOrders', 'recentTransactions', 'estimatedBalance', 'gateways', 'withdrawMethods', 'manualAddTransactionAdd', 'manualAddTransactionSubtract', 'additionalDemoBal'));
     }
     public function depositHistory(Request $request)
     {
