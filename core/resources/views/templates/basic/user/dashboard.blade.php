@@ -34,11 +34,12 @@
                             <span class="delete-icon skeleton" data-bs-toggle="tooltip" data-bs-placement="top"
                                 data-bs-title="Delete">
                                 <i class="las la-times"></i></span>
-                            <div class="alert flex-align alert--danger remove-2fa-notice @if(App::getLocale() == 'ar') justify-content-end @endif" role="alert">
+                            <div class="alert flex-align alert--danger remove-2fa-notice @if (App::getLocale() == 'ar') justify-content-end @endif"
+                                role="alert">
                                 <span class="alert__icon">
                                     <i class="fas fa-exclamation"></i>
                                 </span>
-                                <div class="alert__content @if(App::getLocale() == 'ar') w-auto @endif">
+                                <div class="alert__content @if (App::getLocale() == 'ar') w-auto @endif">
                                     <span class="alert__title">
                                         @lang('To secure your account add 2FA verification').
                                         <a href="{{ route('user.twofactor') }}"
@@ -61,7 +62,7 @@
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
                                         @lang('Open Orders') </a>
-                                    <h6 class="dashboard-card__coin-title">  {{ getAmount($widget['open_order']) }}  </h6>
+                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['open_order']) }} </h6>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +90,9 @@
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
                                         @lang('P & L') </a>
-                                    <h6 class="dashboard-card__coin-title {{ getAmount($widget['pl']) >= 0 ? 'text-success' : 'text-danger' }}"> {{ getAmount($widget['pl']) }}$ </h6>
+                                    <h6
+                                        class="dashboard-card__coin-title {{ getAmount($widget['pl']) >= 0 ? 'text-success' : 'text-danger' }}">
+                                        {{ getAmount($widget['pl']) }}$ </h6>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +108,7 @@
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
                                         @lang('Total Deposit') </a>
-                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['total_deposit']) }}$ </h6>
+                                    <h6 class="dashboard-card__coin-title"> {{ getAmount( ($widget['total_deposit'] + $manualAddTransactionAdd + $additionalDemoBal ) - $manualAddTransactionSubtract) }}$ </h6>
                                 </div>
                             </div>
                         </div>
@@ -119,7 +122,8 @@
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
                                         @lang('Total withdraw') </a>
-                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['total_withdraw']) }}$ </h6>
+                                    <h6 class="dashboard-card__coin-title"> {{ getAmount($widget['total_withdraw']) }}$
+                                    </h6>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +146,7 @@
                 {{-- <div class="row gy-4 mb-3 justify-content-center">
                     <div class="col-lg-6">
                         <div class="transection" style="height: 500px; overflow-y: auto; scrollbar-color: #283c40 #111e21">
-                            <h5 class="transection__title skeleton @if(App::getLocale() == 'ar') text-end @endif"> @lang('Order') </h5>
+                            <h5 class="transection__title skeleton @if (App::getLocale() == 'ar') text-end @endif"> @lang('Order') </h5>
                             @forelse ($recentOrders as $recentOrder)
                                 <div class="transection__item skeleton">
                                     @php
@@ -150,7 +154,7 @@
                                             echo $recentOrder->statusBadge; 
                                         }
                                     @endphp
-                                    <div class="d-flex flex-wrap align-items-center @if(App::getLocale() == 'ar') flex-row-reverse @endif">
+                                    <div class="d-flex flex-wrap align-items-center @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                                         <div class="transection__date">
                                             <h6 class="transection__date-number text-white">
                                                 {{ showDateTime($recentOrder->created_at, 'd') }}
@@ -159,7 +163,7 @@
                                                 {{ __(strtoupper(showDateTime($recentOrder->created_at, 'M'))) }}
                                             </span>
                                         </div>
-                                        <div class="transection__content @if(App::getLocale() == 'ar') px-3 @endif">
+                                        <div class="transection__content @if (App::getLocale() == 'ar') px-3 @endif">
                                             <h6 class="transection__content-title">
                                                 @php echo $recentOrder->orderSideBadge; @endphp
                                             </h6>
@@ -190,7 +194,7 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="transection" style="height: 500px; overflow-y: auto; scrollbar-color: #283c40 #111e21">
-                            <h5 class="transection__title skeleton @if(App::getLocale() == 'ar') text-end @endif"> @lang('Transactions') </h5>
+                            <h5 class="transection__title skeleton @if (App::getLocale() == 'ar') text-end @endif"> @lang('Transactions') </h5>
                             @forelse ($recentTransactions as $recentTransaction)
                                 <div class="transection__item skeleton">
                                     @if (App::getLocale() == 'ar')
@@ -204,7 +208,7 @@
                                             </span>
                                         @endif
                                     @endif
-                                    <div class="d-flex flex-wrap align-items-center @if(App::getLocale() == 'ar') flex-row-reverse @endif">
+                                    <div class="d-flex flex-wrap align-items-center @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                                         <div class="transection__date">
                                             <h6 class="transection__date-number text-white">
                                                 {{ showDateTime($recentTransaction->created_at, 'd') }}
@@ -213,7 +217,7 @@
                                                 {{ __(strtoupper(showDateTime($recentTransaction->created_at, 'M'))) }}
                                             </span>
                                         </div>
-                                        <div class="transection__content @if(App::getLocale() == 'ar') px-3 @endif">
+                                        <div class="transection__content @if (App::getLocale() == 'ar') px-3 @endif">
                                             <h6 class="transection__content-title">
                                                 {{ __(ucwords(keyToTitle($recentTransaction->remark))) }}
                                             </h6>
@@ -251,27 +255,30 @@
             <div class="dashboard-right">
                 <div class="right-sidebar">
                     <div class="right-sidebar__header mb-3 skeleton">
-                        <div class="d-flex flex-between flex-wrap @if(App::getLocale() == 'ar') justify-content-end @endif">
+                        <div
+                            class="d-flex flex-between flex-wrap @if (App::getLocale() == 'ar') justify-content-end @endif">
                             <div>
                                 <h4 class="mb-0 fs-18">@lang('Balance Overview')</h4>
                                 {{-- <p class="mt-0 fs-12">@lang('Available wallet balance including the converted total balance')</p> --}}
                             </div>
-                            <span class="toggle-dashboard-right dashboard--popup-close"><i
-                                    class="las la-times"></i></span>
+                            <span class="toggle-dashboard-right dashboard--popup-close"><i class="las la-times"></i></span>
                         </div>
                     </div>
                     @php
-                        $manualComputedBalance = ( getAmount($widget['total_deposit']) + getAmount($widget['pl']) ) - getAmount($widget['total_withdraw']);
+                        $manualComputedBalance =
+                            getAmount($widget['total_deposit']) +
+                            getAmount($widget['pl']) -
+                            getAmount($widget['total_withdraw']);
                     @endphp
                     <div class="text-center mb-3 skeleton">
                         <h3 class="right-sidebar__number mb-0 pb-0" id="balanceOverview">
-                            {{ $general->cur_sym }}{{ showAmount($manualComputedBalance) }}
+                            {{ $general->cur_sym }}{{ showAmount($estimatedBalance) }}
                         </h3>
                         <span class="fs-14 mt-0">@lang('Estimated Total Balance')</span>
                     </div>
                 </div>
                 <div class="right-sidebar mt-3">
-                    <div class="right-sidebar__header mb-3 skeleton @if(App::getLocale() == 'ar') text-end @endif">
+                    <div class="right-sidebar__header mb-3 skeleton @if (App::getLocale() == 'ar') text-end @endif">
                         <h4 class="mb-0 fs-18">@lang('Deposit Money')</h4>
                         <p class="mt-0 fs-12">@lang('Make crypto & fiat deposits in a few steps')</p>
                     </div>
@@ -283,8 +290,9 @@
                                         class="form--control form-control" placeholder="@lang('Amount')">
                                     <div class="input-group-text skeleton">
                                         <!-- <x-currency-list :action="route('user.currency.all')" valueType="2" logCurrency="true" /> -->
-                                        <select class="form-control form--control form-select" name="currency" id="currency" required style="border:none;">
-                                            <option value="USD" >United States Dollar-USD</option>
+                                        <select class="form-control form--control form-select" name="currency"
+                                            id="currency" required style="border:none;">
+                                            <option value="USD">United States Dollar-USD</option>
                                         </select>
                                     </div>
                                 </div>
@@ -304,7 +312,7 @@
                 </div>
                 @if (enabledWithdrawMoney())
                     <div class="right-sidebar mt-3">
-                        <div class="right-sidebar__header mb-3 skeleton @if(App::getLocale() == 'ar') text-end @endif">
+                        <div class="right-sidebar__header mb-3 skeleton @if (App::getLocale() == 'ar') text-end @endif">
                             <h4 class="mb-0 fs-18">@lang('Withdraw Money')</h4>
                             <p class="mt-0 fs-12">@lang('Withdrawal your balance with our world-class withdrawal process')</p>
                         </div>
@@ -316,24 +324,25 @@
                                             class="form--control form-control" placeholder="@lang('Amount')">
                                         <div class="input-group-text skeleton">
                                             <!-- <x-currency-list :action="route('user.currency.all')" id="withdraw_currency_list"
-                                                parent="withdraw_currency_list_wrapper" valueType="2" logCurrency="true"/> -->
-                                                <select class="form-control form--control form-select" name="currency" id="withdraw_currency_list" required style="border:none;">
-                                                    <option value="USD" >United States Dollar-USD</option>
-                                                </select>
+                                                            parent="withdraw_currency_list_wrapper" valueType="2" logCurrency="true"/> -->
+                                            <select class="form-control form--control form-select" name="currency"
+                                                id="withdraw_currency_list" required style="border:none;">
+                                                <option value="USD">United States Dollar-USD</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
                                 <button class="deposit__button btn btn--base w-100" type="submit">
                                     <span class="icon-withdraw"></span> @lang('Withdraw')
                                 </button>
-                            </form> 
+                            </form>
                         </div>
                     </div>
                 @endif
             </div>
         </div>
     </div>
-    <x-flexible-view :view="$activeTemplate . 'user.components.canvas.deposit'"  :meta="['gateways' => $gateways]"/>
+    <x-flexible-view :view="$activeTemplate . 'user.components.canvas.deposit'" :meta="['gateways' => $gateways]" />
     <x-flexible-view :view="$activeTemplate . 'user.components.canvas.withdraw'" :meta="['withdrawMethods' => $withdrawMethods]" />
 @endsection
 
@@ -345,19 +354,18 @@
 @endpush
 
 @push('script')
-    @if(request()->input('d'))
-    
-         <script>
+    @if (request()->input('d'))
+        <script>
             $(".dashboard-right").toggleClass('show');
-            
-            $('.deposit__button').click(function(){
-             
-               $(".dashboard-right").removeClass('show'); 
-               
+
+            $('.deposit__button').click(function() {
+
+                $(".dashboard-right").removeClass('show');
+
             });
         </script>
     @endif
-   
+
     <script>
         "use strict";
         (function($) {
@@ -438,21 +446,21 @@
 
 
 @push('topContent')
-    <h4 class="mb-4 @if(App::getLocale() == 'ar') text-end @endif">{{ __($pageTitle) }}</h4>
+    <h4 class="mb-4 @if (App::getLocale() == 'ar') text-end @endif">{{ __($pageTitle) }}</h4>
 @endpush
 
 @push('script')
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
         // Initialize Pusher
-        
+
         var pusher = new Pusher('c5afd2b879ff37c4a429', {
             cluster: 'ap2',
             encrypted: true
         });
 
         // Subscribe to the channel
-        var channel = pusher.subscribe("user-balance-channel-{{Auth::user()->id}}");
+        var channel = pusher.subscribe("user-balance-channel-{{ Auth::user()->id }}");
 
         // Bind to the event
         channel.bind('user-balance-change', function(data) {
