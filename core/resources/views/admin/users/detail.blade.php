@@ -469,7 +469,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group ">
                                 <label>@lang('First Name')</label>
                                 <input class="form-control" type="text" name="firstname" required
@@ -477,11 +477,19 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label class="form-control-label">@lang('Last Name')</label>
                                 <input class="form-control" type="text" name="lastname" required
                                     value="{{ $user->lastname }}">
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="form-control-label">@lang('Age')</label>
+                                <input class="form-control" type="number" name="age"
+                                    value="{{ $user->age }}">
                             </div>
                         </div>
 
@@ -585,7 +593,7 @@
                         <div class="form-group col-xl-12 col-md-12 col-12">
                             <label for="userComment" class="col-form-label">Comment History:</label>
 
-                            <div>
+                            {{-- <div>
                                 <ul class="list-group">
                                     @foreach ($user->comments->sortByDesc('created_at') as $comment)
                                         <li class="list-group-item">
@@ -608,7 +616,22 @@
                                         </li>
                                     @endforeach
                                 </ul>
-                            </div>
+                            </div> --}}
+                            {{-- <div> --}}
+                            @foreach ($user->comments->sortByDesc('created_at') as $comment)
+                                <div class="form-group">
+                                    <small>
+                                        <i class="fas fa-user"></i>
+                                        {{ $comment?->commentor?->username }}
+                                    </small>
+                                    <small class="mx-2">
+                                        <i class="fas fa-calendar"></i>
+                                        {{ $comment->formatted_date }}
+                                    </small>
+                                    <textarea class="form-control" rows="4" readonly>{{ $comment->comment ?? '-' }}</textarea>
+                                </div>    
+                            @endforeach
+                            {{-- </div> --}}
                         </div>
                     </div>
 
