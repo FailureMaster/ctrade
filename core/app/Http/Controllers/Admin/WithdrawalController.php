@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use App\Models\Withdrawal;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -247,6 +248,28 @@ class WithdrawalController extends Controller
 
         $notify[] = ['success', 'Withdrawal rejected successfully'];
         return to_route('admin.withdraw.pending')->withNotify($notify);
+    }
+
+    public function removed( Request $request )
+    {
+        if( $request->ajax() ){
+
+            $request->validate([
+                'id'      => 'required|integer',
+            ]);
+
+            try{
+                Withdrawal::where('id', $request->id)->delete();
+
+                return response()->json(['message' => 'Success!', 'success' => 1 ],200);
+            }
+            catch(Exception $e)
+            {
+                return response()->json(['message' => 'Failed!', 'success' => 0 ],500);
+            }
+        }
+
+        return abort(403, 'Unauthorized!');
     }
 
 }

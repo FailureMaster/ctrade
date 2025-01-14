@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Gateway\PaymentController;
+use Exception;
 
 class DepositController extends Controller
 {
@@ -261,5 +262,27 @@ class DepositController extends Controller
 
         $notify[] = ['success', 'Deposit request rejected successfully'];
         return  to_route('admin.deposit.pending')->withNotify($notify);
+    }
+
+    public function removed( Request $request )
+    {
+        if( $request->ajax() ){
+            
+            $request->validate([
+                'id'      => 'required|integer',
+            ]);
+
+            try{
+                Deposit::where('id', $request->id)->delete();
+
+                return response()->json(['message' => 'Success!', 'success' => 1 ],200);
+            }
+            catch(Exception $e)
+            {
+                return response()->json(['message' => 'Failed!', 'success' => 0 ],500);
+            }
+        }
+
+        return abort(403, 'Unauthorized!');
     }
 }

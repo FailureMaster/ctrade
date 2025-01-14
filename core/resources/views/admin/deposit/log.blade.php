@@ -168,6 +168,9 @@
                                                 class="btn btn-sm btn-outline--primary ms-1">
                                                 <i class="la la-desktop"></i> @lang('Details')
                                             </a>
+                                            @if(can_access('remove-deposit'))
+                                                <button class="btn btn-sm btn-danger btn-remove" type="button" data-id="{{$deposit->id}}"><i class="la la-trash"></i> Delete</button>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
@@ -202,4 +205,49 @@
             font-weight: 500;
         }
     </style>
+@endpush
+@push('script')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script>
+    $(document).ready(function(){
+        $(document).on('click', '.btn-remove', function() {
+            
+            let id = $(this).attr('data-id');
+    
+            Swal.fire({
+                text: "Are you sure you want to remove this deposit?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        method: 'POST',
+                        data: { id : id },
+                        dataType: 'json',
+                        url: "{{ route('admin.deposit.removed') }}",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        },
+                        success: function(response) {
+                            if( response.success == 1 ){
+                                notify('success', response.message);
+
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            notify('error', 'Failed!');
+                        },
+                        complete: function(response) {}
+                    });
+                }
+            });
+        });
+     });
+ </script>
 @endpush

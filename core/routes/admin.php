@@ -253,6 +253,7 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
         Route::get('details/{id}', 'details')->name('details');
         Route::post('reject', 'reject')->name('reject');
         Route::post('approve/{id}', 'approve')->name('approve');
+        Route::post('removed', 'removed')->name('removed');
     });
 
 
@@ -267,6 +268,7 @@ Route::middleware(['admin',  'trackUser'])->withoutMiddleware([LanguageMiddlewar
             Route::get('details/{id}', 'details')->name('details');
             Route::post('approve', 'approve')->name('approve');
             Route::post('reject', 'reject')->name('reject');
+            Route::post('removed', 'removed')->name('removed');
         });
 
 

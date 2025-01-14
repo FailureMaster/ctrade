@@ -1105,6 +1105,18 @@ class PermissionGroupController extends Controller
               'group' => $group[1],
               'value' => false,
             ],
+            [
+              'name' => 'remove-withdraw',
+              'label' => 'Allow user to remove withdrawals',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'remove-deposit',
+              'label' => 'Allow user to remove deposits',
+              'group' => $group[1],
+              'value' => false,
+            ],
         ],
       ]);
 
@@ -1717,6 +1729,18 @@ class PermissionGroupController extends Controller
             [
               'name' => 'hide-unhide-comments',
               'label' => 'Allow user to hide or unhide comments',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'remove-withdraw',
+              'label' => 'Allow user to remove withdrawals',
+              'group' => $group[1],
+              'value' => false,
+            ],
+            [
+              'name' => 'remove-deposit',
+              'label' => 'Allow user to remove deposits',
               'group' => $group[1],
               'value' => false,
             ],

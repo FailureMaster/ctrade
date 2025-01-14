@@ -7,10 +7,11 @@ use App\Scopes\ExcludeUserScope;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Withdrawal extends Model
 {
-    use Searchable;
+    use Searchable, SoftDeletes;
 
     protected $casts = [
         'withdraw_information' => 'object'
