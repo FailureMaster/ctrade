@@ -200,6 +200,10 @@
 
                 let lotValue = order.pair.percent_charge_for_buy;
 
+                if( order.lot_value != null ){
+                    lotValue = order.lot_value;
+                }
+
                 // @if (isset($isInGroup) && $isInGroup > 0)
                 //     lotValue = '{{ $isInGroup }}';
                 // @endif

@@ -17,6 +17,8 @@ use App\Models\AdminNotification;
 use Illuminate\Support\Facades\DB;
 use App\Events\Order as EventsOrder;
 use App\Http\Controllers\Controller;
+use App\Models\ClientGroupSetting;
+use App\Models\ClientGroupUser;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
@@ -151,6 +153,26 @@ class OrderController extends Controller
         $order->market_currency_id = $marketCurrency->id;
         $order->no_of_lot          = $request->no_of_lot;
         $order->required_margin    = $request->required_margin;
+
+        // Newly added
+        $order->lot_value          = $pair->percent_charge_for_buy;
+
+        $clientGroupId             = ClientGroupUser::where('user_id', $user->id)->first();
+
+        if( $clientGroupId <> null ){
+
+            $cliID = $clientGroupId->client_group_id;
+
+            $clientGroupSymbols = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+
+            if( !empty($clientGroupSymbols) && in_array($pair->id, $clientGroupSymbols) ){
+
+                $clientGroupSettings = ClientGroupSetting::where('client_group_id', $cliID)->first();
+
+                $order->lot_value    = $clientGroupSettings->lots;
+            }
+        } 
+
         $order->save();
         
         if ($request->order_side ==  Status::BUY_SIDE_ORDER) {

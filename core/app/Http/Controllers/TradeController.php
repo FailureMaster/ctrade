@@ -134,9 +134,9 @@ class TradeController extends Controller
                 $query->where('user_id', $userId);
             })->first();
 
-            // dd($clientGroup);
+            $clientGroupSymbols = ClientGroupSetting::where('client_group_id', $clientGroupId)->select('symbol')->get()->pluck('symbol')->toArray();
 
-            if ($clientGroup !== null) {
+            if ($clientGroup !== null && in_array($pair->id, $clientGroupSymbols)) {
                 $pair->percent_charge_for_buy   = $clientGroupSettings->lots;
 
                 //leverage
@@ -391,6 +391,26 @@ class TradeController extends Controller
 
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
+
+        // New we will be using to compute profit order of lot value
+        $clientGroupId             = ClientGroupUser::where('user_id', $userId)->first();
+        $cliID = $clientGroupId->client_group_id;
+        $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+        $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+        $clientGroupSettings = ClientGroupSetting::where('client_group_id', $cliID)->first();
+        foreach ($orders as $key => $co) 
+        {
+            $orders[$key]->lot_value = null;
+
+            if( $clientGroupId <> null )
+            {
+                if( !empty($clientGroupSymbols) )
+                {
+                    if( in_array($co->pair->id, $clientGroupSymbols) )
+                        $orders[$key]->lot_value = $clientGroupSettings->lots;
+                }
+            } 
+        }
 
         $marketDataJson = Http::get('https://tradehousecrm.com/trade/fetchcoinsprice');
         $marketData = json_decode($marketDataJson);

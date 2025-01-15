@@ -6,15 +6,17 @@ use App\Constants\Status;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use Searchable;
+    use Searchable, SoftDeletes;
     
     protected $fillable = [
         'order_type',
         'no_of_lot',
-        'rate'
+        'rate',
+        'lot_value',
     ];
 
     protected $appends = [
