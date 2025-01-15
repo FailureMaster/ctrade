@@ -65,6 +65,7 @@
                                 'order_count' => $order_count,
                                 'marketCurrencyWallet' => $marketCurrencyWallet,
                                 'requiredMarginTotal' => $requiredMarginTotal,
+                                'isInGroup' => $isInGroup
                             ]" />
                         </div>
                     </div>

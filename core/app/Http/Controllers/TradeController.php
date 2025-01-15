@@ -107,7 +107,7 @@ class TradeController extends Controller
 
 
         $pair           = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
-
+        $isInGroup      = 0;
 
         if ($symbol) {
             $pair = $pair->where('symbol', $symbol)->first();
@@ -147,6 +147,8 @@ class TradeController extends Controller
 
                 //spread
                 $pair->spread                   = $clientGroupSettings->spread;
+
+                $isInGroup                      = $clientGroupSettings->lots;
             }
         }
 
@@ -224,7 +226,7 @@ class TradeController extends Controller
 
         $pendingWithdraw = (clone $withdraws)->where('status', 2)->get();
 
-        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup', 'withdrawMethods', 'deposits', 'withdraws', 'pendingWithdraw'));
+        return view($this->activeTemplate . 'trade.index', compact('pageTitle', 'pair', 'markets', 'coinWallet', 'marketCurrencyWallet', 'gateways', 'order_count', 'requiredMarginTotal', 'currency', 'lots', 'fee_status', 'estimatedBalance', 'widget', 'total_profit', 'total_loss', 'closed_orders', 'pl', 'user', 'userGroup', 'withdrawMethods', 'deposits', 'withdraws', 'pendingWithdraw', 'isInGroup'));
     }
 
     public function fetchUserBalance()

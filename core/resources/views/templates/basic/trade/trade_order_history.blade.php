@@ -4,7 +4,7 @@
 
     $symbol = str_replace("_", "", $pair->symbol);
     $listed_market_name = $pair->listed_market_name;
-    
+    $isInGroup = @$meta->isInGroup;
 @endphp
 
 <!--<div class=" @if (@$meta->screen == 'small') col-sm-12  d-xl-none d-block @else d-xl-block d-none @endif ">-->
@@ -64,7 +64,7 @@
                 <x-flexible-view :view="$activeTemplate . 'trade.order_book'" :meta="['pair' => $pair, 'screen' => 'small']" />
             </div>
             <div class="my_order tab-pan-content px-4 pb-4 active">
-                <x-flexible-view :view="$activeTemplate . 'trade.my_order'" :meta="['markets' => $markets, 'screen' => 'small','pair' => $pair, 'order_count' => $order_count, 'marketCurrencyWallet' => $marketCurrencyWallet, 'requiredMarginTotal' => $requiredMarginTotal]" />
+                <x-flexible-view :view="$activeTemplate . 'trade.my_order'" :meta="['markets' => $markets, 'screen' => 'small','pair' => $pair, 'order_count' => $order_count, 'marketCurrencyWallet' => $marketCurrencyWallet, 'requiredMarginTotal' => $requiredMarginTotal, 'isInGroup' => $isInGroup]" />
             </div>
             <div class="history tab-pan-content px-4 pb-4" style="display: none">
                 <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="['pair' => $pair, 'screen' => 'small']" />

@@ -15,6 +15,7 @@
             border-bottom: none;
             background-color: #f9f9f9;
             margin-right: 5px;
+            font-size:13px;
         }
 
         .tab.active {
@@ -42,6 +43,7 @@
             text-align: left;
             border: 1px solid #ddd;
             padding: 10px;
+            font-size:13px;
         }
 
         th {
@@ -59,7 +61,7 @@
             color: #fff;
             text-decoration: none;
             border-radius: 3px;
-            font-size: 12px;
+            /* font-size: 12px; */
         }
 
         .btn-edit:hover {

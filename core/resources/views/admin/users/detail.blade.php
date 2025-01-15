@@ -1056,9 +1056,9 @@
 
                         $(".admin-free-margin-val").text(`${formatWithPrecision1(free_margin)} $`);
 
-                        // $('.admin-equity-val').html(`${formatWithPrecision1(equity + bonus + credit)} USD`);
-                        $('.admin-equity-val').html(
-                            `${formatWithPrecision1((Number(resp.wallet.balance) + bonus + credit) + pl )} $`);
+                        $('.admin-equity-val').html(`${formatWithPrecision1(equity)} USD`);
+                        // $('.admin-equity-val').html(
+                        //     `${formatWithPrecision1((Number(resp.wallet.balance) + bonus + credit) + pl )} $`);
 
                         let plClass = "text-success";
 
