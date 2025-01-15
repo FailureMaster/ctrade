@@ -207,7 +207,10 @@ class OrderController extends Controller
                     ->spot()
                     ->first();
                     
-                $wallet->balance += (float) $order->profit;
+                if( $order->profit < 0 )
+                    $wallet->balance += (float) abs($order->profit);
+                else
+                    $wallet->balance -= (float) abs($order->profit);
             
                 if ($wallet->balance < 0) {
                     $wallet->balance = 0;
@@ -219,7 +222,7 @@ class OrderController extends Controller
             }
         );
 
-        return returnBack('Open price delete successfully', 'success');
+        return returnBack('Order delete successfully', 'success');
     }
 
     public function fetchMarketData() {

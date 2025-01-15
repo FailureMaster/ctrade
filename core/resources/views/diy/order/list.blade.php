@@ -72,7 +72,8 @@
                                     <th>@lang('Lead ID')</th>
                                     <th>@lang('Name')</th>
                                     <th>@lang('Email')</th>
-                                    <th>@lang('Date')</th>
+                                    <th>@lang('Open Date')</th>
+                                    <th>@lang('Closed Date')</th>
                                     <th>@lang('Symbol')</th>
                                     <th>@lang('Order Type')</th>
                                     <th>@lang('Volume')</th>
@@ -117,6 +118,11 @@
                                         <td>
                                             <div>
                                                 {{ $order->formatted_date }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                {{$order->status === Status::ORDER_CANCELED ? $order->close_date : "-" }}
                                             </div>
                                         </td>
                                         <td>
