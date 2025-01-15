@@ -52,6 +52,8 @@
                                     </ul>
                                 </div>
                             </div>
+                            <p class="text-white mx-2">{{ auth()->user()->lead_code ?? auth()->user()->id }}</p>
+                            <p class="text-white">{{ ( $userGroup != null ? ( ucwords($userGroup->name).' '.__('Account') ) : __('Standard Account') ) }}</p>
                         </div>
                     </div>
                     @if (allowsDemoAccount())
