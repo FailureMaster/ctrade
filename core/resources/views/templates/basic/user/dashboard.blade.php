@@ -108,7 +108,10 @@
                                 <div class="dashboard-card__content">
                                     <a class="dashboard-card__coin-name mb-0 ">
                                         @lang('Total Deposit') </a>
-                                    <h6 class="dashboard-card__coin-title"> {{ getAmount( ($widget['total_deposit'] + $manualAddTransactionAdd + $additionalDemoBal ) - $manualAddTransactionSubtract) }}$ </h6>
+                                    <h6 class="dashboard-card__coin-title">
+                                        {{-- {{ getAmount($widget['total_deposit'] + $manualAddTransactionAdd + $additionalDemoBal - $manualAddTransactionSubtract) }}$ --}}
+                                        {{ getAmount($widget['total_deposit']) }}$
+                                    </h6>
                                 </div>
                             </div>
                         </div>
@@ -324,7 +327,7 @@
                                             class="form--control form-control" placeholder="@lang('Amount')">
                                         <div class="input-group-text skeleton">
                                             <!-- <x-currency-list :action="route('user.currency.all')" id="withdraw_currency_list"
-                                                            parent="withdraw_currency_list_wrapper" valueType="2" logCurrency="true"/> -->
+                                                                                            parent="withdraw_currency_list_wrapper" valueType="2" logCurrency="true"/> -->
                                             <select class="form-control form--control form-select" name="currency"
                                                 id="withdraw_currency_list" required style="border:none;">
                                                 <option value="USD">United States Dollar-USD</option>
