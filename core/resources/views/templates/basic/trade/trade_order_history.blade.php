@@ -41,17 +41,17 @@
                 </li>
                 @if(App::getLocale() != 'ar')
                     <li class="nav-item" role="presentation" data-order-type="orders">
-                        <button class="order-nav-link nav-link active" type="button">@lang('Orders')</button>
+                        <button class="order-nav-link nav-link active" type="button">@lang('Open Orders')</button>
                     </li>
                     <li class="nav-item" role="presentation" data-order-type="history">
-                        <button class="order-nav-link nav-link" type="button">@lang('Closed')</button>
+                        <button class="order-nav-link nav-link" type="button">@lang('Trade History')</button>
                     </li>
                 @else
                     <li class="nav-item" role="presentation" data-order-type="history">
-                        <button class="order-nav-link nav-link" type="button">@lang('Closed')</button>
+                        <button class="order-nav-link nav-link" type="button">@lang('Trade History')</button>
                     </li>
                     <li class="nav-item" role="presentation" data-order-type="orders">
-                        <button class="order-nav-link nav-link active" type="button">@lang('Orders')</button>
+                        <button class="order-nav-link nav-link active" type="button">@lang('Open Orders')</button>
                     </li>
                 @endif
             </ul>
