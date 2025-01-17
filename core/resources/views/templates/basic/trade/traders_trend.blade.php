@@ -1,5 +1,5 @@
 @if(!is_mobile())
-    <div class="py-2 px-3">
+    <div class="pb-5 px-3">
         <div class="d-flex justify-content-between">
             <img src="{{ asset('assets/images/extra_images/bear.png') }}"/>
             <img src="{{ asset('assets/images/extra_images/bull.png') }}" class="mb-1" />

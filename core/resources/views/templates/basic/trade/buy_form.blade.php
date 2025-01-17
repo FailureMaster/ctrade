@@ -286,9 +286,9 @@ Portfolio </h3>-->
             </div>
         @endif
     @else
-        <div class="buy-sell__wrapper">
+        <div class="buy-sell__wrapper px-1">
             <div class="@if (is_mobile()) d-flex justify-content-between mb-3 @endif">
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Balance')</h7>
@@ -304,9 +304,22 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+                <div class="metric-row rounded-lg px-2 d-flex align-items-center justify-content-between @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-green-500 animate-pulse-slow"></div>
+                        <span class="text-gray-400 text-sm">@lang('Balance')</span>
+                    </div>
+                    @auth
+                        <span class="avl-market-cur-wallet text-themed {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success' }}" id="balance_span">
+                            {{ showAmount(@$marketCurrencyWallet->balance) }} $
+                        </span>
+                    @else
+                        <span class="text-white font-medium">00000</span>
+                    @endauth
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Equity')</h7>
@@ -317,9 +330,24 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+
+                <!-- Equity -->
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-primary animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('Equity')</span>
+                    </div>
+                    <span class="fw-medium">
+                        @auth
+                            <span id="equity-span"></span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Bonus')</h7>
@@ -336,13 +364,51 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-purple animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('Bonus')</span>
+                    </div>
+                    <span class="fw-medium">
+                        @auth
+                            <span
+                                id="bonus-span {{ @$marketCurrencyWallet->bonus < 0 ? 'text-danger' : 'text-success' }}">
+                                <label
+                                    class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success' }}">
+                                    {{ showAmount(@$marketCurrencyWallet->Bonus) }} $
+                                    </labe>
+                            </span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Credit')</h7>
                     <span class="fs-12 text-themed">
+                        @auth
+                            <span
+                                id="credit-span {{ @$marketCurrencyWallet->credit < 0 ? 'text-danger' : 'text-success' }}">
+                                <label
+                                    class=" {{ @$marketCurrencyWallet->balance < 0 ? 'text-danger' : 'text-success' }}">
+                                    {{ showAmount(@$marketCurrencyWallet->credit) }} $
+                                </label>
+                            </span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
+                </div> --}}
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-warning animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('Credit')</span>
+                    </div>
+                    <span class="fw-medium">
                         @auth
                             <span
                                 id="credit-span {{ @$marketCurrencyWallet->credit < 0 ? 'text-danger' : 'text-success' }}">
@@ -366,7 +432,7 @@ Portfolio </h3>-->
             <!--</div>-->
 
             <div class="@if (is_mobile()) d-flex justify-content-between mb-3 @endif">
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('PL')</h7>
@@ -377,9 +443,22 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-danger animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('PL')</span>
+                    </div>
+                    <span class="value-down fw-medium">
+                        @auth
+                            <span id="pl-span"></span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Used Margin')</h7>
@@ -390,9 +469,22 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-secondary animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('Used Margin')</span>
+                    </div>
+                    <span class="fw-medium">
+                        @auth
+                            <span id="used-margin-span">0</span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Free Margin')</h7>
@@ -403,9 +495,22 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-success animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('Free Margin')</span>
+                    </div>
+                    <span class="value-up fw-medium">
+                        @auth
+                            <span id="free-margin-span">0</span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) d-none @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title">@lang('ST Level') ({{ number_format($pair->level_percent, 0) }}%)
                     </h7>
@@ -416,9 +521,23 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) d-none @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-info animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('ST Level') ({{ number_format($pair->level_percent, 0) }}%)</span>
+                    </div>
+                    <span class="text-info fw-medium">
+                        @auth
+                            <span id="level-span"></span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
 
-                <div
+                {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <h7 class="buy-sell__title" style="@if (is_mobile()) font-size: 0.75rem @endif">
                         @lang('Margin Level')</h7>
@@ -429,15 +548,27 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
+                </div> --}}
+                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) d-none @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="status-dot bg-primary animate-pulse-slow"></div>
+                        <span class="text-gray-400 small">@lang('Margin Level')</span>
+                    </div>
+                    <span class="text-info fw-medium">
+                        @auth
+                            <span id="margin_level_span"></span>
+                        @else
+                            <span>00000</span>
+                        @endauth
+                    </span>
                 </div>
             </div>
         </div>
 
-        <div class="buy-sell__price pt-1 pb-1">
+        <div class="buy-sell__price buy-sell__price-web pt-1 pb-1 p-1">
             <div class="input--group group-two @if (App::getLocale() == 'ar') text-end @endif">
                 <!--<span class="buy-sell__price-title fs-12">@lang('Lots')</span>-->
-                <label for="id_label_single"
-                    class="@if (is_mobile()) d-flex justify-content-between @endif">
+                <label for="id_label_single" class="@if (is_mobile()) d-flex justify-content-between @endif">
                     <span class="text-themed mb-1"
                         style="@if (is_mobile()) margin-right: 4px @endif">
                         <span class="@if (App::getLocale() != 'ar') d-none @endif">:</span>
@@ -468,16 +599,14 @@ Portfolio </h3>-->
                             <p>No lots available</p>
                         @endif
                     </select>
-
                 </label>
             </div>
         </div>
 
-        <div class="mx-4 mb-3">
+        <div class="buy-sell__price-web p-1">
             <ul class="p-0 m-0">
                 <li class="d-flex">
-                    <div
-                        class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                    {{-- <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="me-2">
                             <small class="text-themed d-block mb-1">
                                 @if (App::getLocale() != 'ar')
@@ -488,7 +617,6 @@ Portfolio </h3>-->
                                     <span class="lot-label"></span>
                                 @endif
                             </small>
-                            {{-- <h6 class="mb-0">Send money</h6> --}}
                         </div>
                         <div class="user-progress d-flex align-items-center gap-1">
                             <small class="text-themed d-block mb-1 lot-eq" id="lot-eq-fetch">
@@ -496,9 +624,35 @@ Portfolio </h3>-->
                                 <span class="lot-currency">{{ @$pair->coin_name }}</span>
                             </small>
                         </div>
+                    </div> --}}
+
+                    <div class="d-flex justify-content-between align-items-center px-2 bg-secondary-2 rounded w-100 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="d-flex align-items-center @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                            <div class="status-dot bg-primary"></div>
+                            <div class="text-muted small mx-1">
+                                @if (App::getLocale() != 'ar')
+                                    <span class="lot-label"></span>:
+                                    <span class="lot-value"></span>
+                                @else
+                                    <span class="lot-value"></span>:
+                                    <span class="lot-label"></span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="small">
+                                <small class="text-themed d-block mb-1 lot-eq" id="lot-eq-fetch">
+                                    <span class="lot-eq-span">{{ $pair ? $pair->percent_charge_for_buy : '0' }}</span>
+                                    <span class="lot-currency">{{ @$pair->coin_name }}</span>
+                                </small>
+                                <small class="text-themed d-block mb-1 lot-eq2" id="lot-eq2-fetch">
+                                    <span class="ll-size-span"></span> {{ @$pair->market_name }}
+                                </small>
+                            </div>
+                        </div>
                     </div>
                 </li>
-                <li class="d-flex mb-1 pb-1">
+                {{-- <li class="d-flex mb-1 pb-1">
                     <div
                         class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="me-2">
@@ -509,9 +663,9 @@ Portfolio </h3>-->
                                     class="ll-size-span"></span> {{ @$pair->market_name }}</small>
                         </div>
                     </div>
-                </li>
-                <li class="mt-1 pt-1 @if (is_mobile()) d-flex @endif">
-                    <div
+                </li> --}}
+                <li class="pt-1 @if (is_mobile()) d-flex @endif">
+                    {{-- <div
                         class="d-flex w-100 flex-wrap align-items-center gap-2 @if (!is_mobile()) justify-content-between @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="me-2">
                             <small class="text-themed d-block mb-1 pip-label">
@@ -519,14 +673,25 @@ Portfolio </h3>-->
                                 @lang('Pips Value')
                                 <span class="@if (App::getLocale() == 'ar') d-none @endif">:</span>
                             </small>
-                            {{-- <h6 class="mb-0">Send money</h6> --}}
                         </div>
                         <div class="user-progress d-flex align-items-center gap-1">
-                            {{-- <h6 class="mb-0">+82.6</h6> <span class="text-muted">USD</span> --}}
                             <small class="text-themed d-block mb-1 pip-value">$0.00</small>
                         </div>
+                    </div> --}}
+                    <div class="d-flex justify-content-between align-items-center py-1 px-2 bg-secondary-2 rounded w-100 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="d-flex align-items-center @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                            <div class="status-dot bg-success"></div>
+                            <span class="text-muted small mx-1">  
+                                <small class="text-themed d-block mb-1 pip-label">
+                                    <span class="@if (App::getLocale() != 'ar') d-none @endif">:</span>
+                                    @lang('Pips Value')
+                                    <span class="@if (App::getLocale() == 'ar') d-none @endif">:</span>
+                                </small>
+                            </span>
+                        </div>
+                        <span class="small animate-value pip-value">$0.00</span>
                     </div>
-                    <div
+                    {{-- <div
                         class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2 @if (!is_mobile()) justify-content-between @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="me-2">
                             <small class="text-themed d-block mb-1 required-margin-label">
@@ -534,12 +699,23 @@ Portfolio </h3>-->
                                 @lang('Required Margin')
                                 <span class="@if (App::getLocale() == 'ar') d-none @endif">:</span>
                             </small>
-                            {{-- <h6 class="mb-0">Send money</h6> --}}
                         </div>
                         <div class="user-progress d-flex align-items-center gap-1">
-                            {{-- <h6 class="mb-0">+82.6</h6> <span class="text-muted">USD</span> --}}
                             <small class="text-themed d-block mb-1 required-margin-value">$0.00</small>
                         </div>
+                    </div> --}}
+                    <div class="d-flex justify-content-between align-items-center py-1 px-2 bg-secondary-2 rounded w-100 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                        <div class="d-flex align-items-center @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                            <div class="status-dot bg-purple"></div>
+                            <span class="text-muted small mx-1">  
+                                <small class="text-themed d-block mb-1 required-margin-label">
+                                    <span class="@if (App::getLocale() != 'ar') d-none @endif">:</span>
+                                    @lang('Required Margin')
+                                    <span class="@if (App::getLocale() == 'ar') d-none @endif">:</span>
+                                </small>
+                            </span>
+                        </div>
+                        <span class="small animate-value pip-value required-margin-value">$0.00</span>
                     </div>
                 </li>
                 <!--<li class="d-flex mt-1 pt-1">-->
@@ -568,7 +744,7 @@ Portfolio </h3>-->
     {{-- total price --}}
     <div style="margin-top: 10px;"></div>
 
-    <div class="trading-bottom__button">
+    <div class="trading-bottom__button py-0">
         <!--<div class="mx-3 my-4">-->
         @auth
             @if (!is_mobile())
@@ -829,7 +1005,7 @@ Portfolio </h3>-->
             var lotLabel = document.querySelector('.lot-label');
 
             lotLabel.innerText = "@lang('Lot')";
-            document.querySelector('.lot-value').innerText = selectedLotText
+            document.querySelector('.lot-value').innerText = selectedLotText.trim();
 
             let lotValue = {{ @$pair->percent_charge_for_buy }};
             let lotEquivalent = parseFloat(lotValue) * parseFloat(selectedLotText);
@@ -1367,4 +1543,104 @@ Portfolio </h3>-->
             border-color: #3c4a54 !important;
         }
     </style>
+
+    {{-- 1/17/2025 --}}
+    <style>
+        .neon-border {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00f7ff, #ff00f7);
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0.3;
+        }
+
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .value-up { color: #00f7a0; }
+        .value-down { color: #ff3b69; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .metric-row {
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            height: 2rem;
+        }
+
+        .metric-row:hover {
+            background: rgba(17, 24, 39, 0.6);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .bg-green-500{
+            background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
+        }	
+
+        .text-gray-400	{
+            color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+        }
+
+        .bg-purple{
+            background-color: rgb(168 85 247 / var(--tw-bg-opacity, 1));
+        }
+
+        .trading-panel {
+            background: linear-gradient(145deg, rgba(26, 31, 43, 0.95), rgba(20, 24, 33, 0.95));
+            width: 240px;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .animate-value {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .bg-secondary-2{
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+
+    @if( !is_mobile() )
+        <style>
+            .trading-chart{
+                height:600px;
+            }
+
+            .bear-pct, .bull-pct{
+                font-size:12px !important;
+            }
+        </style>   
+    @endif
 @endpush
