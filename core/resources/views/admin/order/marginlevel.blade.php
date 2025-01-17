@@ -362,6 +362,9 @@
                 }
                 let lotValue = order.pair.percent_charge_for_buy;
 
+                if( order.lot_value != null ){
+                    lotValue = order.lot_value;
+                }
                 
                 let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
                 let total_price = parseInt(order.order_side) === 2

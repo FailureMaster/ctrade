@@ -394,10 +394,9 @@ class TradeController extends Controller
 
         // New we will be using to compute profit order of lot value
         $clientGroupId             = ClientGroupUser::where('user_id', $userId)->first();
-        $cliID = $clientGroupId->client_group_id;
+        $cliID                     = $clientGroupId <> null ? $clientGroupId->client_group_id : 0;
         $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
-        $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
-        $clientGroupSettings = ClientGroupSetting::where('client_group_id', $cliID)->first();
+        $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
         foreach ($orders as $key => $co) 
         {
             $orders[$key]->lot_value = null;
@@ -464,7 +463,29 @@ class TradeController extends Controller
         $marketData = json_decode($marketDataJson);
 
         $users = $users->map(function ($u) {
+
+            foreach ($u->orders as $key => $co) 
+            {
+                // New we will be using to compute profit order of lot value
+                $clientGroupId             = ClientGroupUser::where('user_id', $u->id)->first();
+                $cliID                     = $clientGroupId <> null ? $clientGroupId->client_group_id : 0;
+                $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+                $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
+    
+                $u->orders[$key]->lot_value = null;
+    
+                if( $clientGroupId <> null )
+                {
+                    if( !empty($clientGroupSymbols) )
+                    {
+                        if( in_array($co->pair->id, $clientGroupSymbols) )
+                        $u->orders[$key]->lot_value = $clientGroupSettings->lots;
+                    }
+                } 
+            }
+          
             $u->totalRequiredMargin = $u->openOrders()->sum('required_margin');
+            
             return $u;
         });
 

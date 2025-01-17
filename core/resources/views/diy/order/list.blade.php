@@ -98,6 +98,7 @@
                                             <div>
                                                 <input type="hidden" class="rate" value="{{ $order->rate }}">
                                                 <input type="hidden" class="lot_value" value="{{ $order->pair->percent_charge_for_buy }}">
+                                                <input type="hidden" class="lotValue" value="{{ $order->lot_value }}">
                                                 <input type="hidden" class="type" value="{{ $order->pair->type }}">
                                                 <input type="hidden" class="symbol" value="{{ $order->pair->symbol }}">
                                                 <input type="hidden" class="no_of_lot" value="{{ $order->no_of_lot }}">
@@ -283,6 +284,8 @@
                             let symbol          = $(this).find('.symbol').val();
                             let spread          = $(this).find('.pair_spread').val();
 
+                            let lotValue        = $(this).find('.lotValue').val();
+
                             if (jsonData[type] && jsonData[type][symbol]) {
                                 let current_price = parseFloat(jsonData[type][symbol].replace(/,/g, ''));
                                 
@@ -290,6 +293,10 @@
                                 
                                 if (parseInt(order_side) === 2) {
                                     current_price = (current_price * spread) + current_price;
+                                }
+
+                                if( lotValue != '' ){
+                                    lot_value = lotValue;
                                 }
 
                                 let lot_equivalent = lot_value * no_of_lot;

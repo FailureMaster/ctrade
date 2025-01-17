@@ -690,7 +690,7 @@ Portfolio </h3>-->
                         // sellSpan.innerText  = removeTrailingZeros((coin_name === 'Crypto' ? sellValue.toFixed(5) : sellValue.toFixed(5)));
                         buySpan.innerText = (coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue
                             .toFixed(buyDecimal));
-                        sellSpan.innerText = (coin_name === 'Crypto' ? sellValue.toFixed(5) : sellValue.toFixed(5));
+                        sellSpan.innerText = (coin_name === 'Crypto' ? sellValue.toFixed(buyDecimal) : sellValue.toFixed(buyDecimal));
                         adjustedBuyValue = (coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue
                             .toFixed(buyDecimal));
                     }

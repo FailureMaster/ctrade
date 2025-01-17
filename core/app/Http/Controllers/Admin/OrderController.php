@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\UpdateRequest;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\ClientGroupSetting;
+use App\Models\ClientGroupUser;
 use App\Models\Market;
 use App\Models\Order;
 use App\Models\Trade;
@@ -28,6 +30,8 @@ class OrderController extends Controller
         $query     = $this->orderData($request, 'open');
         
         $orders = $query->paginate($perPage);
+
+        $orders = $this->loadComputedOrder( $orders );
 
         $this->loadUserList($request, $pageTitle, 'active', $history = 'clients');
 
@@ -61,7 +65,7 @@ class OrderController extends Controller
         // Paginate the results
         
         $orders = $query->paginate($perPage);
-
+        
         return view('admin.order.list', compact('pageTitle', 'orders', 'perPage'));
     }
 
@@ -525,5 +529,30 @@ class OrderController extends Controller
         $users = $this->userData($columnName, $orderDirection, $userType, $startDate, $endDate)->paginate($perPage);
 
         Session::put('users_data', $users);
+    }
+
+    private function loadComputedOrder( $orders )
+    {
+        foreach ($orders as $key => $co) 
+        {
+            // New we will be using to compute profit order of lot value
+            $clientGroupId             = ClientGroupUser::where('user_id', $co->user_id)->first();
+            $cliID                     = $clientGroupId <> null ? $clientGroupId->client_group_id : 0;
+            $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+            $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
+
+            $orders[$key]->lot_value = null;
+
+            if( $clientGroupId <> null )
+            {
+                if( !empty($clientGroupSymbols) )
+                {
+                    if( in_array($co->pair->id, $clientGroupSymbols) )
+                        $orders[$key]->lot_value = $clientGroupSettings->lots;
+                }
+            } 
+        }
+
+        return $orders;
     }
 }

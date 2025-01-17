@@ -6,6 +6,8 @@ use App\Constants\Defaults;
 use App\Constants\Status;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\UpdateRequest;
+use App\Models\ClientGroupSetting;
+use App\Models\ClientGroupUser;
 use App\Models\Market;
 use App\Models\Order;
 use App\Models\Trade;
@@ -23,7 +25,11 @@ class OrderController extends Controller
     public function open(Request $request)
     {
         $pageTitle = "Open Order";
+        
         $orders    = $this->orderData($request, 'open');
+
+        $orders    = $this->loadComputedOrder($orders);
+
         return view('diy.order.list', compact('pageTitle', 'orders'));
     }
 
@@ -233,5 +239,30 @@ class OrderController extends Controller
         $marketData = json_decode($marketDataJson);
 
         return response()->json($marketData);
+    }
+
+    private function loadComputedOrder( $orders )
+    {
+        foreach ($orders as $key => $co) 
+        {
+            // New we will be using to compute profit order of lot value
+            $clientGroupId             = ClientGroupUser::where('user_id', $co->user_id)->first();
+            $cliID                     = $clientGroupId <> null ? $clientGroupId->client_group_id : 0;
+            $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+            $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
+
+            $orders[$key]->lot_value = null;
+
+            if( $clientGroupId <> null )
+            {
+                if( !empty($clientGroupSymbols) )
+                {
+                    if( in_array($co->pair->id, $clientGroupSymbols) )
+                        $orders[$key]->lot_value = $clientGroupSettings->lots;
+                }
+            } 
+        }
+
+        return $orders;
     }
 }
