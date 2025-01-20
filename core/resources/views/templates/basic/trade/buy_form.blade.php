@@ -286,7 +286,7 @@ Portfolio </h3>-->
             </div>
         @endif
     @else
-        <div class="buy-sell__wrapper px-1">
+        <div class="buy-sell__wrapper px-1 pb-0">
             <div class="@if (is_mobile()) d-flex justify-content-between mb-3 @endif">
                 {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
@@ -568,15 +568,16 @@ Portfolio </h3>-->
         <div class="buy-sell__price buy-sell__price-web pt-1 pb-1 p-1">
             <div class="input--group group-two @if (App::getLocale() == 'ar') text-end @endif">
                 <!--<span class="buy-sell__price-title fs-12">@lang('Lots')</span>-->
-                <label for="id_label_single" class="@if (is_mobile()) d-flex justify-content-between @endif">
-                    <span class="text-themed mb-1"
-                        style="@if (is_mobile()) margin-right: 4px @endif">
+                <label for="id_label_single" class="@if (is_mobile()) d-flex justify-content-between @endif d-flex justify-content-between align-items-center">
+                    <span class="text-themed mb-1" style="@if (is_mobile()) margin-right: 4px @endif">
                         <span class="@if (App::getLocale() != 'ar') d-none @endif">:</span>
-                        @lang('Volume in Lots')
+
+                        <span for="">@lang('Volume in Lots')</span>
+
                         <span class="@if (App::getLocale() == 'ar') d-none @endif">:</span>
                     </span>
                     <select id="lot-size-select" class="form--control style-three lot-size-select" name="amount"
-                        style="height: 60px; height: 100%; @if (is_mobile()) min-width: 70% !important @endif"
+                        style="height: 60px; height: 100%; @if (is_mobile()) min-width: 70% !important @endif width:50px !important; width: 130px; min-width: unset !important;"
                         onchange="updateLotValues(this)" data-fee-status="{{ $fee_status }}">
                         @if ($lots && $lots->isNotEmpty())
                             @foreach ($lots as $lot)
@@ -1172,7 +1173,8 @@ Portfolio </h3>-->
 
         .select2-container {
             height: 100% !important;
-            min-width: 100% !important;
+            /* min-width: 100% !important; */
+            width:130px !important;
         }
 
         .selection {
@@ -1585,7 +1587,7 @@ Portfolio </h3>-->
 
         .metric-row {
             background: rgba(17, 24, 39, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             height: 2rem;
         }
 
@@ -1603,8 +1605,8 @@ Portfolio </h3>-->
             background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
         }	
 
-        .text-gray-400	{
-            color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+        .text-gray-400, .lot-label, .lot-value {
+            color: #ffffff;
         }
 
         .bg-purple{
@@ -1629,6 +1631,22 @@ Portfolio </h3>-->
         .bg-secondary-2{
             background: rgba(17, 24, 39, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        [data-theme=light] .metric-row, [data-theme=light] .bg-secondary-2 {
+            background-color: white;
+            border-bottom: 1px solid #000;
+        }
+
+        [data-theme=light] .rounded{
+            border-radius: 0% !important;
+        }
+
+        [data-theme=light] .animate-value, 
+        [data-theme=light] .text-gray-400, 
+        [data-theme=light] .lot-label,
+        [data-theme=light] .lot-value{
+            color: #000000 !important;
         }
     </style>
 
