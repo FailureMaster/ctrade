@@ -329,13 +329,13 @@
                     <td class="text-center p-2">${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span></td>
                     <td class="text-center p-2">${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}</td>
                     <td class="text-center p-2">${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}</td>
-                    <td class="text-center p-2"><span class="${profitClass}">${removeTrailingZeros(formatWithPrecision1(order.profit)) || 0}</span></td>
+                    <td class="text-center p-2"><span class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</span></td>
                     <td class="text-center p-2">${order.status_badge}</td>
                 </tr>
             @else
                 <tr data-order-id="${order.id}">
                     <td class="text-center p-2">${order.status_badge}</td>
-                    <td class="text-center p-2"><span class="${profitClass}">${removeTrailingZeros(formatWithPrecision1(order.profit)) || 0}</span></td>
+                    <td class="text-center p-2"><span class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</span></td>
                     <td class="text-center p-2">${order.take_profit ? removeTrailingZeros(parseFloat(order.take_profit).toFixed(decimalCount)) : '-'}</td>
                     <td class="text-center p-2">${order.stop_loss ? removeTrailingZeros(parseFloat(order.stop_loss).toFixed(decimalCount)) : '-'}</td>
                     <td class="text-center p-2">${removeTrailingZeros(parseFloat(order.closed_price).toFixed(decimalCount)) || 0}</span></td>
