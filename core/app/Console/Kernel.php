@@ -15,7 +15,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('command:paymentdepositcompletion')
+        ->everyTenSeconds()
+        ->withoutOverlapping()
+        ->appendOutputTo(public_path('log/scheduler.log'));
     }
 
     /**

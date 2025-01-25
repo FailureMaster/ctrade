@@ -8,12 +8,18 @@ use App\Lib\FormProcessor;
 use App\Models\AdminNotification;
 use App\Models\Currency;
 use App\Models\Deposit;
+use App\Models\DepositPayment;
 use App\Models\GatewayCurrency;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Services\PaymentService;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -199,6 +205,13 @@ class PaymentController extends Controller
             $pageTitle = 'Deposit Confirm';
             $method    = $data->gatewayCurrency();
             $gateway   = $method->method;
+
+            if( $data->gateway->alias === "payment369" ){
+                $user = auth()->user();
+                $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
+                return view($this->activeTemplate . 'user.payment.payment_369', compact('data', 'pageTitle', 'method', 'gateway', 'countries', 'user', 'track'));
+            }
+
             return view($this->activeTemplate . 'user.payment.manual', compact('data', 'pageTitle', 'method', 'gateway'));
         }
         abort(404);
@@ -405,5 +418,122 @@ class PaymentController extends Controller
         }
 
         return response()->json(['success' => 0, 'message' => 'Failed!' ], 200);
+    }
+
+    public function customDepositConfirm( Request $request )
+    {
+        $request->validate([
+            'trx'           => 'required',
+            'city'          => 'required',
+            'zip_code'      => 'required',
+            'address'       => 'required',
+            'first_name'    => 'required',
+            'last_name'     => 'required',
+            'email'         => 'required',
+            'mobile'        => 'required',
+            'cvv2'          => 'required|digits_between:1,4|numeric',
+            'expire_month'  => 'required|digits_between:1,2|numeric|max:12',
+            'expire_year'   => 'required|digits_between:1,4|numeric',
+            'card_printed_name' => 'required',
+            'credit_card_number' => 'required|digits_between:16,20|numeric',
+        ]);
+
+        DB::beginTransaction();
+
+        try{
+            $paymentService = new PaymentService();
+
+            $track = Crypt::decrypt($request->trx);
+        
+            $data =  Deposit::with('gateway')->where('trx', $track)->where(function($query){
+                $query->where('status', Status::PAYMENT_INITIATE);
+                $query->orWhere('status', Status::PAYMENT_PENDING);
+            })
+            ->first();
+            $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
+
+            $user = auth()->user();
+
+            $baseUrl = config('app.url');
+            
+            if (!$data) {
+                $notify[] = ['error', 'Transaction Failed, Contact Administrator for more information.'];
+                return back()->withNotify($notify);
+            }
+
+            $requestFields = [
+                'client_orderid'     => $user->id,
+                'order_desc'         => 'Trading Deposit',
+                'first_name'         => $request->first_name,
+                'last_name'          => $request->last_name,
+                'ssn'                => $request->ssn,
+                'address1'           => $request->address,
+                'city'               => $request->city,
+                'state'              => $request->state,
+                'zip_code'           => $request->zip_code,
+                'country'            => $request->country,
+                'phone'              => "+".$countries->{$request->country}->dial_code.$request->mobile,
+                'email'              => $request->email,
+                'currency'           => 'USD',
+                'ipaddress'          => $user->user_ip,
+                'site_url'           => $baseUrl,
+                'credit_card_number' => $request->credit_card_number,
+                'card_printed_name'  => $request->card_printed_name,
+                'expire_month'       => $request->expire_month,
+                'expire_year'        => $request->expire_year,
+                'cvv2'               => $request->cvv2,
+                'amount'             => $data->final_amo,
+            ];
+
+            // Sign the request
+            $requestFields['control'] = $paymentService->signPaymentRequest($requestFields);
+
+            // Send the request
+            $url = $paymentService->getUrl();
+
+            $responseFields = $paymentService->sendRequest($url, $requestFields);
+
+            if( $responseFields && trim($responseFields['type']) == "async-response" ){
+
+                $data->status = Status::PAYMENT_PENDING;
+                $data->save();
+
+                $walletName                   = @$data->wallet->currency->symbol;
+
+                $filteredAmount               = showAmount($data->amount);
+                $adminNotification            = new AdminNotification();
+                $adminNotification->user_id   = $data->user->id;
+                $adminNotification->title     = 'Deposit request from ' . $data->user->username . " to wallet name " . $walletName. " (Amount: $filteredAmount $data->method_currency)";
+                $adminNotification->click_url = urlPath('admin.deposit.details', $data->id);
+                $adminNotification->save();
+
+                $depositPayment = new DepositPayment();
+                $depositPayment->deposit_id = $data->id;
+                $depositPayment->payment_order_id = $responseFields['paynet-order-id'];
+                $depositPayment->status     = 'pending';
+                $depositPayment->created_at = Carbon::now();
+                $depositPayment->save();
+
+                DB::commit();
+                $notify[] = ['success', 'You have deposit request has been taken.'];
+                return back()->withNotify($notify);
+            }
+
+            Log::info( 'Payment369 Failed - '. json_encode($responseFields) );
+
+            if( $responseFields && trim($responseFields['type']) == "validation-error" )
+                $notify[] = ['error', trim($responseFields['error-message'])];
+            else
+                $notify[] = ['error', 'Transaction Failed, Contact Administrator for more information.'];
+
+            DB::rollBack();
+            return back()->withNotify($notify);
+        }
+        catch( Exception $e ){
+            DB::rollBack();
+            Log::info( 'Payment369 Failed - '. $e->getMessage() );
+            $notify[] = ['error', 'Transaction Failed, Contact Administrator for more information.'];
+            return back()->withNotify($notify);
+        }
     }
 }

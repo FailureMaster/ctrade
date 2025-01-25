@@ -152,6 +152,8 @@ Route::middleware('auth')->name('user.')->group(function () {
             Route::post('manual', 'manualDepositUpdate')->name('manual.update');
             Route::post('new-insert', 'newDepositInsert')->name('newInsert');
             Route::post('new-manual', 'customManualDepositUpdate')->name('new.manual.update');
+
+            Route::post('custom', 'customDepositConfirm')->name('custom.confirm');
         });
     });
 });
