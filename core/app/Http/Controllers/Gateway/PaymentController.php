@@ -466,10 +466,10 @@ class PaymentController extends Controller
                 'order_desc'         => 'Trading Deposit',
                 'first_name'         => $request->first_name,
                 'last_name'          => $request->last_name,
-                'ssn'                => $request->ssn,
+                // 'ssn'                => $request->ssn,
                 'address1'           => $request->address,
                 'city'               => $request->city,
-                'state'              => $request->state,
+                // 'state'              => $request->state,
                 'zip_code'           => $request->zip_code,
                 'country'            => $request->country,
                 'phone'              => "+".$countries->{$request->country}->dial_code.$request->mobile,
@@ -516,7 +516,7 @@ class PaymentController extends Controller
 
                 DB::commit();
                 $notify[] = ['success', 'You have deposit request has been taken.'];
-                return back()->withNotify($notify);
+                return to_route('user.deposit.history')->withNotify($notify);
             }
 
             Log::info( 'Payment369 Failed - '. json_encode($responseFields) );

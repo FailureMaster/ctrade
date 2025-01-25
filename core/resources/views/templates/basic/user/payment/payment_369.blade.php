@@ -7,7 +7,7 @@
                     <h5 class="card-title">{{ __($pageTitle) }}</h5>
                 </div>
                 <div class="card-body pt-0">
-                    <form action="{{ route('user.deposit.custom.confirm') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('user.deposit.custom.confirm') }}" method="POST" enctype="multipart/form-data" id="frmCustomPaymentGateway">
                         @csrf
                         <div class="row">
                             <div class="col-md-12 text-center">
@@ -34,6 +34,28 @@
                             </div>
                             
                             <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="form-label required" for="first_name">@lang('First Name')*</label>
+                                    <input type="text" class="form-control form--control" name="first_name" value="{{ old('first_name') ?? $user->firstname }}" required id="first_name">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="form-label required" for="last_name">@lang('Last Name')*</label>
+                                    <input type="text" class="form-control form--control" name="last_name" value="{{ old('last_name') ?? $user->lastname }}" required id="last_name">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label class="form-label required" for="email">@lang('Email')*</label>
+                                    <input type="text" class="form-control form--control" name="email" value="{{ old('email') ?? $user->email }}" required id="email">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="form--label required">@lang('Mobile')*</label>
+                                    <div class="input-group">
+                                        <div class="input-group-text mobile-code"></div>
+                                        <input type="number" placeholder="@lang('Your mobile')" name="mobile" value="{{ old('mobile') ?? $user->mobile }}" required  class="form-control form--control checkUser" required>
+                                    </div>
+                                    <small class="text--danger mobileExist"></small>
+                                </div>
+
                                 <div class="form-group col-md-4">
                                     <label class="form-label">@lang('Country')</label>
                                     <select name="country" id="country" class="form--control register-select">
@@ -45,73 +67,53 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label class="form-label required" for="city">City*</label>
+                                    <label class="form-label required" for="city">@lang('City')*</label>
                                     <input type="text" class="form-control form--control" name="city" value="{{ old('city') ?? $user->address->city }}" required id="city">
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label class="form-label required" for="zip_code">Zip Code*</label>
+                                    <label class="form-label required" for="zip_code">@lang('Zip Code')*</label>
                                     <input type="text" class="form-control form--control" name="zip_code" value="{{ old('zip_code') ?? $user->address->zip }}" required id="zip_code">
                                 </div>
-                            </div> 
-                            <div class="form-group">
-                                <label class="form-label required" for="address">Address*</label>
-                                <input type="text" class="form-control form--control" name="address" value="{{ old('address') ?? $user->address->address }}" required id="address">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label required" for="first_name">First Name*</label>
-                                <input type="text" class="form-control form--control" name="first_name" value="{{ old('first_name') ?? $user->firstname }}" required id="first_name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label required" for="last_name">Last Name*</label>
-                                <input type="text" class="form-control form--control" name="last_name" value="{{ old('last_name') ?? $user->lastname }}" required id="last_name">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label required" for="email">Email*</label>
-                                <input type="text" class="form-control form--control" name="email" value="{{ old('email') ?? $user->email }}" required id="email">
-                            </div>
-                            <div class="form-group">
-                                <label class="form--label required">@lang('Mobile')*</label>
-                                <div class="input-group">
-                                    <div class="input-group-text mobile-code"></div>
-                                    <input type="number" placeholder="@lang('Your mobile')" name="mobile" value="{{ old('mobile') ?? $user->mobile }}" required  class="form-control form--control checkUser" required>
+                                <div class="form-group">
+                                    <label class="form-label required" for="address">@lang('Address')*</label>
+                                    <input type="text" class="form-control form--control" name="address" value="{{ old('address') ?? $user->address->address }}" required id="address">
                                 </div>
-                                <small class="text--danger mobileExist"></small>
-                            </div>
+                            </div> 
                             {{-- <div class="form-group">
                                 <label class="form-label" for="cell_phone">Cell Phone</label>
                                 <input type="text" class="form-control form--control" name="cell_phone" value="" id="cell_phone">
                             </div> --}}
-                            <div class="form-group">
-                                <label class="form-label" for="state">State</label>
+                            {{-- <div class="form-group">
+                                <label class="form-label" for="state">@lang('State')</label>
                                 <input type="text" class="form-control form--control" name="state" value="{{ old('state') }}" id="state">
                             </div>
                             <div class="form-group">
-                                <label class="form-label" for="ssn">SSN</label>
+                                <label class="form-label" for="ssn">@lang('SSN')</label>
                                 <input type="text" class="form-control form--control" name="ssn" value="{{ old('ssn') }}" id="ssn">
-                            </div>
+                            </div> --}}
                           
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label class="form-label" for="credit_card_number">Credit Card Number*</label>
+                                    <label class="form-label" for="credit_card_number">@lang('Credit Card Number')*</label>
                                     <input type="text" class="form-control form--control" name="credit_card_number" value="{{ old('credit_card_number') }}" id="credit_card_number">
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label class="form-label" for="card_printed_name">Card Printed Name*</label>
+                                    <label class="form-label" for="card_printed_name">@lang('Card Printed Name')*</label>
                                     <input type="text" class="form-control form--control" name="card_printed_name" value="{{ old('card_printed_name') }}" id="card_printed_name">
                                 </div>
                             </div> 
 
                             <div class="row">
                                 <div class="form-group col-md-4">
-                                    <label class="form-label required" for="cvv2">CVV2*</label>
+                                    <label class="form-label required" for="cvv2">@lang('CVV2')*</label>
                                     <input type="text" class="form-control form--control" name="cvv2" value="{{ old('cvv2') }}" required id="cvv2">
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label class="form-label required" for="expire_month">Expire Month*</label>
+                                    <label class="form-label required" for="expire_month">@lang('Expire Month')*</label>
                                     <input type="text" class="form-control form--control" name="expire_month" value="{{ old('expire_month') }}" required id="expire_month">
                                 </div>
                                 <div class="form-group col-md-4">
-                                    <label class="form-label required" for="expire_year">Expire Year*</label>
+                                    <label class="form-label required" for="expire_year">@lang('Expire Year')*</label>
                                     <input type="text" class="form-control form--control" name="expire_year" value="{{ old('expire_year') }}" required id="expire_year">
                                 </div>
                             </div>
@@ -121,6 +123,11 @@
                                     <button type="submit" class="btn btn--base w-100">@lang('Pay Now')</button>
                                 </div>
                             @endif
+                            <div class="d-flex justify-content-center mt-5">
+                                <img src="{{ asset('assets/images/mastercard.png') }}" width="auto" style="height:100px !important;">
+                                <img class="mx-3" src="{{ asset('assets/images/pci.png') }}" width="auto" style="height:100px !important;">
+                                <img src="{{ asset('assets/images/visa.png') }}" width="auto" style="height:100px !important;">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -141,4 +148,17 @@
             $('.mobile-code').text('+' + $('select[name=country] :selected').data('mobile_code'));
         })
     </script>
+@endpush
+
+@push('style')
+    @if(App::getLocale() == 'ar')
+        <style>
+            .form-group,
+            .form-group input,
+            .form-group select
+            {
+                text-align:right !important;
+            }
+        </style>
+    @endif
 @endpush

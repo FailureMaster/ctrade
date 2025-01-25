@@ -96,5 +96,7 @@ class PaymentDepositCompletion extends Command
 
             var_dump('Done checking payment deposit pending today  '. Carbon::now());
         }
+
+        var_dump('No available cron today  '. Carbon::now());
     }
 }
