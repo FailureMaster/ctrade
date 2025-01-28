@@ -649,7 +649,24 @@
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
                 },
                 success: function(response) {
-                    notify(response.success, response.message);
+                    if( response.success == "error" ){
+                        notify(response.success, response.message);
+                    }
+                    else{
+                        Swal.fire({
+                            allowOutsideClick: false,
+                            target: document.getElementById('changepassword-canvas'),
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: false,
+                            confirmButtonColor: "#d33",
+                            confirmButtonText: "Ok"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "{{ route('user.logout') }}";
+                            }
+                        });
+                    }
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
 
@@ -1143,8 +1160,7 @@
             [data-theme=light] #frmWithdrawMoney select,
             [data-theme=light] #frmWithdrawMoney,
             [data-theme=light] #frmConfirmWithdraw,
-            [data-theme=light] #frmConfirmWithdraw input,
-            {
+            [data-theme=light] #frmConfirmWithdraw input{
                 color: #000000 !important;
                 border-color: #000000 !important;
             }
@@ -1186,11 +1202,10 @@
 
             [data-theme=dark] #customDepositConfirmForm input,
             [data-theme=dark] #customDepositConfirmForm select,
-            [data-theme=dark] #frmWithdrawMoney input,
-            [data-theme=dark] #frmWithdrawMoney select,
-            {
-                color: #ffffff !important;
-                border: 1px solid #ffffff !important;
+            [data-theme=dark] #frmWithdrawMoney .form--control,
+            [data-theme=dark] #frmWithdrawMoney select{
+                color: #ffffff;
+                border: 1px solid #ffffff;
             }
 
             [data-theme=dark] #customDepositConfirmForm h4{

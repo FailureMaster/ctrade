@@ -147,7 +147,7 @@
                         <li class="menu-item @if (App::getLocale() == 'ar') justify-content-end @endif">
                             <a class="text-white {{ auth()->user()->kv != 1 ? "new--kyc" : "" }} @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
                                 <i class="fas fa-id-card"></i>
-                                <span class="{{ $kycStatusClass }}">@lang('KYC') {{ __($kycStatus) }}</span>
+                                <label class="{{ $kycStatusClass }}">@lang('KYC') {{ __($kycStatus) }}</label>
                             </a>
                         </li>
                     @endif
