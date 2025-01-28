@@ -503,6 +503,23 @@ class TradeController extends Controller
             ->where('user_id', auth()->id())
             ->first();
 
+        // New we will be using to compute profit order of lot value
+        $clientGroupId             = ClientGroupUser::where('user_id', auth()->user()->id)->first();
+        $cliID                     = $clientGroupId <> null ? $clientGroupId->client_group_id : 0;
+        $clientGroupSymbols        = ClientGroupSetting::where('client_group_id', $cliID)->select('symbol')->get()->pluck('symbol')->toArray();
+        $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
+
+        $order->lot_value = null;
+
+        if( $clientGroupId <> null )
+        {
+            if( !empty($clientGroupSymbols) )
+            {
+                if( in_array($order->pair->id, $clientGroupSymbols) )
+                    $order->lot_value = $clientGroupSettings->lots;
+            }
+        } 
+
         // $marketDataJson = File::get(base_path('resources/data/data.json'));
         // $marketData = json_decode($marketDataJson);
 

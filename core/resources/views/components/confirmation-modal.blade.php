@@ -116,14 +116,24 @@
                 current_price = current_price.toFixed(decimalCount);
             }
             let lotValue = order.pair.percent_charge_for_buy;
+
+            if( order.lot_value != null ){
+                lotValue = order.lot_value;
+            }
     
             let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
-            let total_price = parseInt(order.order_side) === 2
-                ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price.replace(/,/g, ''))) * lotEquivalent))
-                : formatWithPrecision(((parseFloat(current_price.replace(/,/g, '')) - parseFloat(order.rate)) * lotEquivalent));
+            // let total_price = parseInt(order.order_side) === 2
+            //     ? formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price.replace(/,/g, ''))) * lotEquivalent))
+            //     : formatWithPrecision(((parseFloat(current_price.replace(/,/g, '')) - parseFloat(order.rate)) * lotEquivalent));
+
+            let total_price = parseInt(order.order_side) === 2 ?
+                formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent)) :
+                formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
     
             let profitModal = modal.find('.profit-modal');
-            let profitValue = formatWithPrecision1(total_price);
+            // let profitValue = formatWithPrecision1(total_price);
+            let profitValue = parseFloat(total_price).toFixed(decimalCount);
+
             profitModal.text(`\$ ${profitValue}`);
     
             if (parseFloat(profitValue) <= 0) {
