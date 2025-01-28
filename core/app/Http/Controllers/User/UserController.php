@@ -344,6 +344,10 @@ class UserController extends Controller
         $user->kv       = 2;
         $user->save();
 
+        if( is_mobile() ){
+            return response()->json(['success' => 1, 'message' => 'KYC data submitted successfully'], 200);
+        }
+
         $notify[] = ['success', 'KYC data submitted successfully'];
         return to_route('user.home')->withNotify($notify);
     }
@@ -351,13 +355,47 @@ class UserController extends Controller
     public function attachmentDownload($fileHash)
     {
         $filePath  = decrypt($fileHash);
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-        $general   = gs();
-        $title     = slug($general->site_name) . '- attachments.' . $extension;
-        $mimetype  = mime_content_type($filePath);
-        header('Content-Disposition: attachment; filename="' . $title);
-        header("Content-Type: " . $mimetype);
-        return readfile($filePath);
+
+        if( is_mobile() ){
+            // The path to your file (you can use Storage::disk('local') or other disk types)
+            // Check if the file exists
+            if (!file_exists($filePath)) {
+                abort(404, 'File not found');
+            }
+            $general   = gs();
+            // Get file extension and mime type
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+            $mimeType = mime_content_type($filePath);
+            $title   = slug($general->site_name) . '- attachments.' . $extension;
+
+            // Return the file as a response with proper headers for download
+            return response()->stream(
+                function () use ($filePath) {
+                    // Open the file and output it
+                    $file = fopen($filePath, 'rb');
+                    while (!feof($file)) {
+                        echo fread($file, 8192); // read in chunks
+                        flush(); // ensure the data is sent immediately
+                    }
+                    fclose($file);
+                },
+                200,
+                [
+                    'Content-Type' => $mimeType,
+                    'Content-Disposition' => 'attachment; filename="' . $title . '"',
+                    'Content-Length' => filesize($filePath),
+                ]
+            );
+        }
+        else{
+            $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+            $general   = gs();
+            $title     = slug($general->site_name) . '- attachments.' . $extension;
+            $mimetype  = mime_content_type($filePath);
+            header('Content-Disposition: attachment; filename="' . $title);
+            header("Content-Type: " . $mimetype);
+            return readfile($filePath);
+        }
     }
 
     public function userData()

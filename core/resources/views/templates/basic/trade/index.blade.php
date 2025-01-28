@@ -454,6 +454,24 @@
         <div class="offcanvas-body">
         </div>
     </div>
+
+    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="kyc-offcanvas" aria-labelledby="offcanvasLabel">
+        <div class="offcanvas-header">
+            <h4 class="mb-0 fs-18 offcanvas-title text-white">
+                @lang('KYC')
+            </h4>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            @if( auth()->user()->kv === 0 )
+                @include('components.kyc-form')
+            @elseif( auth()->user()->kv === 2 )
+                @include('components.kyc-info')
+            @endif
+        </div>
+    </div>
 @endsection
 @push('script-lib')
     <script src="{{ asset('assets/global/js/select2.min.js') }}"></script>
@@ -609,6 +627,11 @@
 
         $('.new--withdraw').on('click', function(e) {
             var myOffcanvas = document.getElementById('withdraw-offcanvas');
+            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+        });
+
+        $('.new--kyc').on('click', function(e) {
+            var myOffcanvas = document.getElementById('kyc-offcanvas');
             var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
         });
 
@@ -855,6 +878,39 @@
             $('#withdraw-offcanvas .amount').text(parseFloat($(this).val()).toFixed(2));
         });
 
+        $(document).on('submit', '.frmKYC', function(e) {
+            e.preventDefault();
+
+            let frm = new FormData($('.frmKYC')[0]);
+            let url = $(this).attr('action');
+            
+            $.ajax({
+                method: 'POST',
+                data: frm,
+                processData: false,
+                contentType: false,
+                url: url,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function(response) {
+                    if( response.success == 1 ){
+                        notify('success', response.message);
+                        
+                        setTimeout(() => {
+                            location.reload(); 
+                        }, 1500);
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    notify('error', response.message);
+                },
+                complete: function(response) {}
+            });
+        });
+
         $(document).on('click', '.clickable-row', function(){
             $('.collapse').removeClass('show');
 
@@ -1044,6 +1100,7 @@
             [data-theme=light] #changepassword-canvas,
             [data-theme=light] #deposit-confirmation-canvas,
             [data-theme=light] #withdraw-offcanvas,
+            [data-theme=light] #kyc-offcanvas,
             [data-theme=light] #withdraw-confirmation-canvas{
                 background-color: #ffffff;
                 color: #000000 !important;
@@ -1086,7 +1143,8 @@
             [data-theme=light] #frmWithdrawMoney select,
             [data-theme=light] #frmWithdrawMoney,
             [data-theme=light] #frmConfirmWithdraw,
-            [data-theme=light] #frmConfirmWithdraw input{
+            [data-theme=light] #frmConfirmWithdraw input,
+            {
                 color: #000000 !important;
                 border-color: #000000 !important;
             }
@@ -1129,9 +1187,10 @@
             [data-theme=dark] #customDepositConfirmForm input,
             [data-theme=dark] #customDepositConfirmForm select,
             [data-theme=dark] #frmWithdrawMoney input,
-            [data-theme=dark] #frmWithdrawMoney select{
-                color: #ffffff;
-                border: 1px solid #ffffff;
+            [data-theme=dark] #frmWithdrawMoney select,
+            {
+                color: #ffffff !important;
+                border: 1px solid #ffffff !important;
             }
 
             [data-theme=dark] #customDepositConfirmForm h4{

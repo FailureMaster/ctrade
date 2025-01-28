@@ -131,6 +131,27 @@
                         </li>
                     @endif
 
+                    @if (Auth::check())
+                    @php
+                        $kycStatusClass = "text-danger";
+                        $kycStatus      = "Unverified";
+                        if( auth()->user()->kv === 1 ){
+                            $kycStatus =  "Verified";
+                            $kycStatusClass = "text-success";
+                        } 
+                        if( auth()->user()->kv === 2 ){
+                            $kycStatusClass = "text-warning";
+                            $kycStatus =  "Pending";
+                        } 
+                    @endphp
+                        <li class="menu-item @if (App::getLocale() == 'ar') justify-content-end @endif">
+                            <a class="text-white {{ auth()->user()->kv != 1 ? "new--kyc" : "" }} @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
+                                <i class="fas fa-id-card"></i>
+                                <span class="{{ $kycStatusClass }}">@lang('KYC') {{ __($kycStatus) }}</span>
+                            </a>
+                        </li>
+                    @endif
+
                 
                     @if (Auth::check())
                         <li class="menu-item @if (App::getLocale() == 'ar') justify-content-end @endif">
