@@ -374,8 +374,12 @@ class ManageUsersController extends Controller
         // ->paginate(getPaginate());
     }
 
-    public function detail($id)
+    public function detail(Request $request, $id)
     {
+        if( Session::get('users_data') == null ){
+            $this->loadUserList($request, '', 'active', $history = 'clients');
+        }
+
         $user_data = Session::get('users_data');
         $user_data2 = $user_data->all();
 
@@ -1373,5 +1377,85 @@ class ManageUsersController extends Controller
         }
 
         abort(403, 'Unauthorized');
+    }
+
+    private function loadUserList(Request $request, $pageTitle, $userType)
+    {
+        // Get the 'filter' parameter from the request
+        $filter = $request->get('filter');
+            
+        // If 'customfilter' is present in the request, set the filter to 'custom'
+        if ($request->get('customfilter')) {
+            $filter = 'custom';
+        }
+
+        // Initialize start and end dates to null
+        $startDate = null;
+        $endDate = null;
+
+        // Determine the date range based on the filter
+        switch ($filter) {
+            case 'today':
+                // Set the date range to today
+                $startDate = Carbon::today();
+                $endDate = Carbon::today()->endOfDay();
+                break;
+            case 'yesterday':
+                // Set the date range to yesterday
+                $startDate = Carbon::yesterday();
+                $endDate = Carbon::yesterday()->endOfDay();
+                break;
+            case 'this_week':
+                // Set the date range to the current week
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
+            case 'last_week':
+                // Set the date range to the previous week
+                $startDate = Carbon::now()->subWeek()->startOfWeek();
+                $endDate = Carbon::now()->subWeek()->endOfWeek();
+                break;
+            case 'this_month':
+                // Set the date range to the current month
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                break;
+            case 'last_month':
+                // Set the date range to the previous month
+                $startDate = Carbon::now()->subMonth()->startOfMonth();
+                $endDate = Carbon::now()->subMonth()->endOfMonth();
+                break;
+            case 'all_time':
+                // Set the date range to all time (no filtering)
+                $startDate = null;
+                $endDate = null;
+                break;
+            case 'custom':
+                // Set the date range based on a custom filter
+                $date = explode('-', $request->get('customfilter'));
+                $startDate = Carbon::parse(trim($date[0]))->format('Y-m-d');
+                $endDate = @$date[1] ? Carbon::parse(trim(@$date[1]))->format('Y-m-d') : $startDate;
+                break;
+        }
+
+        // Get the 'per_page' parameter from the request, defaulting to 25
+        $perPage = $request->get('per_page', 25);
+
+        // Fetch the user data based on the user type and date range, then paginate
+
+        $orderDirection = $request->query('direction');
+        // dd($orderDirection);
+
+        if( $request->query('orderby')=='created_at') {
+            $columnName = 'created_at';
+        }elseif($request->query('orderby') == 'updated_at'){
+            $columnName = 'updated_at';
+        }else{
+            $columnName = 'id';
+        }
+
+        $users = $this->userData($columnName, $orderDirection, $userType, $startDate, $endDate)->paginate($perPage);
+
+        Session::put('users_data', $users);
     }
 }

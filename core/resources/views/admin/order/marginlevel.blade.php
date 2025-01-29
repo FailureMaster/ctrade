@@ -245,7 +245,7 @@
                                         {{ getAmount($user->approvedWithdrawals->sum('amount')) }}
                                     </td>
                                     <td class="text-center last-login{{$user->id}}" >
-                                        {{ $loginLog->created_at }}
+                                        {{ @$loginLog->created_at }}
                                     </td>
                                 </tr>
                               
