@@ -400,13 +400,16 @@ class TradeController extends Controller
         foreach ($orders as $key => $co) 
         {
             $orders[$key]->lot_value = null;
+            $orders[$key]->order_spread = null;
 
             if( $clientGroupId <> null )
             {
                 if( !empty($clientGroupSymbols) )
                 {
-                    if( in_array($co->pair->id, $clientGroupSymbols) )
+                    if( in_array($co->pair->id, $clientGroupSymbols) ){
                         $orders[$key]->lot_value = $clientGroupSettings->lots;
+                        $orders[$key]->order_spread = $clientGroupSettings->spread;
+                    }
                 }
             } 
         }
@@ -473,13 +476,15 @@ class TradeController extends Controller
                 $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
     
                 $u->orders[$key]->lot_value = null;
-    
+                $u->orders[$key]->order_spread = null;
+
                 if( $clientGroupId <> null )
                 {
                     if( !empty($clientGroupSymbols) )
                     {
                         if( in_array($co->pair->id, $clientGroupSymbols) )
                         $u->orders[$key]->lot_value = $clientGroupSettings->lots;
+                        $u->orders[$key]->order_spread = $clientGroupSettings->spread;
                     }
                 } 
             }
@@ -510,6 +515,7 @@ class TradeController extends Controller
         $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
 
         $order->lot_value = null;
+        $order->order_spread = null;
 
         if( $clientGroupId <> null )
         {
@@ -517,6 +523,7 @@ class TradeController extends Controller
             {
                 if( in_array($order->pair->id, $clientGroupSymbols) )
                     $order->lot_value = $clientGroupSettings->lots;
+                    $order->order_spread = $clientGroupSettings->spread;
             }
         } 
 

@@ -99,19 +99,27 @@
             var modal = $('#confirmationModal');
     
             let current_price = jsonData[order.pair.symbol].replace(/,/g, '');
+
+            let decimalCount    = countDecimalPlaces(current_price);
             
             current_price = parseFloat(current_price);
             
-            let decimalCount    = countDecimalPlaces(current_price);
+            // let decimalCount    = countDecimalPlaces(current_price);
+
+            let spread = order.pair.spread;
+                
+            if( order.order_spread != null ){
+                spread = order.order_spread;
+            }
 
             if (order.pair.symbol === 'GOLD') {
-                if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * order.pair.spread) + current_price;
+                if (parseInt(order.order_side) === 1) {
+                    current_price = (current_price * spread) + current_price;
                 }
                 current_price = current_price.toFixed(decimalCount);
             } else {
-                if (parseInt(order.order_side) === 2) {
-                    current_price = (current_price * order.pair.spread) + current_price;
+                if (parseInt(order.order_side) === 1) {
+                    current_price = (current_price * spread) + current_price;
                 }
                 current_price = current_price.toFixed(decimalCount);
             }

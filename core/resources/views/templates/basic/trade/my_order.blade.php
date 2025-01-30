@@ -180,19 +180,25 @@
                 });
 
                 let current_price = jsonData[order.pair.symbol].replace(/,/g, '')
-                let spread = order.pair.spread;
 
-                current_price = parseFloat(current_price);
+                let spread = order.pair.spread;
+                
+                if( order.order_spread != null ){
+                    spread = order.order_spread;
+                }
 
                 let decimalCount = countDecimalPlaces(current_price);
 
+                current_price = parseFloat(current_price);
+
+                // let decimalCount = countDecimalPlaces(current_price);
                 if (order.pair.symbol === 'GOLD') {
-                    if (parseInt(order.order_side) === 2) {
+                    if (parseInt(order.order_side) === 1) {
                         current_price = (current_price * spread) + current_price;
                     }
                     current_price = current_price.toFixed(decimalCount);
                 } else {
-                    if (parseInt(order.order_side) === 2) {
+                    if (parseInt(order.order_side) === 1) {
                         current_price = (current_price * spread) + current_price;
                     }
                     current_price = current_price.toFixed(decimalCount);
@@ -352,7 +358,7 @@
                                 </div>
                                 <div>
                                     <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">
-                                        <label class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</label>
+                                        <label class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(decimalCount)}</label>
                                     </span>
                                 </div>
                             </div>     
@@ -434,6 +440,7 @@
 
                         let jsonMarketData = resp.marketData;
 
+                        let pairDecimalCount = countDecimalPlaces(jsonMarketData['{{@$pair->type}}']['{{@$pair->symbol}}'].replace(/,/g, ''));
 
                         if (resp.orders && resp.orders.length > 0) {
                             resp.orders.forEach(order => {
@@ -470,16 +477,16 @@
                         let level = equity * level_percent;
 
                         $('#used-margin-span').html(
-                            `<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(resp.totalRequiredMargin)} $</label>`
+                            `<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${parseFloat(resp.totalRequiredMargin).toFixed(pairDecimalCount)} $</label>`
                             );
                         $('#free-margin-span').html(
-                            `<label class="${(free_margin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(free_margin)} $`
+                            `<label class="${(free_margin < 0 ? 'text-danger':'text-success')}">${free_margin.toFixed(pairDecimalCount)} $`
                             );
                         $('#equity-span').html(
                             `<label class="${(equity < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(equity)} $</label>`
                             );
                         $('#pl-span').html(
-                            `<label class="${(pl < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(pl)} $</label>`
+                            `<label class="${(pl < 0 ? 'text-danger':'text-success')}">${pl.toFixed(pairDecimalCount)} $</label>`
                             );
                         $('#level-span').html(
                             `<label class="${(level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(level)} $</label>`
@@ -488,12 +495,20 @@
                             `<label class="${(margin_level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(margin_level)} %</label>`
                             );
 
-                        if ((parseInt(margin_level) > 0) && (parseInt(margin_level) <=
-                                st_level_percentage
-                                )) { // if ST Level is equal to Margin Level, close all orders.
+                        // if ((parseInt(margin_level) > 0) && (parseInt(margin_level) <=
+                        //         st_level_percentage
+                        //         )) { // if ST Level is equal to Margin Level, close all orders.
+                        //     isClosingAllOrders = true;
+
+                        //     closeAllOrders(resp)
+                        // }
+
+                        if ( free_margin < 0 || margin_level <= 100 ) { 
                             isClosingAllOrders = true;
 
                             closeAllOrders(resp)
+                        }else{
+                            console.log('not in criteria');
                         }
 
                         closeOrdersBasedOnSLTP(resp)

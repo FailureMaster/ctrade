@@ -284,7 +284,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(customOrderProfit).toFixed(2) || 0}</label>
+                                    <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label>
                                 </div>
                             </div>     
                         </td>
@@ -300,9 +300,9 @@
                                 <strong>@lang('Take Profit'):</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '0'}<br>
                                 <strong>@lang('Volume'):</strong> ${removeTrailingZeros(order.no_of_lot)}<br>
                                 @if (App::getLocale() != 'ar')
-                                <strong>@lang('Profit'):</strong> <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label><br>
+                                <strong>@lang('Profit'):</strong> <label class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label><br>
                                 @else
-                                    <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label>:<strong>@lang('Profit')</strong><br>
+                                    <label class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label>:<strong>@lang('Profit')</strong><br>
                                 @endif
 
                                 @if (App::getLocale() != 'ar')

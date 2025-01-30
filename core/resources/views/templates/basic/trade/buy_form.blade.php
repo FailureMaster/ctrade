@@ -838,7 +838,8 @@ Portfolio </h3>-->
                 let sellRate = document.querySelector(".sell-rate");
                 let buyRate = document.querySelector(".buy-rate");
 
-                let buyDecimal = countDecimalPlaces(sellValue);
+                // let buyDecimal = countDecimalPlaces(sellValue);
+                let buyDecimal = countDecimalPlaces(currentPrice);
 
                 let adjustedBuyValue = buyValue;
 
