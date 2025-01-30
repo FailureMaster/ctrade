@@ -7,7 +7,7 @@
                 <h5 class="card-title">@lang('Change Password')</h5>
             </div>
             <div class="card-body">
-                <form action="" method="post" class="cpass">
+                <form action="" method="post" class="">
                     @csrf
                     {{-- <div class="form-group">
                         <label class="form-label">@lang('Current Password')</label>

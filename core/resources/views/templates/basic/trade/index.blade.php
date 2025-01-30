@@ -262,7 +262,7 @@
             </button>
         </div>
         <div class="offcanvas-body">
-            <form action="" method="post" class="cpass">
+            <form action="/user/change-password" method="post" class="cpass">
                 @csrf
                 {{-- <div class="form-group">
                     <label class="form-label">@lang('Current Password')</label>
@@ -271,16 +271,18 @@
                 </div> --}}
                 <div class="form-group">
                     <label class="form-label">@lang('New Password')</label>
-                    <input type="password" class="form--control @if ($general->secure_password) secure-password @endif"
-                        name="password" required autocomplete="current-password">
+                    <input type="password" class="form--control cpass_password @if ($general->secure_password) secure-password @endif"
+                        name="password" required onkeyup="validatePasswords()" autocomplete="current-password">
                 </div>
                 <div class="form-group">
                     <label class="form-label">@lang('Confirm New Password')</label>
-                    <input type="password" class="form-control form--control" name="password_confirmation" required
-                        autocomplete="current-password">
+                    <input type="password" class="form-control form--control cpass_password_confirmation" name="password_confirmation" required
+                    onkeyup="validatePasswords()" autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn--base w-100">@lang('Submit')</button>
+                <p id="error-message" class="error text-danger my-2"></p>
+                <button type="submit" class="btn btn--base w-100 cpass-btn">@lang('Submit')</button>
             </form>
+           
         </div>
     </div>
 
@@ -635,8 +637,22 @@
             var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
         });
 
+        function validatePasswords() {
+            let password = $('.cpass_password').val();
+            let confirmPassword = $('.cpass_password_confirmation').val();
+            let errorMessage = document.getElementById("error-message");
+      
+            if (password && confirmPassword && password != confirmPassword) {
+                errorMessage.textContent = "Passwords do not match!";
+                $('.cpass-btn').prop('disabled', true); // Disable the submit button
+            } else {
+                errorMessage.textContent = ""; // Clear the error message
+                $('.cpass-btn').prop('disabled', false); // Disable the submit button
+            }
+        }
+
         // Change password
-        $(document).on('submit', '.cpass', function(e) {
+        $(document).on('submit', '.cpasss', function(e) {
             e.preventDefault();
 
             let frm = $(this).serialize();

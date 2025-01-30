@@ -34,7 +34,7 @@ class LoginController extends Controller
 
         $this->validateLogin($request);
 
-        $request->session()->regenerateToken();
+        // $request->session()->regenerateToken();
 
         if(!verifyCaptcha()){
             $notify[] = ['error','Invalid captcha provided'];
