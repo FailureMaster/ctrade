@@ -44,3 +44,11 @@ $content = getContent('account_recovery.content',true);
     </div>
 </section>
 @endsection
+
+@push('style')
+<style>
+input:-webkit-autofill {
+    -webkit-text-fill-color: hsl(var(--black)) !important;
+}
+</style>
+@endpush
