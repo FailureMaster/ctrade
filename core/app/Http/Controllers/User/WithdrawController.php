@@ -378,10 +378,14 @@ class WithdrawController extends Controller
                 $adminNotification->user_id   = $user->id;
                 $adminNotification->title     = 'New withdraw request from ' . $user->username;
                 $adminNotification->click_url = urlPath('admin.withdraw.details', $withdraw->id);
+
+                $pendingWithdraw = Withdrawal::where('user_id', auth()->id())->where('status', '!=', Status::PAYMENT_INITIATE)->orderBy('id', 'desc')->where('status', 2)->get();
+
+                $html = view('templates/basic/trade/table/pending-withdraw-table', compact('pendingWithdraw'))->render();
                 
                 if( $adminNotification->save() ){
-                    $lang = __('Withdraw request sent successfully');
-                    return response()->json(['success' => 1 , 'message' =>  $lang], 200);
+                    $lang = __('Withdraw request sent for review successfully');
+                    return response()->json(['success' => 1 , 'message' =>  $lang, 'html' => $html], 200);
                 }
                    
 

@@ -378,7 +378,7 @@
                 <div class="text-center">
                     <h4 class="mb-0 fs-18 offcanvas-title text-white">@lang('Pending Withdraws')</h4>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive" id="tblPendingWithdraw">
                     <table class="tbl-pw">
                         <thead>
                             @if (App::getLocale() != 'ar')
@@ -849,8 +849,23 @@
                 },
                 success: function(response) {
                     if( response.success == 1 ){
-                        notify('success', response.message);
+                        $('#frmWithdrawMoney')[0].reset();
+                        $('#withdraw-offcanvas .preview-details').addClass('d-none');
+                        // notify('success', response.message);
                         $('.text-reset').trigger('click');
+                        $('#tblPendingWithdraw').html( response.html );
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                        
+                        setTimeout(() => {
+                            var myOffcanvas = document.getElementById('withdraw-offcanvas');
+                            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+                        }, 5000);
                     }
                     else
                         notify('error', response.message);
