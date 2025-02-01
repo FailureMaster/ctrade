@@ -970,17 +970,15 @@
                 }
 
                 current_price = parseFloat(current_price);
-                if (order.pair.symbol === 'GOLD') {
-                    if (parseInt(order.order_side) === 1) {
-                        current_price = (current_price * spread) + current_price;
-                    }
-                    current_price = current_price.toFixed(2);
-                } else {
-                    if (parseInt(order.order_side) === 1) {
-                        current_price = (current_price * spread) + current_price;
-                    }
-                    current_price = formatWithPrecision(current_price);
-                }
+
+                // Current Price Formula
+                if (parseInt(order.order_side) === 1) 
+                    current_price = (current_price - parseFloat(spread));
+                else
+                    current_price = (current_price + parseFloat(spread));
+
+                current_price = parseFloat(current_price).toFixed(2);
+
                 let lotValue = order.pair.percent_charge_for_buy;
 
                 if( order.lot_value != null ){

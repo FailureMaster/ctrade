@@ -812,11 +812,14 @@ Portfolio </h3>-->
             updateLotValues(document.querySelector(".lot-size-select"));
 
             function calculateBuyValue(buyPrice) {
-                return (buyPrice * `{{ @$pair->spread }}`) + buyPrice;
+                // return (buyPrice * `{{ @$pair->spread }}`) + buyPrice; // old formula
+                let spread = {{ @$pair->spread }}; // Get spread from Laravel
+                return buyPrice + spread; // Spread as fixed amount
             }
 
-            function calculateSellValue(sellPrice) {
-                return sellPrice; // No calculation needed for sell value
+           function calculateSellValue(sellPrice) {
+                let spread = {{ @$pair->spread }}; // Get spread from Laravel
+                return sellPrice - spread; // Subtract the spread from the sell price
             }
 
             function updateSpanValues(currentPrice) {
