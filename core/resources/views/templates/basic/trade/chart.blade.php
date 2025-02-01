@@ -22,7 +22,7 @@
         <style>
             .trading-chart iframe {
                 width: 100%;
-                height: 80vh; /* Default height */
+                height: 70vh; /* Default height */
             }
         </style>
     @else
@@ -48,62 +48,66 @@
 
     @media screen and (min-width: 320px) and (max-height: 568px){
         .trading-chart iframe {
-            height: 70vh;
+            height: 65vh;
         }
     }
 
     @media screen and (min-width: 360px) and (max-height: 780px){
         .trading-chart iframe {
-            height: 80vh;
+            height: 75vh;
         }
     }
 
     @media screen and (min-width: 375px) and (max-height: 812px){
         .trading-chart iframe {
-            height: 75vh;
+            height: 70vh;
         }
     }
 
     @media screen and (min-width: 384px) and (max-height: 832px){
         .trading-chart iframe {
-            height: 80vh;
+            height: 75vh;
         }
     }
 
     @media screen and (min-width: 390px) and (max-height: 884px){
         .trading-chart iframe {
-            height: 77vh;
+            height: 72vh;
         }
     }
     
     @media screen and (min-width: 412px) and (max-height: 916px){
         .trading-chart iframe {
-            height: 80vh;
+            height: 75vh;
         }
     }
 
     @media screen and (min-width: 414px) and (max-height: 896px){
         .trading-chart iframe {
-            height: 575px;
+            /* height: 575px; */
+            height: 550px;
         }
     }
 
 
     @media screen and (min-width: 428px) and (max-height: 926px){
         .trading-chart iframe {
-            height: 600px;
+            /* height: 600px; */
+            height: 550px;
         }
     }
 
     @media screen and (min-width: 430px) and (max-height: 932px){
         .trading-chart iframe {
-            height: 600px;
+            /* height: 600px; */
+            height: 550px;
         }
     }
 
     @media screen and (min-width: 440px) and (max-height: 956px){
         .trading-chart iframe {
-            height: 600px;
+              /* height: 600px; */
+              height: 550px;
         }
     }
 </style>

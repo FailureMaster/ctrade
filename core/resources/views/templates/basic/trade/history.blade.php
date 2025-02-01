@@ -431,6 +431,10 @@
                     loadhistory = 1;
                 }
             })
+
+            $(document).on('click', '.history-link', function(){
+                fetchHistory();
+            })
         });
     </script>
 @endpush
