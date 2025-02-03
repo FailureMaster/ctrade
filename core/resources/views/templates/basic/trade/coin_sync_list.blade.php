@@ -31,8 +31,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Favorites')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
             </button>
             <div class="dropdown-container" id="dropdown-container-favorites" style="display: none;">
@@ -48,8 +48,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('GCC Stocks')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
             </button>
             <div class="dropdown-container" id="dropdown-container-arabic" style="display: none;">
@@ -65,8 +65,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Stocks')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
             </button>
             <div class="dropdown-container" id="dropdown-container-stocks" style="display: none;">
@@ -81,8 +81,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Forex')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
 
             </button>
@@ -99,8 +99,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Index')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
 
             </button>
@@ -116,8 +116,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Crypto')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
             </button>
 
@@ -135,8 +135,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Commodity')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Sell')</span>
-                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                    <span class="price-text toggle-col">@lang('SELL')</span>
+                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
                 </div>
 
             </button>
