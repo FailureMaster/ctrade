@@ -130,7 +130,7 @@ Portfolio </h3>-->
                             </ul>
                         </div>
                         @if (is_mobile())
-                            <div class="py-2 px-3">
+                            {{-- <div class="py-2 px-3">
                                 <div class="d-flex justify-content-between">
                                     <img src="{{ asset('assets/images/extra_images/bear.png') }}" />
                                     <img src="{{ asset('assets/images/extra_images/bull.png') }}" class="mb-1" />
@@ -144,7 +144,7 @@ Portfolio </h3>-->
                                     <small class="traders-trend-title">@lang('Traders Trend')</small>
                                     <span class="bull-pct">67%</span>
                                 </div>
-                            </div>
+                            </div> --}}
                         @endif
                     </div>
                     <div class="modal-footer">
@@ -365,7 +365,7 @@ Portfolio </h3>-->
                         @endauth
                     </span>
                 </div> --}}
-                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                {{-- <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="status-dot bg-purple animate-pulse-slow"></div>
                         <span class="text-gray-400 small">@lang('Bonus')</span>
@@ -383,7 +383,7 @@ Portfolio </h3>-->
                             <span>00000</span>
                         @endauth
                     </span>
-                </div>
+                </div> --}}
 
                 {{-- <div
                     class="flex-between mx-0 mt-1 @if (is_mobile()) flex-column @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
@@ -523,7 +523,7 @@ Portfolio </h3>-->
                     </span>
                 </div> --}}
 
-                <div class="d-flex align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) d-none @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
+                <div class="d-flex d-none align-items-center justify-content-between metric-row rounded px-2 @if (is_mobile()) d-none @endif @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                     <div class="d-flex align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                         <div class="status-dot bg-info animate-pulse-slow"></div>
                         <span class="text-gray-400 small">@lang('ST Level') ({{ number_format($pair->level_percent, 0) }}%)</span>
@@ -804,7 +804,7 @@ Portfolio </h3>-->
         @endauth
     </div>
 
-    <x-flexible-view :view="$activeTemplate . 'trade.traders_trend'" />
+    {{-- <x-flexible-view :view="$activeTemplate . 'trade.traders_trend'" /> --}}
 </form>
 @push('scripts')
     <script>
