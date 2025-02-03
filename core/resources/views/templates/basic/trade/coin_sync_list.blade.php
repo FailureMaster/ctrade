@@ -31,8 +31,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Favorites')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
             </button>
             <div class="dropdown-container" id="dropdown-container-favorites" style="display: none;">
@@ -48,8 +48,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('GCC Stocks')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
             </button>
             <div class="dropdown-container" id="dropdown-container-arabic" style="display: none;">
@@ -65,8 +65,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Stocks')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
             </button>
             <div class="dropdown-container" id="dropdown-container-stocks" style="display: none;">
@@ -81,8 +81,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Forex')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
 
             </button>
@@ -99,8 +99,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Index')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
 
             </button>
@@ -116,8 +116,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Crypto')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
             </button>
 
@@ -135,8 +135,8 @@
                         <span class="arrow-indicator">&#9654;</span>
                         <span class="title-text text-uppercase">@lang('Commodity')</span>
                     </div>
-                    <span class="price-text toggle-col">@lang('Price')</span>
-                    <span class="daily-change-text toggle-col">@lang('Daily change')</span>
+                    <span class="price-text toggle-col">@lang('Sell')</span>
+                    <span class="daily-change-text toggle-col">@lang('Buy')</span>
                 </div>
 
             </button>
@@ -188,9 +188,10 @@
                 type: "GET",
                 dataType: 'json',
                 cache: false,
-                success: function(favorites) {
+                success: function(response) {
+                    let favorites = response.favorites; 
                     let favorited = favorites.map(favorite => favorite.symbol);
-
+             
                     $.ajax({
                         url: "{{ route('trade.pairs') }}",
                         type: "GET",
@@ -228,7 +229,7 @@
                                                 categorizedData[
                                                 type] = {}; // Initialize the object for this type
                                             }
-
+                                            // console.log(matchingPair.symbol);
                                             // Add the pair to the categorized data
                                             categorizedData[type][pair
                                             .symbol] = {
@@ -246,6 +247,7 @@
                                                     .company,
                                                 dataSymbol: matchingPair
                                                     .dataSymbol,
+                                                spread: ( response.symbols[matchingPair.symbol].length ? parseFloat(response.symbols[matchingPair.symbol]) : 0 )
                                             };
                                         }
                                     });
@@ -427,6 +429,20 @@
 
                 let isFavorite = favoriteCoins.includes(coin);
 
+                let newPrice = coinsData[coin].price;
+
+                newPrice = newPrice.replace(/,/g, '');
+
+                let decCount = countDecimalPlaces(newPrice);
+
+                newPrice = parseFloat(newPrice);
+
+                let buyPrice  = newPrice + coinsData[coin].spread;
+                let sellPrice = newPrice - coinsData[coin].spread;
+
+                buyPrice = parseFloat(buyPrice).toFixed(decCount);
+                sellPrice = parseFloat(sellPrice).toFixed(decCount);
+
                 html += `
                     <div class="d-flex market-coin-item my-2 py-2">
                         <div class="m-item">
@@ -434,16 +450,17 @@
                                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
                             </div>
                             <div class="position-relative text-right mx-1">
-                                <a href="${param}" onclick="navigateToPage('${param}')" id="name-${coin}">${coin.slice(0, 6)}</a>
+                                <a href="${param}" onclick="navigateToPage('${param}')" id="">${coin.slice(0, 6)}</a>
+                                <a href="${param}" class="d-none" id="name-${coin}">${coin.slice(0, 6)}</a>
                             </div>
                         </div>
                         <div class="position-relative price-text">
-                            <a href="${param}" class="coin-link" data-param="${param}">${coinsData[coin].price}</a>
+                            <a href="${param}" class="coin-link" data-param="${param}">${sellPrice}</a>
                         </div>
                         <div class="d-flex position-relative text-end daily-change-text">
                             <div class="d-flex justify-content-between w-100">
-                                <span class="d-block text-secondary ${colorClass}">
-                                    ${coinsData[coin].percent}
+                                <span class="d-block">
+                                    ${buyPrice}
                                 </span>
                                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
                                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
@@ -452,6 +469,32 @@
                         </div>
                     </div>
                 `;
+
+                // html += `
+                //     <div class="d-flex market-coin-item my-2 py-2">
+                //         <div class="m-item">
+                //             <div class="coin-icon">
+                //                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
+                //             </div>
+                //             <div class="position-relative text-right mx-1">
+                //                 <a href="${param}" onclick="navigateToPage('${param}')" id="name-${coin}">${coin.slice(0, 6)}</a>
+                //             </div>
+                //         </div>
+                //         <div class="position-relative price-text">
+                //             <a href="${param}" class="coin-link" data-param="${param}">${coinsData[coin].price}</a>
+                //         </div>
+                //         <div class="d-flex position-relative text-end daily-change-text">
+                //             <div class="d-flex justify-content-between w-100">
+                //                 <span class="d-block text-secondary ${colorClass}">
+                //                     ${coinsData[coin].percent}
+                //                 </span>
+                //                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
+                //                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
+                //                 </div>
+                //             </div>
+                //         </div>
+                //     </div>
+                // `;
             }
 
             $(className).html(html);
@@ -472,7 +515,8 @@
                 type: "GET",
                 dataType: 'json',
                 cache: false,
-                success: function(favorites) {
+                success: function(response) {
+                    let favorites = response.favorites; 
                     const favoriteData = {};
                     const favoriteCoins = favorites.map(favorite => favorite.symbol);
 

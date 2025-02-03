@@ -23,6 +23,7 @@ use App\Models\ClientGroupSetting;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Deposit;
+use App\Models\Language;
 use App\Models\SupportTicket;
 use App\Models\Withdrawal;
 use App\Models\WithdrawMethod;
@@ -88,8 +89,13 @@ class TradeController extends Controller
     public function fetchUserFavorites(Request $request)
     {
         $favorites = FavoriteSymbol::where('user_id', auth()->id())->get();
+        
+        // Get all the symbols
+        $symbols = $this->fetchUserSymbols();
 
-        return response()->json($favorites);
+        return response()->json(['favorites' => $favorites, 'symbols' => $symbols ], 200);
+
+        // return response()->json($favorites);
     }
 
     public function trade(Request $request)
@@ -623,5 +629,100 @@ class TradeController extends Controller
     {
         $uid = (!$id) ? auth()->id() : $id;
         return Order::where('user_id', $uid)->open()->sum('required_margin');
+    }
+
+    public function markets( Request $request )
+    {
+        $pageTitle = "Market";
+
+        return view($this->activeTemplate . 'trade.mobile.market', compact('pageTitle'));
+    }
+
+    public function chart( Request $request )
+    {
+        $pageTitle = "Chart";
+
+        $symbol = null;
+        if ($request->has('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv')) {
+            $symbol = $request->input('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv');
+            $parts = explode(':', $symbol);
+            $symbol = $parts[1];
+        }
+
+        $pair           = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
+
+        if ($symbol) 
+            $pair = $pair->where('symbol', $symbol)->first();
+        else 
+            $pair = $pair->where('is_default', Status::YES)->first();
+
+        $general = gs();
+
+        return view($this->activeTemplate . 'trade.mobile.chart', compact('pageTitle', 'pair', 'general'));
+    }
+
+    public function menu( Request $request ){
+
+        $pageTitle = "Menu";
+
+        // User
+        $user = auth()->user();
+
+        $clientGroupID = isset($user->userGroups->client_group_id) ? $user->userGroups->client_group_id : 0 ;
+
+        $userGroup = ClientGroups::find($clientGroupID);
+
+        $languages  = Language::with('languageCountries')->orderBy('is_default', 'desc')->get();
+
+        $currency = Currency::where('id', 4)->first();
+
+        $gateways = GatewayCurrency::whereHas('method', function ($gate) {
+            $gate->where('status', Status::ENABLE);
+        })->with('method:id,code,crypto')->get();
+
+        $withdrawMethods = WithdrawMethod::active()->get();
+
+        $pendingWithdraw = Withdrawal::where('user_id', auth()->id())->where('status', '!=', Status::PAYMENT_INITIATE)->orderBy('id', 'desc')->where('status', 2)->get();
+
+        return view($this->activeTemplate . 'trade.mobile.menu', compact('pageTitle', 'userGroup', 'languages', 'user', 'gateways', 'currency', 'withdrawMethods', 'pendingWithdraw'));
+    }
+
+    public function fetchUserSymbols(){
+
+        $user = auth()->user();
+
+        // Initialize an empty array to hold the symbol => spread key-value pairs
+        $symbolsAndSpreads = [];
+
+        // Check if the user is part of any client group
+        $clientGroup = $user->userGroups; // Get the first group the user belongs to, if any
+     
+        if (!$clientGroup) {
+            // User is not in any group, fetch all symbols and spreads from coin_pair
+            $coinPairs = CoinPair::all(); // Or paginate, depending on the dataset size
+
+            foreach ($coinPairs as $coinPair) {
+                $symbolsAndSpreads[$coinPair->symbol] = $coinPair->spread;
+            }
+        } else {
+
+            // User is in one group, fetch settings for this group
+            $groupSettings = ClientGroupSetting::with('dataSymbol')->where('client_group_id', $clientGroup->client_group_id)->get();
+   
+            foreach ($groupSettings as $setting) {
+                // Add to array with symbol and spread from client group settings
+                $symbolsAndSpreads[$setting->dataSymbol->symbol] = $setting->spread;
+            }
+
+            // Fetch any remaining symbols from coin_pair that do not exist in client_group_settings
+            $existingSymbols = $groupSettings->pluck('symbol')->toArray();
+            $coinPairs = CoinPair::whereNotIn('id', $existingSymbols)->get();
+
+            foreach ($coinPairs as $coinPair) {
+                $symbolsAndSpreads[$coinPair->symbol] = $coinPair->spread;
+            }
+        }
+
+        return $symbolsAndSpreads;
     }
 }
