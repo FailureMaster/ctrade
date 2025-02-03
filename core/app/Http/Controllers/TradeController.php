@@ -725,4 +725,75 @@ class TradeController extends Controller
 
         return $symbolsAndSpreads;
     }
+
+    public function dashboard( Request $request ){
+
+        $pageTitle = "Dashboard";
+
+        $user = auth()->user();
+
+        $marketCurrencyWallet = Wallet::where('user_id', $user->id)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID)->spot()->first();
+
+        $order         = Order::where('user_id', $user->id);
+
+        $closed_orders = $order->where('status', Status::ORDER_CANCELED)->get();
+
+        $widget['open_order']      = Order::where('user_id', $user->id)->where('status', Status::ORDER_OPEN)->count();
+        $widget['completed_order'] = (clone $order)->completed()->count();
+        $widget['total_trade']     = Trade::where('trader_id', $user->id)->count();
+        $pl                        = 0;
+        $total_profit              = 0;
+        $total_loss                = 0;
+
+        foreach ($closed_orders as $co) {
+
+            if ($co->profit > 1)  $total_profit =  $total_profit + $co->profit;
+            if ($co->profit < 1)  $total_loss =  $total_loss + $co->profit;
+
+            $pl = ($pl + $co->profit);
+        }
+
+        $widget['pl'] = $pl;
+        $widget['closed_orders']  = $closed_orders->count();
+        $widget['total_deposit']  = Deposit::where('user_id', $user->id)->where('status', Status::PAYMENT_SUCCESS)->sum('amount');
+        $widget['total_withdraw'] = Withdrawal::where('user_id', $user->id)->approved()->sum('amount');
+        $widget['open_tickets']   = SupportTicket::where('status', Status::TICKET_OPEN)->count();
+
+        $depositsData  = auth()->user()->deposits()->orderBy('id', 'desc');
+
+        // $clientGroupID = isset($user->userGroups->client_group_id) ? $user->userGroups->client_group_id : 0 ;
+
+        // $userGroup = ClientGroups::find($clientGroupID);
+
+        // $languages  = Language::with('languageCountries')->orderBy('is_default', 'desc')->get();
+
+        $withdrawsData = Withdrawal::where('user_id', auth()->id())->where('status', '!=', Status::PAYMENT_INITIATE)->orderBy('id', 'desc');
+
+        $pendingWithdraw = (clone $withdrawsData)->where('status', 2)->get();
+       
+        return view($this->activeTemplate . 'trade.mobile.dashboard', compact('pageTitle', 'marketCurrencyWallet', 'widget', 'depositsData', 'withdrawsData'));
+    }
+
+    public function closed_orders( Request $request )
+    {
+        $pageTitle = "Closed Orders";
+
+        $user = auth()->user();
+
+        $order         = Order::where('user_id', $user->id);
+        $closed_orders = $order->where('status', Status::ORDER_CANCELED)->get();
+        $pl                        = 0;
+        $total_profit              = 0;
+        $total_loss                = 0;
+
+        foreach ($closed_orders as $co) {
+
+            if ($co->profit > 1)  $total_profit =  $total_profit + $co->profit;
+            if ($co->profit < 1)  $total_loss =  $total_loss + $co->profit;
+
+            $pl = ($pl + $co->profit);
+        }
+
+        return view($this->activeTemplate . 'trade.mobile.closed_order', compact('pageTitle', 'closed_orders', 'pl', 'total_profit', 'total_loss'));
+    }
 }
