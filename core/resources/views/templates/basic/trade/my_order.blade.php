@@ -463,7 +463,9 @@
                         }
 
                         free_margin = equity - resp.totalRequiredMargin;
-                        let level = equity * level_percent;
+
+                        // let level = equity * level_percent; //old formula
+                        let level = level_percent * resp.totalRequiredMargin;
 
                         $('#used-margin-span').html(
                             `<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(parseFloat(resp.totalRequiredMargin))} $</label>`
@@ -492,15 +494,15 @@
                         //     closeAllOrders(resp)
                         // }
                             
-                        if ( parseInt(free_margin) < 0 || parseInt(margin_level) <= 100 ) { 
-                            isClosingAllOrders = true;
+                        // if ( parseInt(free_margin) < 0 || parseInt(margin_level) <= 100 ) { 
+                        //     isClosingAllOrders = true;
 
-                            closeAllOrders(resp)
-                        }else{
-                            // console.log(parseInt(free_margin));
-                            // console.log(parseInt(margin_level));
-                            // console.log('not in criteria');
-                        }
+                        //     closeAllOrders(resp)
+                        // }else{
+                        //     // console.log(parseInt(free_margin));
+                        //     // console.log(parseInt(margin_level));
+                        //     // console.log('not in criteria');
+                        // }
 
                         closeOrdersBasedOnSLTP(resp)
 

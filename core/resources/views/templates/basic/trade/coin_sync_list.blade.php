@@ -79,7 +79,7 @@
                 <div class="d-flex justify-content-between" style="align-items: center">
                     <div class="coin-label">
                         <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Forex')</span>
+                        <span class="title-text text-uppercase">@lang('Currencies')</span>
                     </div>
                     <span class="price-text toggle-col">@lang('SELL')</span>
                     <span class="daily-change-text toggle-col">@lang('BUY')</span>
@@ -593,61 +593,133 @@
                 $('.coin-search-list-body').css('display', 'block');
             }
 
+            // $.ajax({
+            //     url: "https://tradehousecrm.com/trade/fetch-coin",
+            //     type: "GET",
+            //     dataType: 'json',
+            //     cache: false,
+            //     success: function(resp) {
+
+            //         let api_res = resp;
+
+            //         let categorizedData = {};
+
+            //         $.each(coinDataDb.pairs, function(i, pair) {
+            //             // Find the matching pair in api_res based on symbol
+            //             let matchingPair = api_res[pair.symbol.replace('_', '')];
+
+            //             if (matchingPair) {
+            //                 // If it exists, get the type and create a key if it doesn't exist
+            //                 let type = pair.type;
+
+            //                 if (!categorizedData[type]) {
+            //                     categorizedData[type] = {}; // Initialize the object for this type
+            //                 }
+
+            //                 // Add the pair to the categorized data
+            //                 categorizedData[type][pair.symbol] = {
+            //                     symbol: matchingPair.symbol,
+            //                     price: matchingPair.price,
+            //                     percent: matchingPair.percent,
+            //                     current: matchingPair.current,
+            //                     logo_url: matchingPair.logo_url,
+            //                     logo_url2: matchingPair.logo_url2,
+            //                     company: matchingPair.company,
+            //                     dataSymbol: matchingPair.dataSymbol,
+            //                 };
+            //             }
+            //         });
+
+            //         const filteredData = {};
+
+            //         for (const category in categorizedData) {
+            //             for (const symbol in categorizedData[category]) {
+            //                 if (symbol.toUpperCase().includes(searchInput)) {
+            //                     let symbolData = categorizedData[category][symbol];
+            //                     symbolData['symbol'] = symbol;
+            //                     symbolData['category'] = category;
+
+            //                     filteredData[symbol] = symbolData;
+            //                 }
+            //             }
+            //         }
+
+            //         generateCoinssHTML(filteredData, '.coin-search-list-body', '', '');
+            //     },
+            //     error: function(xhr, status, error) {
+            //         console.error("Error fetching history: ", error);
+            //     }
+            // });
             $.ajax({
-                url: "https://tradehousecrm.com/trade/fetch-coin",
+                url: "{{ route('trade.fetch.favorite') }}",
                 type: "GET",
                 dataType: 'json',
                 cache: false,
-                success: function(resp) {
+                success: function(response) {
+                    let favorites = response.favorites; 
+                
+                    $.ajax({
+                        url: "https://tradehousecrm.com/trade/fetch-coin",
+                        type: "GET",
+                        dataType: 'json',
+                        cache: false,
+                        success: function(resp) {
 
-                    let api_res = resp;
+                            let api_res = resp;
 
-                    let categorizedData = {};
+                            let categorizedData = {};
 
-                    $.each(coinDataDb.pairs, function(i, pair) {
-                        // Find the matching pair in api_res based on symbol
-                        let matchingPair = api_res[pair.symbol.replace('_', '')];
+                            $.each(coinDataDb.pairs, function(i, pair) {
+                                // Find the matching pair in api_res based on symbol
+                                let matchingPair = api_res[pair.symbol.replace('_', '')];
 
-                        if (matchingPair) {
-                            // If it exists, get the type and create a key if it doesn't exist
-                            let type = pair.type;
+                                if (matchingPair) {
+                                    // If it exists, get the type and create a key if it doesn't exist
+                                    let type = pair.type;
 
-                            if (!categorizedData[type]) {
-                                categorizedData[type] = {}; // Initialize the object for this type
+                                    if (!categorizedData[type]) {
+                                        categorizedData[type] = {}; // Initialize the object for this type
+                                    }
+
+                                    // Add the pair to the categorized data
+                                    categorizedData[type][pair.symbol] = {
+                                        symbol: matchingPair.symbol,
+                                        price: matchingPair.price,
+                                        percent: matchingPair.percent,
+                                        current: matchingPair.current,
+                                        logo_url: matchingPair.logo_url,
+                                        logo_url2: matchingPair.logo_url2,
+                                        company: matchingPair.company,
+                                        dataSymbol: matchingPair.dataSymbol,
+                                        spread: ( response.symbols[matchingPair.symbol].length ? parseFloat(response.symbols[matchingPair.symbol]) : 0 )
+                                    };
+                                }
+                            });
+
+                            const filteredData = {};
+
+                            for (const category in categorizedData) {
+                                for (const symbol in categorizedData[category]) {
+                                    if (symbol.toUpperCase().includes(searchInput)) {
+                                        let symbolData = categorizedData[category][symbol];
+                                        symbolData['symbol'] = symbol;
+                                        symbolData['category'] = category;
+
+                                        filteredData[symbol] = symbolData;
+                                    }
+                                }
                             }
 
-                            // Add the pair to the categorized data
-                            categorizedData[type][pair.symbol] = {
-                                symbol: matchingPair.symbol,
-                                price: matchingPair.price,
-                                percent: matchingPair.percent,
-                                current: matchingPair.current,
-                                logo_url: matchingPair.logo_url,
-                                logo_url2: matchingPair.logo_url2,
-                                company: matchingPair.company,
-                                dataSymbol: matchingPair.dataSymbol,
-                            };
+                            generateCoinssHTML(filteredData, '.coin-search-list-body', '', '');
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching history: ", error);
                         }
                     });
 
-                    const filteredData = {};
-
-                    for (const category in categorizedData) {
-                        for (const symbol in categorizedData[category]) {
-                            if (symbol.toUpperCase().includes(searchInput)) {
-                                let symbolData = categorizedData[category][symbol];
-                                symbolData['symbol'] = symbol;
-                                symbolData['category'] = category;
-
-                                filteredData[symbol] = symbolData;
-                            }
-                        }
-                    }
-
-                    generateCoinssHTML(filteredData, '.coin-search-list-body', '', '');
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error fetching history: ", error);
+                    console.error("Error fetching favorites: ", error);
                 }
             });
         }
