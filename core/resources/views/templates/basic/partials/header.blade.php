@@ -305,18 +305,20 @@
 @push('script')
     <script>
         // Toggle fullscreen mode for the whole page
-        fullscreenButton.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch((err) => {
-                    console.error(
-                        `Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-                });
-                fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
-            } else {
-                document.exitFullscreen();
-                fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
-            }
-        });
+        if( $('#fullscreenButton').length ){
+            fullscreenButton.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch((err) => {
+                        console.error(
+                            `Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
+                    fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
+                } else {
+                    document.exitFullscreen();
+                    fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
+                }
+            });
+        }
     </script>
 @endpush
 @push('script')

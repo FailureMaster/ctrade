@@ -4,9 +4,7 @@
     $listedMarket = $pair->listed_market_name;
     $theme = session('theme') ?? 'dark';
 @endphp
-
 @extends($activeTemplate . 'layouts.frontend')
-
 @section('content')
     <div class="trading-chart-container">
         <div id="tradingview-widget"></div>
@@ -17,7 +15,7 @@
 
 @push('styles')
     <style>
-        /* Reset and base styles */
+        /* Performance optimized styles */
         body, html {
             margin: 0;
             padding: 0;
@@ -25,21 +23,30 @@
             height: 100%;
             overflow: hidden;
             position: fixed;
+            overscroll-behavior: none; /* Prevent pull-to-refresh */
         }
+
         .trading-chart-container {
             width: 100%;
-            height: calc(var(--vh, 1vh) * 90); /* Adjust height for mobile menu */
+            height: calc(var(--vh, 1vh) * 85);
             position: relative;
             background: #131722;
             touch-action: none;
+            -webkit-backface-visibility: hidden; /* Prevent flickering */
+            backface-visibility: hidden;
+            transform: translateZ(0); /* Force GPU acceleration */
+            will-change: transform; /* Hint for browser optimization */
         }
+
         #tradingview-widget {
-            width: 100%; /* Ensure full width */
-            height: 100%; /* Ensure full height */
+            width: 100%;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
+            contain: strict; /* Optimize rendering */
         }
+
         .mobile-menu {
             position: fixed;
             bottom: 0;
@@ -49,59 +56,46 @@
             background: #131722;
             z-index: 1000;
             padding-bottom: env(safe-area-inset-bottom, 0px);
-            will-change: transform; /* Optimize for animations */
+            will-change: transform;
+            transform: translateZ(0);
+            contain: layout size;
         }
     </style>
 @endpush
 
 @push('script')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Throttle function to limit how often setViewportHeight runs
-            function throttle(func, limit) {
-                let inThrottle;
-                return function() {
-                    const args = arguments;
-                    const context = this;
-                    if (!inThrottle) {
-                        func.apply(context, args);
-                        inThrottle = true;
-                        setTimeout(() => inThrottle = false, limit);
-                    }
-                };
-            }
+        (function() {
+            'use strict';
 
-            // Set viewport height once and update on resize
+            let vh = window.innerHeight * 0.01;
+            const doc = document.documentElement;
+            const tvContainer = document.querySelector('.trading-chart-container');
+            let tvWidget = null;
+            let resizeTimeout = null;
+
+            // Set viewport height
             function setViewportHeight() {
-                const vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                vh = window.innerHeight * 0.01;
+                doc.style.setProperty('--vh', `${vh}px`);
             }
 
-            // Initialize TradingView widget only when it's in the viewport
-            const observer = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) {
-                    // Load TradingView script dynamically
-                    const script = document.createElement('script');
-                    script.src = 'https://s3.tradingview.com/tv.js';
-                    script.async = true; // Load script asynchronously
-                    script.onload = initializeTradingViewWidget;
-                    document.body.appendChild(script);
-
-                    // Stop observing after loading
-                    observer.disconnect();
+            // Debounced resize handler
+            function handleResize() {
+                if (resizeTimeout) {
+                    cancelAnimationFrame(resizeTimeout);
                 }
-            }, { threshold: 0.5 });
-
-            observer.observe(document.querySelector('.trading-chart-container'));
+                resizeTimeout = requestAnimationFrame(setViewportHeight);
+            }
 
             // Initialize TradingView widget
             function initializeTradingViewWidget() {
-                new TradingView.widget({
+                const config = {
                     "container_id": "tradingview-widget",
                     "symbol": "{{ $listedMarket }}:{{ $symbol }}",
                     "interval": "5",
                     "timezone": "Etc/UTC",
-                    "theme": "{{ $theme ?? 'dark' }}",
+                    "theme": "{{ $theme }}",
                     "style": "1",
                     "locale": "en",
                     "toolbar_bg": "#131722",
@@ -115,14 +109,12 @@
                     "autosize": true,
                     "height": "100%",
                     "width": "100%",
-                    "studies": [
-                        {
-                            "id": "RSI@tv-basicstudies",
-                            "inputs": {
-                                "length": 14
-                            }
+                    "studies": [{
+                        "id": "RSI@tv-basicstudies",
+                        "inputs": {
+                            "length": 14
                         }
-                    ],
+                    }],
                     "overrides": {
                         "volumePaneSize": "0%",
                         "mainSeriesProperties.showVolume": false,
@@ -145,17 +137,46 @@
                         "paneProperties.bottomMargin": 0,
                         "scalesProperties.textColor": "#FFFFFF"
                     }
-                });
+                };
+                tvWidget = new TradingView.widget(config);
             }
 
-            // Set initial viewport height
-            setViewportHeight();
+            // Initialize the application
+            function init() {
+                // Set initial viewport height
+                setViewportHeight();
 
-            // Throttle the resize handler to improve performance
-            const throttledResize = throttle(setViewportHeight, 100);
-            window.addEventListener('resize', throttledResize);
-            window.addEventListener('orientationchange', throttledResize);
-            window.visualViewport?.addEventListener('resize', throttledResize);
-        });
+                // Preconnect to TradingView CDN
+                const link = document.createElement('link');
+                link.rel = 'preconnect';
+                link.href = 'https://s3.tradingview.com';
+                document.head.appendChild(link);
+
+                // Load TradingView script asynchronously
+                const script = document.createElement('script');
+                script.src = 'https://s3.tradingview.com/tv.js';
+                script.async = true;
+
+                // Initialize widget after script loads
+                script.onload = initializeTradingViewWidget;
+                document.body.appendChild(script);
+
+                // Add passive event listeners for resize and orientation change
+                const passiveOpts = { passive: true };
+                window.addEventListener('resize', handleResize, passiveOpts);
+                window.addEventListener('orientationchange', handleResize, passiveOpts);
+
+                if (window.visualViewport) {
+                    window.visualViewport.addEventListener('resize', handleResize, passiveOpts);
+                }
+            }
+
+            // Start initialization
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
     </script>
 @endpush

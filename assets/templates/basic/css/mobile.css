@@ -161,6 +161,49 @@ td {
     color: white;
 }
 
+.positions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.ch1 {
+    margin-top: 5px !important;
+    margin-bottom: 0 !important;
+}
+
+#tablesOrder td, 
+#tablesOrder tr, 
+#tablesOrder {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+#tablesOrder .clickable-row {
+    border-color: #3c4a54 !important;
+}
+
+.order-list-body>tr {
+    border-bottom: 1px solid hsl(var(--base-two) / 0.09) !important;
+}
+
+td div div:first-child div:first-child span:first-child {
+    font-weight: bold;
+}
+
+td div div:first-child div:first-child span:last-child, td div div:first-child div:first-child span:nth-child(2) {
+    color: #3b8bfb !important;
+    font-weight: 400;
+}
+
+td div div:first-child div:last-child span {
+    color: #97a6b5;
+}
+
+.offcanvas-title{
+    font-size:15px;
+}
 
 /*  */
 /*  */
@@ -217,9 +260,28 @@ td {
     color:#ffffff !important;
 }
 
+[data-theme=light] .custom--modal .modal-content{
+    background-color:#000000;
+    color: #ffffff;
+}
+
+[data-theme=dark] .body-section{
+    color: #ffffff;
+}
+
 /*  */
 /*  */
 /* Light Theme */
+
+[data-theme=light] .offcanvas {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+[data-theme=light] .body-section{
+    color: #000000;
+}
+
 [data-theme=light] .chart-dark {
     display: none;
 }
@@ -240,7 +302,7 @@ td {
 [data-theme=light] #modalBuySell span, 
 [data-theme=light] #modalBuySell label, 
 [data-theme=light] #modalBuySell small {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #000000 !important;
 }
 
@@ -257,7 +319,7 @@ td {
 [data-theme=light] #modalBuySell span,
 [data-theme=light] #modalBuySell label,
 [data-theme=light] #modalBuySell small {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: #000000 !important;
 }
 
@@ -342,6 +404,17 @@ td {
 
 [data-theme=light] .tbl-pw tr td,
 [data-theme=light] .portfolio-item{
+    color: #000000 !important;
+}
+
+[data-theme=light] .dots {
+    background-image: radial-gradient(circle, rgb(0 0 0 / 20%) 1px, transparent 4px);
+}
+
+[data-theme=light] .clickable-row[aria-expanded="true"] .h-label, 
+[data-theme=light] .clickable-row[aria-expanded="true"] strong, 
+[data-theme=light] .history-collapse.show strong, 
+[data-theme=light] .history-collapse.show td {
     color: #000000 !important;
 }
 

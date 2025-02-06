@@ -157,6 +157,16 @@ class OrderController extends Controller
         // Newly added
         $order->lot_value          = $pair->percent_charge_for_buy;
 
+        if( $request->has('sl') && $request->sl <> "" ){
+            $order->stop_loss = $request->sl;
+            $order->stop_loss_close_at_high = 1;
+        }
+
+        if( $request->has('tp') && $request->tp <> "" ){
+            $order->take_profit = $request->tp;
+            $order->take_profit_close_at_high = 1;
+        }
+
         $clientGroupId             = ClientGroupUser::where('user_id', $user->id)->first();
 
         if( $clientGroupId <> null ){

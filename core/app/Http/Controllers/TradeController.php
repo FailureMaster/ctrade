@@ -796,4 +796,133 @@ class TradeController extends Controller
 
         return view($this->activeTemplate . 'trade.mobile.closed_order', compact('pageTitle', 'closed_orders', 'pl', 'total_profit', 'total_loss'));
     }
+
+    public function open_orders( Request $request )
+    {
+        $pageTitle = "Open Orders";
+
+        $user = auth()->user();
+
+        $marketCurrencyWallet = Wallet::where('user_id', $user->id)->where('currency_id', Defaults::DEF_WALLET_CURRENCY_ID)->spot()->first();
+        
+        $symbol = null;
+
+        if ($request->has('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv')) {
+            $symbol = $request->input('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv');
+            $parts = explode(':', $symbol);
+            $symbol = $parts[1];
+        }
+
+        $pair           = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
+
+        if ($symbol)
+            $pair = $pair->where('symbol', $symbol)->first();
+        else 
+            $pair = $pair->where('is_default', Status::YES)->first();
+        
+
+        if (!$pair) {
+            $notify[] = ['error', 'No pair found'];
+            return back()->withNotify($notify);
+        }
+   
+        if ( $user->userGroups <> null ) {
+            $clientGroupId          = $user->userGroups->client_group_id;
+
+            $clientGroupSettings    = ClientGroupSetting::where('client_group_id', $clientGroupId)->first();
+
+            $clientGroup = ClientGroups::whereHas('groupUsers', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->first();
+
+            $clientGroupSymbols = ClientGroupSetting::where('client_group_id', $clientGroupId)->select('symbol')->get()->pluck('symbol')->toArray();
+
+            if ($clientGroup !== null && in_array($pair->id, $clientGroupSymbols)) 
+            {
+                $pair->percent_charge_for_buy   = $clientGroupSettings->lots;
+
+                //leverage
+                $pair->percent_charge_for_sell  = $clientGroupSettings->leverage;
+
+                //level
+                $pair->level_percent            = $clientGroupSettings->level;
+
+                //spread
+                $pair->spread                   = $clientGroupSettings->spread;
+
+                $isInGroup                      = $clientGroupSettings->lots;
+            }
+        }
+
+
+        return view($this->activeTemplate . 'trade.mobile.trade', compact('pageTitle', 'marketCurrencyWallet', 'pair'));
+    }
+
+    public function new_order( Request $request ){
+
+        $pageTitle = "Open Orders";
+
+        $user = auth()->user();
+
+        $symbol = null;
+
+        if ($request->has('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv')) {
+            $symbol = $request->input('symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv');
+            $parts = explode(':', $symbol);
+            $symbol = $parts[1];
+        }
+
+        $pair           = CoinPair::active()->activeMarket()->activeCoin()->with('market', 'coin', 'marketData');
+
+        if ($symbol)
+            $pair = $pair->where('symbol', $symbol)->first();
+        else 
+            $pair = $pair->where('is_default', Status::YES)->first();
+        
+
+        if (!$pair) {
+            $notify[] = ['error', 'No pair found'];
+            return back()->withNotify($notify);
+        }
+
+        $lots = LotManager::all();
+
+        $clientGroupID = isset($user->userGroups->client_group_id) ? $user->userGroups->client_group_id : 0 ;
+
+        $userGroup = ClientGroups::find($clientGroupID);
+
+        $fee_status = Fee::first()->status;
+
+        if ( $user->userGroups <> null ) {
+            $clientGroupId          = $user->userGroups->client_group_id;
+
+            $clientGroupSettings    = ClientGroupSetting::where('client_group_id', $clientGroupId)->first();
+
+            $clientGroup = ClientGroups::whereHas('groupUsers', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->first();
+
+            $clientGroupSymbols = ClientGroupSetting::where('client_group_id', $clientGroupId)->select('symbol')->get()->pluck('symbol')->toArray();
+
+            if ($clientGroup !== null && in_array($pair->id, $clientGroupSymbols)) 
+            {
+                $pair->percent_charge_for_buy   = $clientGroupSettings->lots;
+
+                //leverage
+                $pair->percent_charge_for_sell  = $clientGroupSettings->leverage;
+
+                //level
+                $pair->level_percent            = $clientGroupSettings->level;
+
+                //spread
+                $pair->spread                   = $clientGroupSettings->spread;
+
+                $isInGroup                      = $clientGroupSettings->lots;
+            }
+        }
+
+        $requiredMarginTotal = $this->requiredMarginTotal();
+
+        return view($this->activeTemplate . 'trade.mobile.new_order', compact('pageTitle', 'pair', 'lots', 'userGroup', 'fee_status', 'requiredMarginTotal'));
+    }
 }

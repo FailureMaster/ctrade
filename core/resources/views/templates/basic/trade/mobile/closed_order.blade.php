@@ -102,6 +102,22 @@
     </div>
 </div> 
 
+{{-- Canva --}}
+<div class="offcanvas offcanvas-bottom custom-offcanvas p-4" tabindex="-1" id="closed-canvas" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas-header">
+        <h4 class="mb-0 fs-18 offcanvas-title text-white">
+        </h4>
+        <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+            <i class="fa fa-times-circle fa-lg"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body">
+       <div class="body-section">
+
+       </div>
+    </div>
+</div>
+
 {{-- Menu --}}
 @include($activeTemplate . 'partials.mobile.menu')
 @endsection
@@ -284,7 +300,32 @@
         .negative, .text-danger {
             color: #c2424b !important;
         }
+
+        .dots {
+            flex-grow: 1;
+            height: 8px;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 4px);
+            background-size: 10px;
+            opacity: 0.2;
+            margin: 0 20px;
+        }
+
+        .custom-offcanvas{
+            height:300px;
+        }
     </style>
+
+    @if (App::getLocale() == 'ar')
+        <style>
+            .portfolio-item {
+                flex-flow: row-reverse;
+            }
+
+            .summary-container .h-title {
+                text-align: right;
+            }
+        </style>
+    @endif
 @endpush
 
 @push('script')
@@ -381,13 +422,14 @@
 
                     // Uncomment this tomorrow
                     let customOrderProfit = removeTrailingZeros(formatWithPrecision(order.profit));
+
                     return `
-                        <tr class="clickable-row clickable-header" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
+                        <tr class="clickable-row clickable-header" data-id="${order.id}" id="heading${order.id}" data-bs-toggle="" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
                             <td class="p-0">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-flex flex-column">
                                         <div>
-                                            <span class="h-label">${order.pair.symbol.replace('_', '/')},</span>
+                                            <span class="h-label h-symbol">${order.pair.symbol.replace('_', '/')},</span>
                                             <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">${order.custom_order_side_badge}</span>
                                             <span class="h-label">${removeTrailingZeros(order.no_of_lot)}</span>
                                         </div>
@@ -398,14 +440,14 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label>
+                                        <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(order.profit).toFixed(2) || 0}</label>
                                     </div>
                                 </div>     
                             </td>
                         </tr>
                         
-                        <tr id="collapse${order.id}" class="history-collapse collapse ${ is_collapsed ? 'show' : '' }" aria-labelledby="heading${order.id}" >
-                            <td colspan="6">
+                        <tr id="collapse-${order.id}" class="collapse" aria-labelledby="">
+                            <td class="history-collapse">
                                 <div class="@if (App::getLocale() == 'ar') text-end @endif">
                                     <strong>@lang('Date'):</strong> ${order.formatted_date}<br>
                                     <strong>@lang('Open Price'):</strong> ${parseFloat(order.rate).toFixed(decimalCount)}<br>
@@ -428,42 +470,8 @@
                             </td>
                         </tr>
                     `;
-                    // End of Uncomment this tomorrow
                 }
-                return `
-                    @if (App::getLocale() != 'ar')
-                        <tr data-order-id="${order.id}">
-                            <td class="text-center p-2">#${order.id}</td>
-                            <td class="text-center p-2">${order.formatted_date}</td>
-                            <td class="text-center p-2">${order.close_date}</td>
-                            <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
-                            <td class="text-center p-2">${order.order_side_badge}</td>
-                            <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
-                            <td class="text-center p-2">${parseFloat(order.rate).toFixed(decimalCount)}</td>
-                            <td class="text-center p-2">${parseFloat(order.closed_price).toFixed(decimalCount) || 0}</span></td>
-                            <td class="text-center p-2">${order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) || 0 : '-'}</td>
-                            <td class="text-center p-2">${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '-'}</td>
-                            <td class="text-center p-2"><span class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</span></td>
-                            <td class="text-center p-2">${order.status_badge}</td>
-                        </tr>
-                    @else
-                        <tr data-order-id="${order.id}">
-                            <td class="text-center p-2">${order.status_badge}</td>
-                            <td class="text-center p-2"><span class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</span></td>
-                            <td class="text-center p-2">${order.take_profit ? removeTrailingZeros(parseFloat(order.take_profit).toFixed(decimalCount)) : '-'}</td>
-                            <td class="text-center p-2">${order.stop_loss ? removeTrailingZeros(parseFloat(order.stop_loss).toFixed(decimalCount)) : '-'}</td>
-                            <td class="text-center p-2">${removeTrailingZeros(parseFloat(order.closed_price).toFixed(decimalCount)) || 0}</span></td>
-                            <td class="text-center p-2">${removeTrailingZeros(parseFloat(order.rate).toFixed(decimalCount))}</td>
-                            <td class="text-center p-2">${removeTrailingZeros(order.no_of_lot)}</td>
-                            <td class="text-center p-2">${order.order_side_badge}</td>
-                            <td class="text-center p-2">${order.pair.symbol.replace('_', '/')}</td>
-                            <td class="text-center p-2">${order.close_date}</td>
-                            <td class="text-center p-2">${order.formatted_date}</td>
-                            <td class="text-center p-2">#${order.id}</td>
-                        </tr>
-                    @endif
-                    `;
-                }
+            }
 
                 function formatWithPrecision(value, precision = 5) {
                     // Formats numbers with a specified precision
@@ -495,6 +503,49 @@
                         loadhistory = 1;
                     }
                 })
+
+                $(document).on('click', '.clickable-row', function(e){
+                    e.preventDefault();
+                    let id = $(this).attr('data-id');
+                    let elem = $(`#collapse-${id}`).find('.history-collapse').html();
+                    let symbol = $(this).find('.h-symbol').text().replace(/,/g, '')
+                    let offcanvas = $('#closed-canvas'); // jQuery object
+                    let offcanvasElement = document.getElementById("closed-canvas"); // Plain JS element
+                    // Update offcanvas content
+                    $('.body-section').html(elem);
+                    offcanvas.find('.offcanvas-title').text(symbol);
+
+                    let parentLink = $(this);
+
+                    // Get the clicked element's position
+                    let rect = parentLink[0].getBoundingClientRect();
+                    let windowHeight = window.innerHeight;
+                    let offcanvasHeight = offcanvas.outerHeight();
+
+                    let topPosition;
+                    let spaceBelow = windowHeight - rect.bottom;
+                    let spaceAbove = rect.top;
+
+                    // Check if there's enough space below, otherwise place it above
+                    if (spaceBelow >= offcanvasHeight) {
+                        topPosition = rect.bottom + window.scrollY; // Place below
+                    } else if (spaceAbove >= offcanvasHeight) {
+                        topPosition = rect.top + window.scrollY - offcanvasHeight; // Place above
+                    } else {
+                        topPosition = windowHeight - offcanvasHeight - 20; // Stick near bottom if no space
+                    }
+
+                    // Set the offcanvas position
+                    offcanvas.css({
+                        // top: `${topPosition}px`,
+                        // top: `20px`,
+                        display: 'block'
+                    });
+
+                    // Show Bootstrap Offcanvas properly
+                    let bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                    bsOffcanvas.show();
+                });
         })
     </script>
 @endpush

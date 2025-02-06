@@ -92,7 +92,7 @@ Portfolio </h3>-->
                         <div class="mx-4 mb-3">
                             <ul class="p-0 m-0">
                                 <li class="mt-1 pt-1 d-flex flex-column gap-2">
-                                    <div
+                                    {{-- <div
                                         class="d-flex justify-content-between align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                                         <small class="text-themed d-block mb-1 pip-label">
                                             <span class="{{ App::getLocale() == 'ar' ? '' : 'd-none' }}">
@@ -108,7 +108,7 @@ Portfolio </h3>-->
                                             </span>
                                         </small>
                                         <small class="text-themed d-block mb-1 pip-value">$0.00</small>
-                                    </div>
+                                    </div> --}}
                                     <div
                                         class="d-flex justify-content-between align-items-center gap-2 @if (App::getLocale() == 'ar') flex-row-reverse @endif">
                                         <small class="text-themed d-block mb-1 required-margin-label">
@@ -129,7 +129,7 @@ Portfolio </h3>-->
                                 </li>
                             </ul>
                         </div>
-                        @if (is_mobile())
+                        {{-- @if (is_mobile())
                             <div class="py-2 px-3">
                                 <div class="d-flex justify-content-between">
                                     <img src="{{ asset('assets/images/extra_images/bear.png') }}" />
@@ -145,7 +145,7 @@ Portfolio </h3>-->
                                     <span class="bull-pct">67%</span>
                                 </div>
                             </div>
-                        @endif
+                        @endif --}}
                     </div>
                     <div class="modal-footer">
                         @auth
@@ -811,6 +811,60 @@ Portfolio </h3>-->
         document.addEventListener("DOMContentLoaded", function() {
             updateLotValues(document.querySelector(".lot-size-select"));
 
+            var i = 1;
+            let equity = 0;
+            let total_open_order_profit = 0;
+            let total_amount = 0;
+            let pl = 0;
+            let order_count = parseInt({{ @$order_count }}) || 0;
+            let balance = parseFloat({{ @$balance }}) || 0;
+            let free_margin = 0;
+            let level_percent = (parseFloat({{ @$pair->level_percent }}) || 0) / 100;
+            let total_used_margin = 0;
+            let required_margin_total = {{ @$requiredMarginTotal ?? 0 }}
+            let bonus = parseFloat({{ @$bonus }}) || 0;
+            let credit = parseFloat({{ @$credit }}) || 0;
+            let margin_level = 0;
+            let st_level_percentage = parseInt({{ @$pair->level_percent }}) || 0;
+
+            function generateOrderRow(order, jsonData) {
+                // sell price is current price from API
+                // buy price is when you add the spread.
+
+                let current_price = jsonData[order.pair.symbol].replace(/,/g, '')
+
+                let spread = order.pair.spread;
+                
+                if( order.order_spread != null ) spread = order.order_spread;
+
+                let decimalCount = countDecimalPlaces(current_price);
+
+                current_price = parseFloat(current_price);
+
+                // Current Price Formula
+                if (parseInt(order.order_side) === 1) 
+                    current_price = (current_price - parseFloat(spread));
+                else
+                    current_price = (current_price + parseFloat(spread));
+                
+                current_price = parseFloat(current_price).toFixed(decimalCount);
+
+                let lotValue = order.pair.percent_charge_for_buy;
+
+                if( order.lot_value != null ){
+                    lotValue = order.lot_value;
+                }
+
+                let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+
+                let total_price = parseInt(order.order_side) === 2 ?
+                    formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price)) * lotEquivalent)) :
+                    formatWithPrecision(((parseFloat(current_price) - parseFloat(order.rate)) * lotEquivalent));
+
+                total_open_order_profit = parseFloat(total_open_order_profit) + parseFloat(total_price);
+                total_amount = parseFloat(total_amount) + parseFloat(formatWithPrecision1(order.amount));
+            }
+
             function calculateBuyValue(buyPrice) {
                 // return (buyPrice * `{{ @$pair->spread }}`) + buyPrice; // old formula
                 let spread = {{ @$pair->spread }}; // Get spread from Laravel
@@ -996,7 +1050,7 @@ Portfolio </h3>-->
                     $('.btn-modal-buy').addClass('d-none');
                 }
 
-                customUpdateTrend(type);
+                // customUpdateTrend(type);
 
                 $('#modalBuySell').modal('show');
             });

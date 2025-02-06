@@ -15,9 +15,7 @@
                     </a>
                 </li>
                 <li class="nav-item" role="presentation" data-status="0">
-                    <a class="nav-link m-portfolio d-flex flex-column" data-type="trade-btn-pill" data-bs-toggle="pill"
-                        data-bs-target="#portfolio-sm" role="tab" aria-controls="pills-chartthree"
-                        aria-selected="true">
+                    <a class="nav-link m-portfolio d-flex flex-column {{ $uri === "open_orders" ? 'active' : '' }}" data-type="trade-btn-pill" href="/trade/open_orders">
                         <i class="fas fa-briefcase" id="trade-btn-pill"></i>
                         @lang('Trade')
                     </a>
@@ -85,6 +83,28 @@
             const decimalPlaces = numStr.length - decimalIndex - 1;
 
             return decimalPlaces;
+        }
+
+        // Formats numbers with a specified precision
+        function formatWithPrecision(value, precision = 5) {
+            return Number(value).toFixed(precision);
+        }
+
+        // Formats numbers with a specified precision
+        function formatWithPrecision1(value, precision = 2) {
+            return Number(value).toFixed(precision);
+        }
+
+        function removeTrailingZeros(number) {
+            var numberString = number.toString();
+            var trimmedNumberString = numberString.replace(/\.?0+$/, '');
+            var trimmedNumber = parseFloat(trimmedNumberString);
+
+            if (Number.isInteger(trimmedNumber)) {
+                return trimmedNumber.toFixed(2);
+            }
+
+            return trimmedNumber;
         }
  </script>
 @endpush

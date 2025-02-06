@@ -166,7 +166,7 @@
         </div>
         <div class="offcanvas-body">
            <p>
-                <a href="#" class="new-order">
+                <a href="#" class="new-order-link">
                     @lang('New Order')
                 </a>
             </p>
@@ -441,76 +441,14 @@
 
         }
 
-        // $(document).on('click', '.open-symbol', function(e){
-        //     e.preventDefault();
-        //     let link = $(this);
-        //     let url  = $(this).attr('href');
-        //     let name = $(this).attr('data-coin_name');
-
-        //     $('#market-canvas').find('.link-to-chart').attr('href', url);
-        //     $('#market-canvas').find('.offcanvas-title').text(name);
-
-        //     // var myOffcanvas = document.getElementById('market-canvas');
-        //     // var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas);
-        //     // bsOffcanvas.show();
-
-        //     const offcanvas = document.getElementById("market-canvas");
-
-        //     // Get the clicked element's position
-        //     const rect = link.getBoundingClientRect();
-        //     const top = rect.bottom + window.scrollY; // Position it below the link
-        //     const left = rect.left + (rect.width / 2) - (offcanvas.offsetWidth / 2); // Center it
-
-        //     // Set the offcanvas position
-        //     offcanvas.style.top = `${top}px`;
-        //     offcanvas.style.left = `${Math.max(left, 10)}px`; // Prevent going off-screen
-        //     offcanvas.style.display = "block"; // Show it
-
-        //     // Close the offcanvas when clicking outside
-        //     // document.addEventListener("click", function closeOffcanvas(e) {
-        //     //     if (!offcanvas.contains(e.target) && !link.contains(e.target)) {
-        //     //         offcanvas.style.display = "none"; // Hide offcanvas
-        //     //         document.removeEventListener("click", closeOffcanvas); // Remove event listener
-        //     //     }
-        //     // });
-
-        // });
-        // $(document).on('click', '.open-symbol', function (e) {
-        //     e.preventDefault();
-            
-        //     let link = $(this); // jQuery object
-        //     let url = link.attr('href');
-        //     let name = link.attr('data-coin_name');
-            
-        //     let offcanvas = $('#market-canvas'); // jQuery object
-        //     let offcanvasElement = document.getElementById("market-canvas"); // Plain JS element
-            
-        //     // Update offcanvas content
-        //     offcanvas.find('.link-to-chart').attr('href', url);
-        //     offcanvas.find('.offcanvas-title').text(name);
-
-        //     // Get the clicked element's position
-        //     let rect = link[0].getBoundingClientRect(); // Convert jQuery object to plain JS element
-        //     let top = rect.bottom + window.scrollY; // Position it below the link
-        //     let left = rect.left + (rect.width / 2) - (offcanvas.outerWidth() / 2); // Center it
-
-        //     // Set the offcanvas position
-        //     offcanvas.css({
-        //         top: `${top}px`,
-        //         // left: `${Math.max(left, 10)}px`,
-        //         display: 'block'
-        //     });
-
-        //     // Show Bootstrap Offcanvas properly
-        //     let bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-        //     bsOffcanvas.show();
-        // });
         $(document).on('click', '.open-symbol', function (e) {
             e.preventDefault();
 
             let link = $(this); // jQuery object
             let url = link.attr('href');
             let name = link.attr('data-coin_name');
+            let company = link.attr('data-company').replace('/', 'vs');
+            let orderParam = link.attr('data-order_param');
 
             let parentLink = $(this).parents('.m-item');
 
@@ -519,32 +457,16 @@
 
             // Update offcanvas content
             offcanvas.find('.link-to-chart').attr('href', url);
-            offcanvas.find('.offcanvas-title').text(name);
+            offcanvas.find('.new-order-link').attr('href', orderParam);
+            offcanvas.find('.offcanvas-title').text(name+': '+company);
 
             // Get the clicked element's position
             let rect = parentLink[0].getBoundingClientRect();
             let windowHeight = window.innerHeight;
             let offcanvasHeight = offcanvas.outerHeight();
 
-            let topPosition;
-            let spaceBelow = windowHeight - rect.bottom;
-            let spaceAbove = rect.top;
-
-            // Check if there's enough space below, otherwise place it above
-            if (spaceBelow >= offcanvasHeight) {
-                topPosition = rect.bottom + window.scrollY; // Place below
-            } else if (spaceAbove >= offcanvasHeight) {
-                topPosition = rect.top + window.scrollY - offcanvasHeight; // Place above
-            } else {
-                topPosition = windowHeight - offcanvasHeight - 20; // Stick near bottom if no space
-            }
-
-            let leftPosition = rect.left + (rect.width / 2) - (offcanvas.outerWidth() / 2);
-            leftPosition = Math.max(leftPosition, 10); // Prevent overflow on left side
-
             // Set the offcanvas position
             offcanvas.css({
-                top: `${topPosition}px`,
                 display: 'block'
             });
 
@@ -564,6 +486,9 @@
                 let encodedCoin = encodeURIComponent(coin);
                 let param =
                     `chart?category=${category ? category : coinsData[coin].category}&symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv=${symbol}%3A${encodedCoin}%3A%3A`;
+
+                let orderParam =
+                `new_order?category=${category ? category : coinsData[coin].category}&symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv=${symbol}%3A${encodedCoin}%3A%3A`;
 
                 // Encode the parameter using Base64
                 let encodedParam = btoa(param);
@@ -593,7 +518,7 @@
                                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
                             </div>
                             <div class="position-relative text-right mx-1">
-                                <a href="${param}" class="open-symbol" data-coin_name="${coin}" id="">${coin.slice(0, 6)}</a>
+                                <a href="${param}" class="open-symbol" data-order_param="${orderParam}" data-company="${coinsData[coin].company}" data-coin_name="${coin}" id="">${coin.slice(0, 6)}</a>
                             </div>
                         </div>
                         <div class="position-relative price-text">
@@ -611,32 +536,6 @@
                         </div>
                     </div>
                 `;
-
-                // html += `
-                //     <div class="d-flex market-coin-item my-2 py-2">
-                //         <div class="m-item">
-                //             <div class="coin-icon">
-                //                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
-                //             </div>
-                //             <div class="position-relative text-right mx-1">
-                //                 <a href="${param}" onclick="navigateToPage('${param}')" id="name-${coin}">${coin.slice(0, 6)}</a>
-                //             </div>
-                //         </div>
-                //         <div class="position-relative price-text">
-                //             <a href="${param}" class="coin-link" data-param="${param}">${coinsData[coin].price}</a>
-                //         </div>
-                //         <div class="d-flex position-relative text-end daily-change-text">
-                //             <div class="d-flex justify-content-between w-100">
-                //                 <span class="d-block text-secondary ${colorClass}">
-                //                     ${coinsData[coin].percent}
-                //                 </span>
-                //                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
-                //                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
-                //                 </div>
-                //             </div>
-                //         </div>
-                //     </div>
-                // `;
             }
 
             $(className).html(html);
@@ -1036,7 +935,7 @@
         .custom-offcanvas {
             position: absolute; /* Allow dynamic positioning */
             width: 100%; /* Adjust width as needed */
-            max-width: 400px; /* Prevent it from getting too big */
+            /* max-width: 400px;  */
             border-radius: 12px; /* Rounded corners for smooth look */
             height: auto; /* Adjust dynamically */
             max-height: 400px; /* Set a limit */

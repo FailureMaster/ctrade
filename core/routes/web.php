@@ -57,6 +57,8 @@ Route::controller("TradeController")->prefix('trade')->group(function () {
         Route::get('menu', 'menu')->name('trade.mobile');
         Route::get('dashboard', 'dashboard')->name('trade.dashboard');
         Route::get('closed_orders', 'closed_orders')->name('trade.closed_orders');
+        Route::get('open_orders', 'open_orders')->name('trade.open_orders');
+        Route::get('new_order', 'new_order')->name('trade.new_order');
     });
     
     Route::get('order/list/{pairSym}/{status}', 'orderList')->name('trade.order.list');
