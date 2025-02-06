@@ -3,8 +3,8 @@
 @section('content')
 <div class="closed-container">
     <div class="summary-container pb-0 sc-history">
-        <h2 class="h-title p-0 mb-0 border-0">@lang('Transactions Logs')</h2>
-        <h2 class="p-0 ch5"></h2>
+        <h2 class="h-title p-0 mb-2 border-0">@lang('History')</h2>
+
         <div class="portfolio-item">
             <div class="label p-0">@lang('Total Orders')</div>
             <div class="dots"></div>
@@ -87,6 +87,7 @@
     </div>
 
     <h2 class="p-0 ch5"></h2>
+
     <div class="summary-container pt-0" id="history-sc">
         <div class="d-flex align-items-center justify-content-between @if (App::getLocale() == 'ar') flex-row-reverse @endif">
             <h2 class="h-title p-0 mb-0 border-0">@lang('Closed Orders')</h2>

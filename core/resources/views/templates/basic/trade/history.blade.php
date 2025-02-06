@@ -68,8 +68,8 @@
 </div>
 <div class="trading-table__mobile">
     <div class="summary-container pb-0 sc-history">
-        <h2 class="h-title p-0 mb-0 border-0">@lang('Transactions Logs')</h2>
-        <h2 class="p-0 ch5"></h2>
+        <h2 class="h-title p-0 mb-2 border-0">@lang('History')</h2>
+        
         <div class="portfolio-item">
             <div class="label p-0">@lang('Total Orders')</div>
             <div class="dots"></div>

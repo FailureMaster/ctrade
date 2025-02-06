@@ -4,10 +4,9 @@
     <div class="mobile-container">
         <div class="trading-right m-0" style="height: 99%;">
             <div class="trading-right__top pb-0">
-                <div class="summary-container c-summary">
-                    <h2 class="border-0 p-0 mb-0 h-title @if(App::getLocale() == 'ar') text-end @endif">@lang('Markets')</h2>
+                <div class="summary-container c-summary pt-0">
+                    <h2 class="border-0 p-0 mb-2 h-title @if(App::getLocale() == 'ar') text-end @endif">@lang('Markets')</h2>
                 </div>
-                <h2 class="p-0 ch5 ch5-history"></h2>
                 <div class="w-100">
                     <form id="search-market" onsubmit="searchMarket(event)">
                         <div class="input--group">
@@ -156,7 +155,7 @@
     </div>
 
     {{-- Canva --}}
-    <div class="offcanvas offcanvas-bottom custom-offcanvas p-4" tabindex="-1" id="market-canvas" aria-labelledby="offcanvasBottomLabel">
+    <div class="offcanvas offcanvas-bottom custom-offcanvas p-4 rounded-top" tabindex="-1" id="market-canvas" aria-labelledby="offcanvasBottomLabel">
         <div class="offcanvas-header">
             <h4 class="mb-0 fs-18 offcanvas-title text-white">
             </h4>
@@ -521,9 +520,9 @@
                 let sellPriceClass = 'nochange';
                 let buyPriceClass = 'nochange';
 
-                if (parseFloat(sellPrice) > previousSellPrice) {
+                if (parseFloat(sellPrice) < previousSellPrice) {
                     sellPriceClass = 'num-increase';
-                } else if (parseFloat(sellPrice) < previousSellPrice) {
+                } else if (parseFloat(sellPrice) > previousSellPrice) {
                     sellPriceClass = 'num-decrease';
                 }
 
@@ -550,10 +549,9 @@
                         </div>
                         <div class="d-flex position-relative text-end daily-change-text">
                             <div class="d-flex justify-content-between w-100">
-                                <a href="#" class="d-block fw-bold coin-buy-price-${coin} ${buyPriceClass}">
+                                <a href="#" class="d-block coin-buy-price-${coin} ${buyPriceClass}">
                                     ${buyPrice}
                                 </a>
-                                
                                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
                                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
                                 </div>
@@ -961,7 +959,7 @@
             position: absolute; /* Allow dynamic positioning */
             width: 100%; /* Adjust width as needed */
             /* max-width: 400px;  */
-            border-radius: 12px; /* Rounded corners for smooth look */
+            border-radius: 12px 12px 0 0; /* Rounded corners for smooth look */
             height: auto; /* Adjust dynamically */
             max-height: 400px; /* Set a limit */
             /* background: white;  */
@@ -969,7 +967,7 @@
             display: none; /* Initially hidden */
         }
 
-        .nochange {
+        [data-theme=light] .nochange {
             color: black !important;
         }
         .num-increase {

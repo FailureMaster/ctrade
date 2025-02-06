@@ -3,8 +3,7 @@
 @section('content')
  <div class="trade-container">
     <div class="summary-container pb-0">
-        <h2 class="h-title p-0 mb-0 border-0">@lang('Portfolio')</h2>
-        <h2 class="p-0 ch5"></h2>
+        <h2 class="h-title p-0 mb-2 border-0">@lang('Portfolio')</h2>
         <div class="portfolio-item">
             <div class="label p-0">@lang('Balance')</div>
             <div class="dots"></div>
@@ -116,7 +115,7 @@
 <x-take-profit-modal />
 
 {{-- Canva --}}
-<div class="offcanvas offcanvas-bottom custom-offcanvas p-4" tabindex="-1" id="trade-canvas" aria-labelledby="offcanvasBottomLabel">
+<div class="h-auto offcanvas offcanvas-bottom custom-offcanvas p-" tabindex="-1" id="trade-canvas" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header">
         <h4 class="mb-0 fs-18 offcanvas-title text-white">
         </h4>
@@ -245,7 +244,7 @@
                         <button 
                             type="button" 
                             style="font-size: 12px; border: transparent; color: white !important;"
-                            class="btn btn-secondary px-4 py-2 stopLossModalBtn" 
+                            class="btn btn-secondary px-4 py-2 mb-2 stopLossModalBtn" 
                             data-orderid="${order.id}"
                             data-action="${actionUrl}"
                             data-title="@lang('Stop Loss') #${order.id}"
@@ -264,7 +263,7 @@
                     <button 
                         type="button" 
                         style="font-size: 12px; border: transparent; color: white !important;"
-                        class="btn btn-secondary px-4 py-2 takeProfitModalBtn" 
+                        class="btn btn-secondary px-4 py-2 mb-2 takeProfitModalBtn" 
                         data-orderid="${order.id}"
                         data-action="${actionUrl}"
                         data-title="@lang('Take Profit') #${order.id}"
@@ -351,7 +350,9 @@
                                 </div>     
                                 <div id="" class="collapse order-collapse py-2" aria-labelledby="">
                                     <div class="d-flex flex-column @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif text-center">
-                                        <strong class="mb-2">@lang('Actions') @if (App::getLocale() != 'ar') @endif </strong> <div class="d-flex justify-content-between">${buttonStopLoss} ${buttonTakeProfit} ${button}</div>
+                                        ${buttonStopLoss} 
+                                        ${buttonTakeProfit} 
+                                        ${button}
                                     </div>
                                 </div>
                             </td>

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="summary-container">
-        <div class="d-flex justify-content-between" id="menuHeaderContainer">
+        <div class="d-flex justify-content-between border-0" id="menuHeaderContainer">
             <h2 class="h-title p-0 mb-0 border-0">{{ __(gs()->site_name) }}</h2>
             @if (Auth::check())
                 <span class="text-white">

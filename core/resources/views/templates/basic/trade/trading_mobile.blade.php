@@ -256,7 +256,7 @@
                             data-bs-target="#trade-history-sm" role="tab" data-type="m-closed" aria-controls="pills-historytwentyfive"
                             aria-selected="false">
                             <i class="fas fa-history" id="m-closed"></i>
-                            @lang('Closed Orders')
+                            @lang('History')
                         </a>
                     </li>
                     <li class="nav-item" role="presentation" data-status="0">

@@ -6,21 +6,25 @@
             @csrf
             <input type="hidden" name="order_side" value="{{ Status::BUY_SIDE_ORDER }}">
             <input type="hidden" name="order_type" value="{{ Status::ORDER_TYPE_LIMIT }}">
-        
+
             <input type="hidden" name="order_volume_1" value="" id="order_volume_1">
             <input type="hidden" name="order_volume_2" value="" id="order_volume_2">
-          
+
             <div class="order-header d-flex align-items-center justify-content-between">
                 {{ $pair->symbol }}
-                <a href="/trade/markets"><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></a>
+                <a href="/trade/markets"><button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button></a>
             </div>
 
             <div class="order-body p-3">
+
                 <div class="form-group">
                     <span class="text-themed mb-1" style="margin-right: 4px">
                         @lang('Volume in Lots')
                     </span>
-                    <select id="lot-size-select" class="form--control style-three lot-size-select" name="amount" onchange="updateLotValues(this)" data-fee-status="{{ $fee_status }}">
+
+                    <select id="lot-size-select" class="form--control style-three lot-size-select" name="amount"
+                        onchange="updateLotValues(this)" data-fee-status="{{ $fee_status }}">
                         @if ($lots && $lots->isNotEmpty())
                             @foreach ($lots as $lot)
                                 @php
@@ -33,12 +37,34 @@
                                         $lot_volume_display = rtrim(rtrim($lot->lot_volume, '0'), '.');
                                     }
                                 @endphp
-                                <option value="{{ $lot->lot_value }}" {{ $lot->selected == 1 ? 'selected' : '' }}> {{ $lot_volume_display }}</option>
+                                <option value="{{ $lot->lot_value }}" {{ $lot->selected == 1 ? 'selected' : '' }}>
+                                    {{ $lot_volume_display }}</option>
                             @endforeach
                         @else
                             <p>No lots available</p>
                         @endif
                     </select>
+
+                    {{-- <div class="mt-2 d-flex">
+                        <div class="input-group mx-2">
+                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="decrement"
+                                data-trigger="0">-</button>
+                            <input type="number" name="tp" class="form-control text-center tp-sl" placeholder="TP">
+                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="increment"
+                                data-trigger="0">+</button>
+                        </div>
+                    </div> --}}
+                </div>
+
+                <div class="custom--range pt-0 px-0">
+                    <div class="buy-amount-slider custom--range__range slider-range"></div>
+                    <ul class="range-list buy-amount-range">
+                        <li class="range-list__number" data-percent="0">@lang('0')%<span></span></li>
+                        <li class="range-list__number" data-percent="25">@lang('25')%<span></span></li>
+                        <li class="range-list__number" data-percent="50">@lang('50')%<span></span></li>
+                        <li class="range-list__number" data-percent="75">@lang('75')%<span></span></li>
+                        <li class="range-list__number" data-percent="100">@lang('100')%<span></span></li>
+                    </ul>
                 </div>
 
                 <small class="text-themed d-block mb-1 d-none">
@@ -56,7 +82,7 @@
                         <span>{{ @$pair->market_name }}</span>
                     </div>
                 </div>
-        
+
                 <div class="mb-3">
                     <ul class="p-0 m-0">
                         <li class="mt-1 pt-1 d-flex flex-column gap-2">
@@ -86,32 +112,41 @@
                         <span class="sl-price">1.0396<sup>4</sup></span>
                         <span class="mx-3 tp-price">1.0396<sup>8</sup></span>
                     </div> --}}
-            
+
                     <div class="mt-2 d-flex">
                         <div class="input-group">
-                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="decrement" data-trigger="0">-</button>
-                            <input type="number" name="sl" class="form-control text-center tp-sl" value="" placeholder="SL">
-                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="increment" data-trigger="0">+</button>
+                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="decrement"
+                                data-trigger="0">-</button>
+                            <input type="number" name="sl" class="form-control text-center tp-sl" value=""
+                                placeholder="SL">
+                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="increment"
+                                data-trigger="0">+</button>
                         </div>
                         <div class="input-group mx-2">
-                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="decrement" data-trigger="0">-</button>
+                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="decrement"
+                                data-trigger="0">-</button>
                             <input type="number" name="tp" class="form-control text-center tp-sl" placeholder="TP">
-                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="increment" data-trigger="0">+</button>
+                            <button class="btn btn-update btn-outline-secondary" type="button" data-type="increment"
+                                data-trigger="0">+</button>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="d-flex btn-container">
-                <button class="btn-modal-sell btn btn--danger w-100 btn--sm sell-btn btn-submit" type="button" id="sellButton" data-orderside="2">
+                <button class="btn-modal-sell btn btn--danger w-100 btn--sm sell-btn btn-submit" type="button"
+                    id="sellButton" data-orderside="2">
                     <span class="action-btn">@lang('SELL')</span>
-                    <input type="number" step="any" class="form--control style-three sell-rate"
-                        name="sell_rate" id="sell-rate" style="display: none;">
+                    <input type="number" step="any" class="form--control style-three sell-rate" name="sell_rate"
+                        id="sell-rate" style="display: none;">
                     <span id="sellSpan" style="color:white;display: block"></span>
                 </button>
                 <div style="margin: 0 2px;"></div>
-                <button class="btn-modal-buy btn btn--base-two w-100 btn--sm buy-btn btn-submit" type="button" id="buyButton" data-orderside="1">
+                <button class="btn-modal-buy btn btn--base-two w-100 btn--sm buy-btn btn-submit" type="button"
+                    id="buyButton" data-orderside="1">
                     <span class="action-btn">@lang('BUY')</span>
-                    <input type="number" step="any" class="form--control style-three buy-rate" name="buy_rate" id="buy-rate" style="display: none;">
+                    <input type="number" step="any" class="form--control style-three buy-rate" name="buy_rate"
+                        id="buy-rate" style="display: none;">
                     <span id="buySpan" style="color:white;display: block"></span>
                 </button>
             </div>
@@ -125,49 +160,63 @@
 
 @push('style')
     <style>
-        .price { font-size: 24px; font-weight: bold; color: red; }
-        .btn-order { width: 100%; padding: 15px; font-size: 18px; font-weight: bold; }
-        .input-group-text { width: 50px; text-align: center; }
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+        }
 
-        .order-header{
-            height:40px;
+        .btn-order {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .input-group-text {
+            width: 50px;
+            text-align: center;
+        }
+
+        .order-header {
+            height: 40px;
             background-color: #ffffff;
             color: #000000;
             padding: 1rem;
-            margin-bottom:1rem;
+            margin-bottom: 1rem;
         }
 
-        .order-container{
-            background-color:#0d1e23;
-            position:relative;
-            height:100vh;
+        .order-container {
+            background-color: #0d1e23;
+            position: relative;
+            height: 100vh;
         }
 
         [data-theme=light] .order-container {
             background-color: #ffffff;
         }
 
-        .lot-size-select{
-            height: 40px; 
+        .lot-size-select {
+            height: 40px;
             width: 50px;
             min-width: 70% !important;
         }
 
-        .input-group > button{
+        .input-group>button {
             padding: .6rem;
-            color:#ffffff !important;
+            color: #ffffff !important;
             border-color: hsl(var(--white) / 0.2);
         }
 
-        .btn-container{
-            position:absolute;
-            bottom:100px;
-            right:0;
-            left:0;
+        .btn-container {
+            position: absolute;
+            bottom: 100px;
+            right: 0;
+            left: 0;
         }
 
-        [data-theme=dark] .order-container{
-            color:#ffffff;
+        [data-theme=dark] .order-container {
+            color: #ffffff;
         }
 
         .input-group input {
@@ -176,7 +225,7 @@
             border-color: hsl(var(--white) / 0.2);
         }
 
-        .btn-outline-secondary:active{
+        .btn-outline-secondary:active {
             color: hsl(var(--white));
             border-color: hsl(var(--white) / 0.2);
         }
@@ -185,19 +234,19 @@
             color: #000000 !important;
         }
 
-        [data-theme=light] .action-btn{
+        [data-theme=light] .action-btn {
             color: #ffffff;
         }
     </style>
 
-    @if(App::getLocale() == "ar")
+    @if (App::getLocale() == 'ar')
         <style>
             .btn-modal-sell,
             .btn-modal-buy {
                 padding: 5px 10px !important
             }
 
-            .action-btn{
+            .action-btn {
                 font-size: 1.4rem !important;
                 margin-top: -5px;
                 margin-bottom: 5px;
@@ -207,6 +256,7 @@
 @endpush
 
 @push('script')
+    <script src="{{ asset($activeTemplateTrue . 'js/jquery-ui.js') }}"></script>
     <script>
         let global_current_price = 0;
         let updateCurrentPrice = false;
@@ -228,7 +278,7 @@
 
             return decimalPlaces;
         }
-        
+
         // Formats numbers with a specified precision
         function formatWithPrecision(value, precision = 5) {
             return Number(value).toFixed(precision);
@@ -271,15 +321,15 @@
         }
 
         function updateLLSize() {
-            let lotEquivalent   = parseFloat(document.querySelector('.lot-eq-span').innerText);
-            
-            let currentPrice    = document.querySelector("#sellSpan").innerText;
-            let llSizeVal       = parseFloat(currentPrice) * lotEquivalent;
-            let llSize          = parseInt(llSizeVal) >= 0 ? llSizeVal : 0;
+            let lotEquivalent = parseFloat(document.querySelector('.lot-eq-span').innerText);
+
+            let currentPrice = document.querySelector("#sellSpan").innerText;
+            let llSizeVal = parseFloat(currentPrice) * lotEquivalent;
+            let llSize = parseInt(llSizeVal) >= 0 ? llSizeVal : 0;
 
             document.querySelector('.ll-size-span').innerText = llSize.toFixed();
 
-            let leverage        = parseFloat({{ @$pair->percent_charge_for_sell }} || 0);
+            let leverage = parseFloat({{ @$pair->percent_charge_for_sell }} || 0);
             let required_margin = llSize / leverage;
             document.querySelector('.required-margin-value').innerText = `${formatWithPrecision1(required_margin)} USD`;
         }
@@ -300,7 +350,7 @@
             let sellSpan = document.getElementById("sellSpan");
             let buySpan = document.getElementById("buySpan");
 
-            if( sellSpan == null || buySpan == null ){
+            if (sellSpan == null || buySpan == null) {
                 return false;
             }
 
@@ -330,7 +380,8 @@
                 } else {
                     buySpan.innerText = (coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue
                         .toFixed(buyDecimal));
-                    sellSpan.innerText = (coin_name === 'Crypto' ? sellValue.toFixed(buyDecimal) : sellValue.toFixed(buyDecimal));
+                    sellSpan.innerText = (coin_name === 'Crypto' ? sellValue.toFixed(buyDecimal) : sellValue.toFixed(
+                        buyDecimal));
                     adjustedBuyValue = (coin_name === 'Crypto' ? buyValue.toFixed(buyDecimal) : buyValue
                         .toFixed(buyDecimal));
                 }
@@ -401,12 +452,14 @@
 
                     let jsonMarketData = resp.marketData;
 
-                    let pairDecimalCount = countDecimalPlaces(jsonMarketData['{{@$pair->type}}']['{{@$pair->symbol}}'].replace(/,/g, ''));
+                    let pairDecimalCount = countDecimalPlaces(jsonMarketData['{{ @$pair->type }}'][
+                        '{{ @$pair->symbol }}'
+                    ].replace(/,/g, ''));
 
                     if (resp.orders && resp.orders.length > 0) {
                         resp.orders.forEach(order => {
                             html += generateOrderRow(order, jsonMarketData[order.pair
-                            .type]);
+                                .type]);
                         });
 
                         pl = total_open_order_profit;
@@ -441,22 +494,22 @@
 
                     $('#used-margin-span').html(
                         `<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(parseFloat(resp.totalRequiredMargin))} $</label>`
-                        );
+                    );
                     $('#free-margin-span').html(
                         `<label class="${(free_margin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(free_margin)} $`
-                        );
+                    );
                     $('#equity-span').html(
                         `<label class="${(equity < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(equity)} $</label>`
-                        );
+                    );
                     $('#pl-span').html(
                         `<label class="${(pl < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(pl)} $</label>`
-                        );
+                    );
                     $('#level-span').html(
                         `<label class="${(level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(level)} $</label>`
-                        );
+                    );
                     $('#margin_level_span').html(
                         `<label class="${(margin_level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(margin_level)} %</label>`
-                        );
+                    );
 
                     closeOrdersBasedOnSLTP(resp)
 
@@ -468,27 +521,27 @@
             });
         }
 
-        function loadCurrentPrice(){
-            if( updateCurrentPrice ){
+        function loadCurrentPrice() {
+            if (updateCurrentPrice) {
                 let checkPrice = global_current_price;
 
-                if( checkPrice != null && global_current_price != 0 ){
+                if (checkPrice != null && global_current_price != 0) {
                     global_current_price = parseFloat(global_current_price.replace(/,/g, ''));
                     $('input[data-run="1"]').val(global_current_price);
                 }
             }
         }
 
-        $(document).ready(function(){
+        $(document).ready(function() {
 
             updateLotValues(document.querySelector(".lot-size-select"));
 
-            $(document).on('input', '.tp-sl', function(){
+            $(document).on('input', '.tp-sl', function() {
                 updateCurrentPrice = false;
                 $(this).attr('data-run', 0);
             })
 
-            $(document).on('click', '.tp-sl', function(){
+            $(document).on('click', '.tp-sl', function() {
                 updateCurrentPrice = true;
                 $(this).attr('data-run', 1);
             })
@@ -502,13 +555,13 @@
                 return func;
             }(), 1000);
 
-            $(document).on('click', '.btn-update', function(){
+            $(document).on('click', '.btn-update', function() {
                 let type = $(this).attr('data-type');
                 let val = $(this).parent().find('input').val();
 
                 let isTrigger = $(this).attr('data-trigger');
 
-                if( isTrigger != 1 ){
+                if (isTrigger != 1) {
                     updateCurrentPrice = true;
                     $(this).parent().find('input').attr('data-run', 1);
                     $(this).parent().find('.btn-update').attr('data-trigger', 1);
@@ -519,14 +572,13 @@
                 updateCurrentPrice = false;
                 $(this).parent().find('input').attr('data-run', 0);
 
-                val = ( val == "" ? 0 : val );
-                
-                if( val > 0 ){
-                    if( type == "decrement" ){
+                val = (val == "" ? 0 : val);
+
+                if (val > 0) {
+                    if (type == "decrement") {
                         let value = parseFloat(val) - 0.0001;
                         $(this).parent().find('input').val(Number(value).toFixed(5));
-                    }
-                    else if( type == "increment" ){
+                    } else if (type == "increment") {
                         let value = parseFloat(val) + 0.0001;
                         $(this).parent().find('input').val(Number(value).toFixed(5));
                     }
@@ -534,56 +586,61 @@
             })
 
             $(document).on('click', '.btn-submit', function() {
-                let formData      = new FormData($('#frmNewOrder')[0]);
-                let action        = "{{ route('user.order.save', ':symbol') }}";
-                let symbol        = "{{ @$pair->symbol }}";
-                let token         = $('#frmNewOrder').find('input[name=_token]');
-                let orderSide     = $(this).attr('data-orderside');
+                let formData = new FormData($('#frmNewOrder')[0]);
+                let action = "{{ route('user.order.save', ':symbol') }}";
+                let symbol = "{{ @$pair->symbol }}";
+                let token = $('#frmNewOrder').find('input[name=_token]');
+                let orderSide = $(this).attr('data-orderside');
 
                 let cancelMessage = "@lang('Are you sure to Close this order?')";
-                let actionCancel  = "{{ route('user.order.cancel',':id') }}";
-                formData.set("order_side", orderSide); 
+                let actionCancel = "{{ route('user.order.cancel', ':id') }}";
+                formData.set("order_side", orderSide);
                 $('input[name="orderside"]').remove();
-                
+
                 let select = document.querySelector(".lot-size-select");
                 let selectedOption = select.options[select.selectedIndex];
                 let selectedLotText = selectedOption.textContent;
                 formData.set("no_of_lot", parseFloat(selectedLotText));
-                
+
                 let level = document.querySelector('#level-span').innerText.replace(/ USD/g, "");
                 let equity = document.querySelector('#equity-span').innerText.replace(/ USD/g, "");
-                let used_margin = document.querySelector('#used-margin-span').innerText.replace(/ USD/g, "");
-                let free_margin = document.querySelector('#free-margin-span').innerText.replace(/ USD/g, "");
-                let required_margin = document.querySelector(".required-margin-value").innerText.replace(/ USD/g, "");
-                // let level_equity_threshold = parseFloat({{$level_equity_threshold}}) / 100;
-                let used_margin_equity_threshold = parseFloat({{$used_margin_equity_threshold}}) / 100;
+                let used_margin = document.querySelector('#used-margin-span').innerText.replace(/ USD/g,
+                "");
+                let free_margin = document.querySelector('#free-margin-span').innerText.replace(/ USD/g,
+                "");
+                let required_margin = document.querySelector(".required-margin-value").innerText.replace(
+                    / USD/g, "");
+                // let level_equity_threshold = parseFloat({{ $level_equity_threshold }}) / 100;
+                let used_margin_equity_threshold = parseFloat({{ $used_margin_equity_threshold }}) / 100;
 
                 // New computation
-                let margin_level = ( parseFloat(equity) / parseFloat(used_margin) ) * 100;
+                let margin_level = (parseFloat(equity) / parseFloat(used_margin)) * 100;
 
                 // New added for volumen display
                 let l1 = $('#lot-eq-fetch').text().trim();
                 let l2 = $('#lot-eq2-fetch').text().trim();
-                formData.set("order_volume_1", l1); 
-                formData.set("order_volume_2", l2); 
+                formData.set("order_volume_1", l1);
+                formData.set("order_volume_2", l2);
 
                 if (parseFloat(level) >= parseFloat(equity)) {
-                    toastr('error', 'Unable to open an order: Level is already below or equal to the 10% of the equity. Need to increase your balance.');
+                    toastr('error',
+                        'Unable to open an order: Level is already below or equal to the 10% of the equity. Need to increase your balance.'
+                        );
                     return;
                 }
 
-                if ( margin_level < 100 ) {
+                if (margin_level < 100) {
                     toastr('error', 'You do not have enough equity to open this order.');
                     return;
                 }
-                
+
                 if (parseFloat(free_margin) <= parseFloat(required_margin)) {
                     toastr('error', 'You do not have enough margin to open this order.');
                     return;
                 }
-                
+
                 formData.set("required_margin", required_margin);
-                
+
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': token
@@ -598,7 +655,7 @@
                         if (parseInt(orderSide) === 1) {
                             $('.buy-btn').append(` <i class="fa fa-spinner fa-spin"></i>`);
                             $('.buy-btn').attr('disabled', true);
-                        } 
+                        }
                         if (parseInt(orderSide) === 2) {
                             $('.sell-btn').append(` <i class="fa fa-spinner fa-spin"></i>`);
                             $('.sell-btn').attr('disabled', true);
@@ -616,7 +673,8 @@
                     },
                     success: function(resp) {
                         if (resp.success) {
-                            $('.avl-market-cur-wallet').text(formatWithPrecision1(resp.data.wallet_balance));
+                            $('.avl-market-cur-wallet').text(formatWithPrecision1(resp.data
+                                .wallet_balance));
 
                             notify('success', resp.message);
 
@@ -636,5 +694,54 @@
                 });
             });
         })
+
+        "use strict";
+        (function($) { 
+            // $('.buy-amount-range').on('click', '.range-list__number', function(e) {
+
+            //     let percent = parseInt($(this).data('percent'));
+            //     changeBuyAmountRange(percent);
+
+            //     $(".buy-amount-slider").find('.ui-widget-header').css({
+            //         'width': `${percent}%`
+            //     });
+
+            //     $(".buy-amount-slider").find('.ui-state-default').css({
+            //         'left': `${percent ==100 ? 97 : percent}%`
+            //     });
+            // });
+
+            function changeBuyAmountRange(percent) {
+
+                percent = parseFloat(percent);
+
+                if (percent > 100) {
+                    notify('error', "@lang('Invalid amount range selected')");
+                    return false;
+                }
+
+                // let availableBalance = parseFloat("{{ @$marketCurrencyWallet->balance }}");
+                // if (availableBalance <= 0) return false;
+
+                // let percentAmount = (availableBalance / 100) * percent;
+                // $('.total-buy-amount').val(getAmount(percentAmount))
+                //     .trigger('change');
+            }
+
+            $(".buy-amount-slider").slider({
+                range: true,
+                min: 0,
+                max: 10,
+                values: [0, 0],
+                slide: function(event, ui) {
+                    console.log(ui);
+                    changeBuyAmountRange(ui.value);
+                },
+                change: function(event, ui) {
+                    changeBuyAmountRange(ui.value);
+                }
+            });      
+        })(jQuery);
+
     </script>
 @endpush

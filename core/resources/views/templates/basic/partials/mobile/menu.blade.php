@@ -23,7 +23,7 @@
                 <li class="nav-item" role="presentation">
                     <a class="nav-link m-closed d-flex flex-column {{ $uri === "closed_orders" ? 'active' : '' }}" data-type="m-closed" href="/trade/closed_orders">
                         <i class="fas fa-history" id="m-closed"></i>
-                        @lang('Closed Orders')
+                        @lang('History')
                     </a>
                 </li>
                 <li class="nav-item" role="presentation" data-status="0">
