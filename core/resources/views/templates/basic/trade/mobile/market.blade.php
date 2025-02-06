@@ -511,6 +511,28 @@
                 buyPrice = parseFloat(buyPrice).toFixed(decCount);
                 sellPrice = parseFloat(sellPrice).toFixed(decCount);
 
+                // Change Buy/Sell Text Color
+                let priceSellElement = $(`.coin-sell-price-${coin}`);
+                let previousSellPrice = parseFloat(priceSellElement.first().text()) || 0;
+
+                let priceBuyElement = $(`.coin-buy-price-${coin}`);
+                let previousBuyPrice = parseFloat(priceBuyElement.first().text()) || 0;
+
+                let sellPriceClass = 'nochange';
+                let buyPriceClass = 'nochange';
+
+                if (parseFloat(sellPrice) > previousSellPrice) {
+                    sellPriceClass = 'num-increase';
+                } else if (parseFloat(sellPrice) < previousSellPrice) {
+                    sellPriceClass = 'num-decrease';
+                }
+
+                if (parseFloat(buyPrice) > previousBuyPrice) {
+                    buyPriceClass = 'num-increase';
+                } else if (parseFloat(buyPrice) < previousBuyPrice) {
+                    buyPriceClass = 'num-decrease';
+                }
+
                 html += `
                     <div class="d-flex market-coin-item my-2 py-2">
                         <div class="m-item">
@@ -522,13 +544,16 @@
                             </div>
                         </div>
                         <div class="position-relative price-text">
-                            <a href="${param}" class="coin-link" data-param="${param}">${sellPrice}</a>
+                            <a href="${param}" class="coin-link coin-sell-price-${coin} ${sellPriceClass}" data-param="${param}">
+                                ${sellPrice}
+                            </a>
                         </div>
                         <div class="d-flex position-relative text-end daily-change-text">
                             <div class="d-flex justify-content-between w-100">
-                                <span class="d-block">
+                                <a href="#" class="d-block fw-bold coin-buy-price-${coin} ${buyPriceClass}">
                                     ${buyPrice}
-                                </span>
+                                </a>
+                                
                                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
                                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
                                 </div>
@@ -942,6 +967,16 @@
             /* background: white;  */
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Soft shadow */
             display: none; /* Initially hidden */
+        }
+
+        .nochange {
+            color: black !important;
+        }
+        .num-increase {
+            color: #198754 !important;
+        }
+        .num-decrease {
+            color: #dc3545 !important
         }
     </style>
 @endpush
