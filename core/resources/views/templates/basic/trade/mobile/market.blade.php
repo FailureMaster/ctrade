@@ -163,14 +163,14 @@
                 <i class="fa fa-times-circle fa-lg"></i>
             </button>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body text-center">
            <p>
-                <a href="#" class="new-order-link">
+                <a href="#" class="new-order-link text-themed btn border border-0">
                     @lang('New Order')
                 </a>
             </p>
            <p class="my-2">
-                <a href="#" class="link-to-chart">
+                <a href="#" class="link-to-chart text-themed btn border border-0">
                     @lang('Chart')
                 </a>
             </p>
@@ -179,8 +179,8 @@
 
     {{-- Menu --}}
     @include($activeTemplate . 'partials.mobile.menu')
-
 @endsection
+
 @push('script')
     <script>
         "use strict";
