@@ -149,6 +149,7 @@
 {{-- Menu --}}
 @include($activeTemplate . 'partials.mobile.menu')
 @endsection
+
 @push('style')
     <style>
         .dashboard-card{
