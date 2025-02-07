@@ -117,8 +117,8 @@
 {{-- Canva --}}
 <div class="h-auto offcanvas offcanvas-bottom custom-offcanvas p-" tabindex="-1" id="trade-canvas" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header">
-        <h4 class="mb-0 fs-18 offcanvas-title text-white">
-        </h4>
+        <h4 class="mb-0 fs-18 offcanvas-title text-white"></h4>
+        {{-- <h5 class="mb-0 fs-16 offcanvas-order-date text-white">Test</h5> --}}
         <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="fa fa-times-circle fa-lg"></i>
         </button>
@@ -218,9 +218,8 @@
                     let button = order.status == 0 ?
                         `
                             <button 
-                                type="button" 
-                                style="font-size: 12px; border: transparent; color: white !important;"
-                                class="btn btn-secondary px-4 py-2 confirmationBtn text-uppercase" 
+                                type="button"
+                                class="btn trade-order-button px-4 py-2 confirmationBtn" 
                                 data-question="@lang('Close the order now with current profit?')" 
                                 data-orderid="${order.id}"
                                 data-action="${actionUrl}"
@@ -231,20 +230,19 @@
                                 data-volume="${removeTrailingZeros(order.no_of_lot)}"
                                 data-profit="${removeTrailingZeros(total_price)}"
                                 title="Close Order"
-                            >@lang('Close')</button>
+                            >@lang('Close Order')</button>
                         ` : '';
 
 
                     let slButtonLabel = order.stop_loss ? parseFloat(order.stop_loss).toFixed(decimalCount) :
-                        "{{ __('SL') }}";
+                        "{{ __('Stop Loss') }}";
                     let tpButtonLabel = order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) :
-                        "{{ __('TP') }}";
+                        "{{ __('Take Profit') }}";
 
                     let buttonStopLoss = `
                         <button 
-                            type="button" 
-                            style="font-size: 12px; border: transparent; color: white !important;"
-                            class="btn btn-secondary px-4 py-2 mb-2 stopLossModalBtn" 
+                            type="button"
+                            class="btn trade-order-button px-4 py-2 stopLossModalBtn" 
                             data-orderid="${order.id}"
                             data-action="${actionUrl}"
                             data-title="@lang('Stop Loss') #${order.id}"
@@ -261,9 +259,8 @@
 
                 let buttonTakeProfit = `
                     <button 
-                        type="button" 
-                        style="font-size: 12px; border: transparent; color: white !important;"
-                        class="btn btn-secondary px-4 py-2 mb-2 takeProfitModalBtn" 
+                        type="button"
+                        class="btn trade-order-button px-4 py-2 takeProfitModalBtn" 
                         data-orderid="${order.id}"
                         data-action="${actionUrl}"
                         data-title="@lang('Take Profit') #${order.id}"
@@ -277,6 +274,17 @@
                         title="Take Profit"
                     >${tpButtonLabel}</button>
                 `;
+
+                // New Order Button
+                let buttonNewOrder = `
+                    <button 
+                        type="button"
+                        class="btn trade-order-button px-4 py-2" 
+                        data-orderid="${order.id}"
+                        title="New Order"
+                    >@lang('New Order')</button>
+                `;
+
                 var run_time = parseFloat(document.title);
 
                 let profitClass = total_price <= 0 ? 'text-danger' : 'text-success';
@@ -351,7 +359,8 @@
                                 <div id="" class="collapse order-collapse py-2" aria-labelledby="">
                                     <div class="d-flex flex-column @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif text-center">
                                         ${buttonStopLoss} 
-                                        ${buttonTakeProfit} 
+                                        ${buttonTakeProfit}
+                                        ${buttonNewOrder}
                                         ${button}
                                     </div>
                                 </div>
@@ -717,6 +726,25 @@
 
        .custom--modal .question {
             color: hsl(var(--white)) !important;
+        }
+
+        [data-theme=dark] .trade-order-button {
+            color: white !important;
+        }
+        .trade-order-button {
+            background: transparent;
+            border: transparent;
+            margin-bottom: 0.5rem;
+            color: black !important;
+            margin
+        }
+
+        .trade-order-button:hover {
+            color: black !important;
+        }
+
+        [data-theme=dark] .trade-order-button:hover {
+            color: white !important;
         }
 
     </style>
