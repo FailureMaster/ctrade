@@ -741,6 +741,7 @@ class TradeController extends Controller
         $widget['open_order']      = Order::where('user_id', $user->id)->where('status', Status::ORDER_OPEN)->count();
         $widget['completed_order'] = (clone $order)->completed()->count();
         $widget['total_trade']     = Trade::where('trader_id', $user->id)->count();
+        $widget['total_credit']    = isset($marketCurrencyWallet->credit) ? $marketCurrencyWallet->credit : 0;
         $pl                        = 0;
         $total_profit              = 0;
         $total_loss                = 0;

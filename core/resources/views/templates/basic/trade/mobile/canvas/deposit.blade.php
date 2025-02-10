@@ -1,5 +1,5 @@
-<div class="offcanvas offcanvas-end p-4" tabindex="-1" id="deposit-canvas" aria-labelledby="offcanvasLabel">
-    <div class="offcanvas-header">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="deposit-canvas" aria-labelledby="offcanvasLabel" style="padding: 10px;">
+    <div class="offcanvas-header p-0">
         <h4 class="mb-0 fs-18 offcanvas-title text-white">
             @lang('Deposit Preview')
         </h4>
@@ -7,7 +7,7 @@
             <i class="fa fa-times-circle fa-lg"></i>
         </button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body p-0 pt-4">
         <form action="" method="post" id="depositFrm"
             class="@if ($gateways->count() <= 0) d-none @endif">
             @csrf
@@ -16,13 +16,13 @@
             {{-- <div class="form-group position-relative" id="currency_list_wrapper">
                 <x-currency-list :action="route('user.currency.all')" valueType="2" logCurrency="true" />
             </div> --}}
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <select class="form-control form--control form-select text-white" name="gateway" required
                 style="border: 1px solid #7c666675">
                     <option value="USD" >United States Dollar-USD</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label class="form-label text-white">@lang('Amount')</label>
                 <div class="input-group">
                     <input type="number" step="any" class="form--control form-control text-white" name="amount"

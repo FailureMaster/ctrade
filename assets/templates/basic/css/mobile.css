@@ -55,7 +55,7 @@
 .register input,
 .cpass input {
     color: #ffffff !important;
-    border-color: #ffffff;
+    border-color: #7c666675;
 }
 
 .cpass .form-group label{
@@ -213,7 +213,8 @@ td div div:first-child div:last-child span {
 [data-theme=dark] #frmWithdrawMoney .form--control,
 [data-theme=dark] #frmWithdrawMoney select{
     color: #ffffff;
-    border: 1px solid #ffffff;
+    /* border: 1px solid #ffffff; */
+    border: 1px solid #7c666675;
 }
 
 [data-theme=dark] #customDepositConfirmForm h4{
@@ -370,7 +371,7 @@ td div div:first-child div:last-child span {
 [data-theme=light] #frmConfirmWithdraw,
 [data-theme=light] #frmConfirmWithdraw input{
     color: #000000 !important;
-    border-color: #000000 !important;
+    border-color: #7c666675 !important;
 }
 
 [data-theme=light] h5, 

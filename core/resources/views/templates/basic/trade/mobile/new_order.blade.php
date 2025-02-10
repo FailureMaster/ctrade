@@ -29,7 +29,7 @@
                     <div class="input-group">
                         <button class="btn btn-update btn-outline-secondary" type="button" data-type="lot_decrement"
                             data-trigger="0">-</button>
-                        <input type="number" class="form-control text-center lot-size-input" name="lot_size_input" value="0.01" min="0.01" max="100">
+                        <input type="number" class="form-control text-center lot-size-input" name="lot_size_input" value="0.01" min="0.01">
                         <button class="btn btn-update btn-outline-secondary" type="button" data-type="lot_increment"
                             data-trigger="0">+</button>
                     </div>
@@ -181,16 +181,32 @@
                             <button class="btn btn-update btn-outline-secondary" type="button" data-type="increment"
                                 data-trigger="0">+</button>
                         </div>
+
                         <div class="ms-2">
-                            <select class="form--control style-three">
-                                <option value="Buy" selected></option>
-                                <option value="Sell"></option>
-                            </select>
+                            <div class="p2p-header__top-left">
+                                <div class="buy-sell-tab buy">
+                                    <button type="button"
+                                        class="buy-sell-tab__link buy btn buy--sell-btn active"
+                                        data-type="buy">
+                                        @lang('Buy')
+                                    </button>
+                                    <button type="button"
+                                        class="buy-sell-tab__link sell btn buy--sell-btn"
+                                        data-type="sell">
+                                        @lang('Sell')
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <button class="btn btn--base-two w-100 btn--lg mt-4" type="button">
+                    <button class="btn btn--base-two w-100 btn--lg mt-4 btn-pending-buy" type="button">
                         <span class="action-btn mb-1">@lang('BUY')</span>
+                        <span style="color:white;display: block">0.01</span>
+                    </button>
+
+                    <button class="btn btn--danger w-100 btn--lg btn-pending-sell mt-4 d-none" type="button">
+                        <span class="action-btn mb-1">@lang('SELL')</span>
                         <span style="color:white;display: block">0.01</span>
                     </button>
                     
@@ -208,7 +224,24 @@
 @endsection
 
 @push('style')
+    <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/p2p.css') }}">
+
     <style>
+
+        .p2p-header__top-left .buy-sell-tab {
+            width: 145px;
+        }
+
+        [data-theme=dark] .p2p-header__top-left .buy-sell-tab__link {
+            color: white !important;
+        }
+        [data-theme=light] .p2p-header__top-left .buy-sell-tab__link {
+            color: black !important;
+        }
+
+        [data-theme=light] .p2p-header__top-left .buy-sell-tab__link.active {
+            color: white !important;
+        }
 
         .new-order_title {
             width: 100px;
@@ -824,15 +857,36 @@
 
         $(document).ready(function() {
 
+            $('.buy-sell-tab').on('click', 'button', function(e) {
+                const type = $(this).data('type');
+                skip = 0;
+                isLoadMore = false;
+
+                $('.buy-sell-tab').find(`button`).removeClass('active');
+                $(this).addClass('active');
+
+                $('.buy-sell-tab').removeClass('buy sell');
+                $('.buy-sell-tab').addClass(type);
+
+                // Show/hide the appropriate action button
+                if (type === 'buy') {
+                    $('.btn-pending-buy').removeClass('d-none');
+                    $('.btn-pending-sell').addClass('d-none');
+                } else if (type === 'sell') {
+                    $('.btn-pending-buy').addClass('d-none');
+                    $('.btn-pending-sell').removeClass('d-none');
+                }
+            });
+
             updateLotValues(document.querySelector(".lot-size-select"));
 
             $('.lot-size-input').on('input change keyup paste', function() {
                 let value = parseFloat($(this).val()) || 0;
     
                 if (value < 0.01) return;
-                if (value > 100) {
-                    $(this).val(100);
-                }
+                // if (value > 100) {
+                //     $(this).val(100);
+                // }
 
                 console.log("Direct input value:", value);
                 updateLotSelect(value.toFixed(2));
@@ -928,6 +982,8 @@
                     }
                 }
             })
+
+
 
             $(document).on('click', '.btn-submit', function() {
                 let formData = new FormData($('#frmNewOrder')[0]);

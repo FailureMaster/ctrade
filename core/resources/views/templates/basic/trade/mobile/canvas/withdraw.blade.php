@@ -1,5 +1,5 @@
 <div class="offcanvas offcanvas-end" tabindex="-1" id="withdraw-offcanvas" aria-labelledby="offcanvasLabel">
-    <div class="offcanvas-header">
+    <div class="offcanvas-header" style="padding: 10px;">
         <h4 class="mb-0 fs-18 offcanvas-title text-white">
             @lang('Withdraw')
         </h4>
@@ -7,11 +7,11 @@
             <i class="fa fa-times-circle fa-lg"></i>
         </button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body pt-2" style="padding: 10px;">
         <form action="#" method="post" class="@if($withdrawMethods->count() <=0 ) d-none @endif" id="frmWithdrawMoney">
             @csrf
             <input type="hidden" name="currency" value="{{ $currency->symbol }}">
-            <div class="form-group">
+            <div class="form-group mb-2">
                 <label class="form-label">@lang('Amount')</label>
                 <div class="input-group">
                     <input type="number" step="any" name="amount" value="{{ old('amount') }}" id="amount-withdraw" class="form-control form--control" required>

@@ -49,7 +49,15 @@
             <div class="value-box"></div>
         @endauth
     </div>
-    
+    <div class="portfolio-item">
+        <div class="label p-0">@lang('Credit')</div>
+        <div class="dots"></div>
+        @auth
+            <div class="value-box {{ $widget['total_credit'] < 0 ? 'text-danger' : 'text-success'}}">{{ getAmount($widget['total_credit']) }} $</div>
+        @else
+            <div class="value-box"></div>
+        @endauth
+    </div>
     <div class="portfolio-item">
         <div class="label p-0">@lang('Total Deposits')</div>
         <div class="dots"></div>

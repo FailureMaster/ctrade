@@ -1,7 +1,7 @@
 <div id="stopLossModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="background-color: var(--pane-bg) !important">
-            <div class="modal-header">
+            <div class="modal-header pb-2">
                 <h5 class="modal-title">@lang('Confirmation Alert!')</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="las la-times"></i>
@@ -9,8 +9,8 @@
             </div>
             <form class="stopLossModal-form">
                 @csrf
-                <div class="modal-body pb-0">
-                    <table class="table table-sltp">
+                <div class="modal-body pt-0">
+                    <table class="table table-sltp pb-2">
                         <thead>
                             @if (App::getLocale() != 'ar')
                                 <tr>
@@ -46,6 +46,7 @@
                             @endif
                         </tbody>
                     </table>
+                    
                     <div class="container">
                         <div class="mb-3">
                             <div class="label mb-2 @if(App::getLocale() == 'ar') text-end @endif">@lang('Pips')</div>

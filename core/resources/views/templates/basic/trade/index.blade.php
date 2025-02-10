@@ -1193,7 +1193,7 @@
             [data-theme=light] #frmConfirmWithdraw,
             [data-theme=light] #frmConfirmWithdraw input{
                 color: #000000 !important;
-                border-color: #000000 !important;
+                border-color: #7c666675 !important;
             }
 
             [data-theme=light] h5, [data-theme=light] .ellipsis-menu, [data-theme=light] .no-order-label, [data-theme=light] .empty-gateway h6 {

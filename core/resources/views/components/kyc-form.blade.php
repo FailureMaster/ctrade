@@ -11,11 +11,11 @@
  <style>
      [data-theme=light] .frmKYC .form--control{
         color: #000000 !important;
-        border: 1px solid #000000 !important;
+        border: 1px solid #7c666675 !important;
       }
       [data-theme=dark] .frmKYC .form--control{
         color: #ffffff !important;
-        border: 1px solid #ffffff !important;
+        border: 1px solid #7c666675 !important;
       }
  </style>
 @endpush

@@ -4,7 +4,7 @@
 <div id="confirmationModal" class="modal fade @if($isCustom) custom--modal  @endif" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header pb-2">
                 <h5 class="modal-title">@lang('Confirmation Alert!')</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" style="color: hsl(var(--white))">
                     <i class="las la-times"></i>
@@ -12,7 +12,7 @@
             </div>
             <form action="" method="POST">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body pt-0">
                     <table class="table table-close-order">
                         <thead>
                             @if (App::getLocale() != 'ar')
@@ -50,7 +50,7 @@
                         </tbody>
                     </table>
                     
-                    <div class="mb-5"></div>
+                    <div class="mb-3"></div>
                     
                     <p class="question text-center"></p>
                     

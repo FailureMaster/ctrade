@@ -118,7 +118,7 @@
 <div class="h-auto offcanvas offcanvas-bottom custom-offcanvas p-" tabindex="-1" id="trade-canvas" aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-header">
         <h4 class="mb-0 fs-18 offcanvas-title text-white"></h4>
-        {{-- <h5 class="mb-0 fs-16 offcanvas-order-date text-white">Test</h5> --}}
+        <h5 class="mb-0 fs-16 offcanvas-order-date text-white"></h5>
         <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
             <i class="fa fa-times-circle fa-lg"></i>
         </button>
@@ -205,6 +205,9 @@
                 // total_used_margin = parseFloat(total_used_margin) + (ll_size / parseFloat(order.pair
                 //     .percent_charge_for_sell));
 
+                let orderParam =
+                `new_order?category=${order.pair.type}&symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv=${order.pair.listed_market_name}%3A${order.pair.symbol}%3A%3A`;
+
                 let actionUrl =
                     `{{ route('user.order.close', ['id' => ':id', 'order_side' => ':order_side', 'amount' => ':amount', 'closed_price' => ':closed_price', 'profit' => ':profit']) }}`;
 
@@ -277,12 +280,12 @@
 
                 // New Order Button
                 let buttonNewOrder = `
-                    <button 
+                    <a href="${orderParam}"  
                         type="button"
                         class="btn trade-order-button px-4 py-2" 
                         data-orderid="${order.id}"
                         title="New Order"
-                    >@lang('New Order')</button>
+                    >@lang('New Order')</a>
                 `;
 
                 var run_time = parseFloat(document.title);
@@ -338,6 +341,7 @@
                         <tr class="clickable-row clickable-header flex flex-column" id="heading${order.id}" data-bs-toggle="collapse" data-bs-target="#collapse${order.id}" ${ is_collapsed ? 'aria-expanded="true"' : '' }>
                             <td class="p-0">
                                 <div class="d-flex justify-content-between align-items-center">
+                                    <span class="d-none h-trade-order-date">${order.created_at}</span>
                                     <div class="d-flex flex-column">
                                         <div>
                                             <span class="h-label h-symbol">${order.pair.symbol.replace('_', '/')},</span>
@@ -404,6 +408,7 @@
                     cache: false,
                     data: {},
                     success: function(resp) {
+                        // console.log(resp);
                         let html = '';
                         let initial_equity = Number(resp.wallet.balance) + Number(resp.wallet.bonus) +
                             Number(resp.wallet.credit)
@@ -582,14 +587,20 @@
 
             $(document).on('click', '.clickable-row', function(e){
                 e.preventDefault();
+
                 let elem = $(this).find('.order-collapse').html();
-                let symbol = $(this).find('.h-symbol').text().replace(/,/g, '')
+                let symbol = $(this).find('.h-symbol').text().replace(/,/g, '');
+                let tradeOrderOpenDate = $(this).find('.h-trade-order-date').text();
                 let offcanvas = $('#trade-canvas'); // jQuery object
                 let offcanvasElement = document.getElementById("trade-canvas"); // Plain JS element
+
+                let pairOrderDate = new Date(tradeOrderOpenDate);
+                var optionsFormatDate = { year: 'numeric', month: 'long', day: 'numeric' };
 
                 // Update offcanvas content
                 $('.body-section').html(elem);
                 offcanvas.find('.offcanvas-title').text(symbol);
+                offcanvas.find('.offcanvas-order-date').text(pairOrderDate.toLocaleDateString('en-US', optionsFormatDate))
 
                 let parentLink = $(this);
 
@@ -622,12 +633,24 @@
                 let bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
                 bsOffcanvas.show();
             });
+       
+            $('body').on('show.bs.modal', '.modal', function () {
+                $('.modal:visible').modal('hide');
+                let offcanvasElement = document.getElementById("trade-canvas");
+                let bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                
+                if (bsOffcanvas) {
+                    bsOffcanvas.hide(); // Close the offcanvas when a modal opens
+                }
+            });
         });
     </script>
 @endpush
 @push('style')
     <style>
-
+        .modal {
+            z-index: 999999 !important;s
+        }
         .ellipsis-menu {
             font-size: 16px;
             color: white;
