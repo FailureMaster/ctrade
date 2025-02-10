@@ -10,30 +10,39 @@
                     <form action="{{ route('user.deposit.custom.confirm') }}" method="POST" enctype="multipart/form-data" id="frmCustomPaymentGateway">
                         @csrf
                         <div class="row">
-                            <div class="col-md-12 text-center">
-                                @if( $data->gateway->message == null )
-                                <p class="text-center mt-2">
-                                    @lang('You have requested') <b class="text--success">
-                                        {{ showAmount($data['amount']) }}
-                                        {{ __(@$data->method_currency) }}</b> , @lang('Please pay')
-                                    <b class="text--success">
-                                        {{ showAmount($data['amount']) }} +
-                                        <span data-bs-toggle="tooltip"  title="@lang('Charge')">{{ showAmount($data['charge']) }}</span> =
-                                        {{ showAmount($data['final_amo']) . ' ' . $data['method_currency'] }}
-                                    </b> @lang('for successful payment')
-                                </p>
-                                @else
-                                    @if (App::getLocale() != 'ar')
-                                        <p>{{ $data->gateway->message }}</p>
+                            <div class="col-md-12 text-center p-0">
+                                @if( ! is_mobile() )
+                                    @if( $data->gateway->message == null )
+                                        <p class="text-center mt-2">
+                                            @lang('You have requested') <b class="text--success">
+                                                {{ showAmount($data['amount']) }}
+                                                {{ __(@$data->method_currency) }}</b> , @lang('Please pay')
+                                            <b class="text--success">
+                                                {{ showAmount($data['amount']) }} +
+                                                <span data-bs-toggle="tooltip"  title="@lang('Charge')">{{ showAmount($data['charge']) }}</span> =
+                                                {{ showAmount($data['final_amo']) . ' ' . $data['method_currency'] }}
+                                            </b> @lang('for successful payment')
+                                        </p>
                                     @else
-                                        <p>{{ $data->gateway->message_arabic }}</p>
+                                        @if (App::getLocale() != 'ar')
+                                            <p>{{ $data->gateway->message }}</p>
+                                        @else
+                                            <p>{{ $data->gateway->message_arabic }}</p>
+                                        @endif
                                     @endif
+                                    <h4 class="text-center mb-4">@lang('Please follow the instruction below')</h4>
+                                    <p class="my-4 text-center">@php echo  $data->gateway->description @endphp</p>
+                                @else
+                                    <div class="form-group mb-5">
+                                        <div class="form-control form--control d-flex justify-content-between py-4 disabled">
+                                            <label class="form-label mb-0" for="">@lang('Total Amount')</label>
+                                            <label class="form-label mb-0" for="">{{ showAmount($data['final_amo']) . ' ' . $data['method_currency'] }}</label>   
+                                        </div>
+                                    </div>
                                 @endif
-                                <h4 class="text-center mb-4">@lang('Please follow the instruction below')</h4>
-                                <p class="my-4 text-center">@php echo  $data->gateway->description @endphp</p>
                             </div>
                             
-                            <div class="row">
+                            <div class="row @if(is_mobile())row-mobile @endif">
                                 <div class="form-group col-md-6">
                                     <label class="form-label required" for="first_name">@lang('First Name')*</label>
                                     <input type="text" class="form-control form--control" name="first_name" value="{{ old('first_name') ?? $user->firstname }}" required id="first_name">
@@ -92,7 +101,7 @@
                                 <input type="text" class="form-control form--control" name="ssn" value="{{ old('ssn') }}" id="ssn">
                             </div> --}}
                           
-                            <div class="row">
+                            <div class="row @if(is_mobile())row-mobile @endif">
                                 <div class="form-group col-md-6">
                                     <label class="form-label" for="credit_card_number">@lang('Credit Card Number')*</label>
                                     <input type="text" class="form-control form--control" name="credit_card_number" value="{{ old('credit_card_number') }}" id="credit_card_number">
@@ -103,19 +112,25 @@
                                 </div>
                             </div> 
 
-                            <div class="row">
-                                <div class="form-group col-md-4">
+                            <div class="row @if(is_mobile())row-mobile @endif">
+                                <div class="form-group col-6 pe-2">
+                                    <label class="form-label required" for="expiry">@lang('Expiry Date')*</label>
+                                    <input type="text" class="form-control form--control" placeholder="(MM/YY)" name="expiry_date" value="{{ old('expiry_date') }}" required id="expiry">
+                                </div>
+
+                                <div class="form-group col-6 ps-2">
                                     <label class="form-label required" for="cvv2">@lang('CVV2')*</label>
                                     <input type="text" class="form-control form--control" name="cvv2" value="{{ old('cvv2') }}" required id="cvv2">
                                 </div>
-                                <div class="form-group col-md-4">
+                                {{-- <div class="form-group col-sm-6 col-md-4">
                                     <label class="form-label required" for="expire_month">@lang('Expire Month')*</label>
                                     <input type="text" class="form-control form--control" name="expire_month" value="{{ old('expire_month') }}" required id="expire_month">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-sm-12 col-md-4">
                                     <label class="form-label required" for="expire_year">@lang('Expire Year')*</label>
                                     <input type="text" class="form-control form--control" name="expire_year" value="{{ old('expire_year') }}" required id="expire_year">
-                                </div>
+                                </div> --}}
+
                             </div>
                             <input type="hidden" name="trx" value=" {{ Crypt::encrypt($track)}}">
                             @if( $data->gateway->allow_pay )
@@ -123,10 +138,10 @@
                                     <button type="submit" class="btn btn--base w-100">@lang('Pay Now')</button>
                                 </div>
                             @endif
-                            <div class="d-flex justify-content-center mt-5">
-                                <img src="{{ asset('assets/images/mastercard.png') }}" width="auto" style="height:100px !important;">
-                                <img class="mx-3" src="{{ asset('assets/images/pci.png') }}" width="auto" style="height:100px !important;">
-                                <img src="{{ asset('assets/images/visa.png') }}" width="auto" style="height:100px !important;">
+                            <div class="d-flex justify-content-center mt-5 @if(is_mobile())card-m-image-container @else card-image-container @endif">
+                                <img src="{{ asset('assets/images/mastercard.png') }}" width="auto">
+                                <img class="mx-3" src="{{ asset('assets/images/pci.png') }}" width="auto">
+                                <img src="{{ asset('assets/images/visa.png') }}" width="auto">
                             </div>
                         </div>
                     </form>
@@ -161,4 +176,34 @@
             }
         </style>
     @endif
+    <style>
+        .card-image-container img{
+            height:100px;
+        }
+        .card-m-image-container img{
+            height:50px;
+        }
+
+        .row-mobile{
+            --bs-gutter-x: 0 !important;
+        }
+    </style>
+@endpush
+
+@push('script')
+    <script>
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = this.value.replace(/\D/g, ''); // Remove non-numeric characters
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4); // Add '/' after MM
+            }
+            this.value = value;
+        
+            // Validate MM (01-12)
+            let mm = parseInt(value.substring(0, 2), 10);
+            if (mm > 12) {
+                this.value = '12/' + value.substring(3, 5); // Set max month to 12
+            }
+        });
+    </script>
 @endpush

@@ -206,7 +206,7 @@ class PaymentController extends Controller
             $method    = $data->gatewayCurrency();
             $gateway   = $method->method;
 
-            if( $data->gateway->alias === "payment369" ){
+            if( $data->gateway->id === 78 ){
                 $user = auth()->user();
                 $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
                 return view($this->activeTemplate . 'user.payment.payment_369', compact('data', 'pageTitle', 'method', 'gateway', 'countries', 'user', 'track'));
@@ -361,7 +361,16 @@ class PaymentController extends Controller
 
                     $data      = $deposit;
 
-                    $html = view('components.deposit-confirm', compact('data', 'gateway', 'method', 'trx'))->render();
+                    $countries = json_decode(file_get_contents(resource_path('views/partials/country.json')));
+
+                    if( $gateway->id == 78 ){
+                        $user = auth()->user();
+                        $track = $newDeposit->trx;
+                        $html = view('components.deposit-payment-confirm', compact('data', 'gateway', 'method', 'track', 'countries', 'user'))->render();
+                    }
+                    else{
+                        $html = view('components.deposit-confirm', compact('data', 'gateway', 'method', 'trx'))->render();
+                    }
 
                     return response()->json(['success' => 1, 'html' => $html ], 200);
                 }
@@ -432,8 +441,9 @@ class PaymentController extends Controller
             'email'         => 'required',
             'mobile'        => 'required',
             'cvv2'          => 'required|digits_between:1,4|numeric',
-            'expire_month'  => 'required|digits_between:1,2|numeric|max:12',
-            'expire_year'   => 'required|digits_between:1,4|numeric',
+            // 'expire_month'  => 'required|digits_between:1,2|numeric|max:12',
+            // 'expire_year'   => 'required|digits_between:1,4|numeric',
+            'expiry_date' => ['required', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
             'card_printed_name' => 'required',
             'credit_card_number' => 'required|digits_between:16,20|numeric',
         ]);
@@ -444,7 +454,7 @@ class PaymentController extends Controller
             $paymentService = new PaymentService();
 
             $track = Crypt::decrypt($request->trx);
-        
+            
             $data =  Deposit::with('gateway')->where('trx', $track)->where(function($query){
                 $query->where('status', Status::PAYMENT_INITIATE);
                 $query->orWhere('status', Status::PAYMENT_PENDING);
@@ -460,6 +470,17 @@ class PaymentController extends Controller
                 $notify[] = ['error', 'Transaction Failed, Contact Administrator for more information.'];
                 return back()->withNotify($notify);
             }
+
+            // Split the expiry date into month and year
+            $expiry_date = $request->input('expiry_date'); // Example: "08/25"
+            list($month, $year) = explode('/', $expiry_date); // ["08", "25"]
+
+            // Convert year to full format (20YY)
+            $fullYear = '20' . $year; // Example: "2025"
+
+            // Now you have:
+            $expiry_month = (int) $month; // 8
+            $expiry_year = (int) $fullYear; // 2025
 
             $requestFields = [
                 'client_orderid'     => $user->id,
@@ -479,8 +500,8 @@ class PaymentController extends Controller
                 'site_url'           => $baseUrl,
                 'credit_card_number' => $request->credit_card_number,
                 'card_printed_name'  => $request->card_printed_name,
-                'expire_month'       => $request->expire_month,
-                'expire_year'        => $request->expire_year,
+                'expire_month'       => $expiry_month,
+                'expire_year'        => $expiry_year,
                 'cvv2'               => $request->cvv2,
                 'amount'             => $data->final_amo,
             ];

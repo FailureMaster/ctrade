@@ -1,4 +1,4 @@
-<form action="#" method="POST" enctype="multipart/form-data" id="customDepositConfirmForm">
+<form action="{{ route('user.deposit.new.manual.update') }}" method="POST" enctype="multipart/form-data" id="customDepositConfirmForm">
     @csrf
     <div class="row">
         <div class="col-md-12 text-center">

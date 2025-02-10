@@ -197,6 +197,30 @@
             }
         </style>
     @endif
+
+    <style>
+        .card-image-container img{
+            height:100px;
+        }
+        .card-m-image-container img{
+            height:50px;
+        }
+
+        .row-mobile{
+            --bs-gutter-x: 0 !important;
+        }
+
+        [data-theme=dark] .amount-section{
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+        }
+
+        [data-theme=light] .amount-section{
+            border: 1px solid #7c666675;
+            border-radius: 4px;
+        }
+    </style>
 @endpush
 
 @push('script')
@@ -572,5 +596,19 @@
                 $('.cpass-btn').prop('disabled', false); // Disable the submit button
             }
         }
+
+        $(document).on('input', '#expiry', function(e){
+            let value = this.value.replace(/\D/g, ''); // Remove non-numeric characters
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4); // Add '/' after MM
+            }
+            this.value = value;
+        
+            // Validate MM (01-12)
+            let mm = parseInt(value.substring(0, 2), 10);
+            if (mm > 12) {
+                this.value = '12/' + value.substring(3, 5); // Set max month to 12
+            }
+        });
     </script>
 @endpush

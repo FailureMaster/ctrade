@@ -80,8 +80,8 @@
     </div>
 </div>
 
-<div class="offcanvas offcanvas-end p-4" tabindex="-1" id="deposit-confirmation-canvas" aria-labelledby="offcanvasLabel">
-    <div class="offcanvas-header">
+<div class="offcanvas offcanvas-end" tabindex="-1" id="deposit-confirmation-canvas" aria-labelledby="offcanvasLabel" style="padding: 10px;">
+    <div class="offcanvas-header p-0">
         <h4 class="mb-0 fs-18 offcanvas-title text-white">
             @lang('Deposit Confirmation')
         </h4>
