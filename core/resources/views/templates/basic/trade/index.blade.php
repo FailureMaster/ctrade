@@ -262,7 +262,7 @@
             </button>
         </div>
         <div class="offcanvas-body">
-            <form action="" method="post" class="cpass">
+            <form action="/user/change-password" method="post" class="cpass">
                 @csrf
                 {{-- <div class="form-group">
                     <label class="form-label">@lang('Current Password')</label>
@@ -271,16 +271,18 @@
                 </div> --}}
                 <div class="form-group">
                     <label class="form-label">@lang('New Password')</label>
-                    <input type="password" class="form--control @if ($general->secure_password) secure-password @endif"
-                        name="password" required autocomplete="current-password">
+                    <input type="password" class="form--control cpass_password @if ($general->secure_password) secure-password @endif"
+                        name="password" required onkeyup="validatePasswords()" autocomplete="current-password">
                 </div>
                 <div class="form-group">
                     <label class="form-label">@lang('Confirm New Password')</label>
-                    <input type="password" class="form-control form--control" name="password_confirmation" required
-                        autocomplete="current-password">
+                    <input type="password" class="form-control form--control cpass_password_confirmation" name="password_confirmation" required
+                    onkeyup="validatePasswords()" autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn--base w-100">@lang('Submit')</button>
+                <p id="error-message" class="error text-danger my-2"></p>
+                <button type="submit" class="btn btn--base w-100 cpass-btn">@lang('Submit')</button>
             </form>
+           
         </div>
     </div>
 
@@ -376,7 +378,7 @@
                 <div class="text-center">
                     <h4 class="mb-0 fs-18 offcanvas-title text-white">@lang('Pending Withdraws')</h4>
                 </div>
-                <div class="table-responsive">
+                <div class="table-responsive" id="tblPendingWithdraw">
                     <table class="tbl-pw">
                         <thead>
                             @if (App::getLocale() != 'ar')
@@ -452,6 +454,24 @@
             </button>
         </div>
         <div class="offcanvas-body">
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end p-4" tabindex="-1" id="kyc-offcanvas" aria-labelledby="offcanvasLabel">
+        <div class="offcanvas-header">
+            <h4 class="mb-0 fs-18 offcanvas-title text-white">
+                @lang('KYC')
+            </h4>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
+            </button>
+        </div>
+        <div class="offcanvas-body">
+            @if( auth()->user()->kv === 0 )
+                @include('components.kyc-form')
+            @elseif( auth()->user()->kv === 2 )
+                @include('components.kyc-info')
+            @endif
         </div>
     </div>
 @endsection
@@ -612,8 +632,27 @@
             var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
         });
 
+        $('.new--kyc').on('click', function(e) {
+            var myOffcanvas = document.getElementById('kyc-offcanvas');
+            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+        });
+
+        function validatePasswords() {
+            let password = $('.cpass_password').val();
+            let confirmPassword = $('.cpass_password_confirmation').val();
+            let errorMessage = document.getElementById("error-message");
+      
+            if (password && confirmPassword && password != confirmPassword) {
+                errorMessage.textContent = "Passwords do not match!";
+                $('.cpass-btn').prop('disabled', true); // Disable the submit button
+            } else {
+                errorMessage.textContent = ""; // Clear the error message
+                $('.cpass-btn').prop('disabled', false); // Disable the submit button
+            }
+        }
+
         // Change password
-        $(document).on('submit', '.cpass', function(e) {
+        $(document).on('submit', '.cpasss', function(e) {
             e.preventDefault();
 
             let frm = $(this).serialize();
@@ -626,7 +665,24 @@
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
                 },
                 success: function(response) {
-                    notify(response.success, response.message);
+                    if( response.success == "error" ){
+                        notify(response.success, response.message);
+                    }
+                    else{
+                        Swal.fire({
+                            allowOutsideClick: false,
+                            target: document.getElementById('changepassword-canvas'),
+                            text: response.message,
+                            icon: "success",
+                            showCancelButton: false,
+                            confirmButtonColor: "#d33",
+                            confirmButtonText: "Ok"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "{{ route('user.logout') }}";
+                            }
+                        });
+                    }
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
 
@@ -793,8 +849,23 @@
                 },
                 success: function(response) {
                     if( response.success == 1 ){
-                        notify('success', response.message);
+                        $('#frmWithdrawMoney')[0].reset();
+                        $('#withdraw-offcanvas .preview-details').addClass('d-none');
+                        // notify('success', response.message);
                         $('.text-reset').trigger('click');
+                        $('#tblPendingWithdraw').html( response.html );
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 5000
+                        });
+                        
+                        setTimeout(() => {
+                            var myOffcanvas = document.getElementById('withdraw-offcanvas');
+                            var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas).show();
+                        }, 5000);
                     }
                     else
                         notify('error', response.message);
@@ -853,6 +924,39 @@
         $('#withdraw-offcanvas input[name=amount]').on('input', function() {
             var data = $('select[name=method_code]').change();
             $('#withdraw-offcanvas .amount').text(parseFloat($(this).val()).toFixed(2));
+        });
+
+        $(document).on('submit', '.frmKYC', function(e) {
+            e.preventDefault();
+
+            let frm = new FormData($('.frmKYC')[0]);
+            let url = $(this).attr('action');
+            
+            $.ajax({
+                method: 'POST',
+                data: frm,
+                processData: false,
+                contentType: false,
+                url: url,
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                success: function(response) {
+                    if( response.success == 1 ){
+                        notify('success', response.message);
+                        
+                        setTimeout(() => {
+                            location.reload(); 
+                        }, 1500);
+                    }
+                    else
+                        notify('error', response.message);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    notify('error', response.message);
+                },
+                complete: function(response) {}
+            });
         });
 
         $(document).on('click', '.clickable-row', function(){
@@ -1044,6 +1148,7 @@
             [data-theme=light] #changepassword-canvas,
             [data-theme=light] #deposit-confirmation-canvas,
             [data-theme=light] #withdraw-offcanvas,
+            [data-theme=light] #kyc-offcanvas,
             [data-theme=light] #withdraw-confirmation-canvas{
                 background-color: #ffffff;
                 color: #000000 !important;
@@ -1088,7 +1193,7 @@
             [data-theme=light] #frmConfirmWithdraw,
             [data-theme=light] #frmConfirmWithdraw input{
                 color: #000000 !important;
-                border-color: #000000 !important;
+                border-color: #7c666675 !important;
             }
 
             [data-theme=light] h5, [data-theme=light] .ellipsis-menu, [data-theme=light] .no-order-label, [data-theme=light] .empty-gateway h6 {
@@ -1128,7 +1233,7 @@
 
             [data-theme=dark] #customDepositConfirmForm input,
             [data-theme=dark] #customDepositConfirmForm select,
-            [data-theme=dark] #frmWithdrawMoney input,
+            [data-theme=dark] #frmWithdrawMoney .form--control,
             [data-theme=dark] #frmWithdrawMoney select{
                 color: #ffffff;
                 border: 1px solid #ffffff;

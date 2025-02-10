@@ -252,6 +252,7 @@ class OrderController extends Controller
             $clientGroupSettings       = ClientGroupSetting::where('client_group_id', $cliID)->first();
 
             $orders[$key]->lot_value = null;
+            $orders[$key]->order_spread = null;
 
             if( $clientGroupId <> null )
             {
@@ -259,6 +260,7 @@ class OrderController extends Controller
                 {
                     if( in_array($co->pair->id, $clientGroupSymbols) )
                         $orders[$key]->lot_value = $clientGroupSettings->lots;
+                        $orders[$key]->order_spread = $clientGroupSettings->spread;
                 }
             } 
         }

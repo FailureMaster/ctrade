@@ -95,6 +95,8 @@ class Email extends NotifyProcess implements Notifiable
         $mail->SMTPAuth   = true;
         $mail->Username   = $config->username;
         $mail->Password   = $config->password;
+        $mail->SMTPDebug  = 0;  // Disable debug messages
+        $mail->Debugoutput = false; // Prevent output of debug info
         if ($config->enc == 'ssl') {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
         } else {

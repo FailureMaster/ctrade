@@ -180,33 +180,28 @@
                 });
 
                 let current_price = jsonData[order.pair.symbol].replace(/,/g, '')
-                let spread = order.pair.spread;
 
-                current_price = parseFloat(current_price);
+                let spread = order.pair.spread;
+                
+                if( order.order_spread != null ) spread = order.order_spread;
 
                 let decimalCount = countDecimalPlaces(current_price);
 
-                if (order.pair.symbol === 'GOLD') {
-                    if (parseInt(order.order_side) === 2) {
-                        current_price = (current_price * spread) + current_price;
-                    }
-                    current_price = current_price.toFixed(decimalCount);
-                } else {
-                    if (parseInt(order.order_side) === 2) {
-                        current_price = (current_price * spread) + current_price;
-                    }
-                    current_price = current_price.toFixed(decimalCount);
-                }
+                current_price = parseFloat(current_price);
+
+                // Current Price Formula
+                if (parseInt(order.order_side) === 1) 
+                    current_price = (current_price - parseFloat(spread));
+                else
+                    current_price = (current_price + parseFloat(spread));
+                
+                current_price = parseFloat(current_price).toFixed(decimalCount);
 
                 let lotValue = order.pair.percent_charge_for_buy;
 
                 if( order.lot_value != null ){
                     lotValue = order.lot_value;
                 }
-
-                // @if (isset($isInGroup) && $isInGroup > 0)
-                //     lotValue = '{{ $isInGroup }}';
-                // @endif
 
                 let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
 
@@ -352,7 +347,7 @@
                                 </div>
                                 <div>
                                     <span class="${ total_price < 0 ? 'negative' : 'text-primary'}">
-                                        <label class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(2)}</label>
+                                        <label class="${ total_price < 0 ? 'negative' : 'text-primary'}">${parseFloat(total_price).toFixed(decimalCount)}</label>
                                     </span>
                                 </div>
                             </div>     
@@ -434,6 +429,7 @@
 
                         let jsonMarketData = resp.marketData;
 
+                        let pairDecimalCount = countDecimalPlaces(jsonMarketData['{{@$pair->type}}']['{{@$pair->symbol}}'].replace(/,/g, ''));
 
                         if (resp.orders && resp.orders.length > 0) {
                             resp.orders.forEach(order => {
@@ -467,10 +463,12 @@
                         }
 
                         free_margin = equity - resp.totalRequiredMargin;
-                        let level = equity * level_percent;
+
+                        // let level = equity * level_percent; //old formula
+                        let level = level_percent * resp.totalRequiredMargin;
 
                         $('#used-margin-span').html(
-                            `<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(resp.totalRequiredMargin)} $</label>`
+                            `<label class="${(resp.totalRequiredMargin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(parseFloat(resp.totalRequiredMargin))} $</label>`
                             );
                         $('#free-margin-span').html(
                             `<label class="${(free_margin < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(free_margin)} $`
@@ -488,13 +486,23 @@
                             `<label class="${(margin_level < 0 ? 'text-danger':'text-success')}">${formatWithPrecision1(margin_level)} %</label>`
                             );
 
-                        if ((parseInt(margin_level) > 0) && (parseInt(margin_level) <=
-                                st_level_percentage
-                                )) { // if ST Level is equal to Margin Level, close all orders.
-                            isClosingAllOrders = true;
+                        // if ((parseInt(margin_level) > 0) && (parseInt(margin_level) <=
+                        //         st_level_percentage
+                        //         )) { // if ST Level is equal to Margin Level, close all orders.
+                        //     isClosingAllOrders = true;
 
-                            closeAllOrders(resp)
-                        }
+                        //     closeAllOrders(resp)
+                        // }
+                            
+                        // if ( parseInt(free_margin) < 0 || parseInt(margin_level) <= 100 ) { 
+                        //     isClosingAllOrders = true;
+
+                        //     closeAllOrders(resp)
+                        // }else{
+                        //     // console.log(parseInt(free_margin));
+                        //     // console.log(parseInt(margin_level));
+                        //     // console.log('not in criteria');
+                        // }
 
                         closeOrdersBasedOnSLTP(resp)
 
@@ -555,6 +563,7 @@
                     let current_price = jsonData[order.pair.symbol];
                     let lotValue = order.pair.percent_charge_for_buy;
                     let lotEquivalent = parseFloat(lotValue) * parseFloat(order.no_of_lot);
+                    //profit formula for Sell and Buy
                     let total_price = parseInt(order.order_side) === 2 ?
                         formatWithPrecision(((parseFloat(order.rate) - parseFloat(current_price.replace(/,/g,
                             ''))) * lotEquivalent)) :

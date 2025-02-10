@@ -15,7 +15,7 @@ class ClientGroupSetting extends Model
         return $this->belongsTo(ClientGroups::class);
     }
 
-    public function symbol(){
+    public function dataSymbol(){
         // return $this->hasOne(CoinPair::class, 'id', 'symbol');
 
         return $this->belongsTo(CoinPair::class, 'symbol', 'id');

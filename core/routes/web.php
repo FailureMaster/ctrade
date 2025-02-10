@@ -50,6 +50,15 @@ Route::controller("TradeController")->prefix('trade')->group(function () {
         
         Route::post('/favorite/add', 'addToFavorite')->name('trade.favorite.add');
         Route::get('/favorite/fetch', 'fetchUserFavorites')->name('trade.fetch.favorite');
+
+        // New for mobile
+        Route::get('markets', 'markets')->name('trade.markets');
+        Route::get('chart', 'chart')->name('trade.chart');
+        Route::get('menu', 'menu')->name('trade.mobile');
+        Route::get('dashboard', 'dashboard')->name('trade.dashboard');
+        Route::get('closed_orders', 'closed_orders')->name('trade.closed_orders');
+        Route::get('open_orders', 'open_orders')->name('trade.open_orders');
+        Route::get('new_order', 'new_order')->name('trade.new_order');
     });
     
     Route::get('order/list/{pairSym}/{status}', 'orderList')->name('trade.order.list');
@@ -64,21 +73,21 @@ Route::namespace('P2P')->group(function () {
 });
 
 Route::controller('SiteController')->group(function () {
-    Route::get('/contact', 'contact')->name('contact');
+    // Route::get('/contact', 'contact')->name('contact');
     Route::get('/pwa/configuration', 'pwaConfiguration')->name('pwa.configuration');
     Route::get('/market/list', 'marketList')->name('market.list');
     Route::get('/crypto/list', 'cryptoCurrencyList')->name('crypto_currency.list');
-    Route::get('/market', 'market')->name('market');
-    Route::get('/about-us', 'about')->name('about');
-    Route::get('/blogs', 'blogs')->name('blogs');
-    Route::get('/crypto-currency', 'crypto')->name('crypto_currencies');
+    // Route::get('/market', 'market')->name('market');
+    // Route::get('/about-us', 'about')->name('about');
+    // Route::get('/blogs', 'blogs')->name('blogs');
+    // Route::get('/crypto-currency', 'crypto')->name('crypto_currencies');
     Route::get('/crypto/currency/{symbol}', 'cryptoCurrencyDetails')->name('crypto.details');
-    Route::post('/contact', 'contactSubmit');
+    // Route::post('/contact', 'contactSubmit');
     Route::get('/change/{lang?}', 'changeLanguage')->name('lang');
     Route::post('/subscribe', 'subscribe')->name('subscribe');
     Route::get('cookie-policy', 'cookiePolicy')->name('cookie.policy');
     Route::get('/cookie/accept', 'cookieAccept')->name('cookie.accept');
-    Route::get('blog/{slug}/{id}', 'blogDetails')->name('blog.details');
+    // Route::get('blog/{slug}/{id}', 'blogDetails')->name('blog.details');
     Route::get('policy/{slug}/{id}', 'policyPages')->name('policy.pages');
     Route::get('placeholder-image/{size}', 'placeholderImage')->name('placeholder.image');
     Route::post('pusher/auth/{socketId}/{channelName}', "pusherAuthentication");

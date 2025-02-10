@@ -1,111 +1,129 @@
 @php
- $meta   = (object) $meta;
- $pair   = $meta->pair;
- $widget = $general->trading_view_widget;
+    $meta = (object) $meta;
+    $pair = $meta->pair;
 
- $symbol = str_replace("_","",$pair->symbol);
- $widget = str_replace('{{pair}}',$symbol,$widget);
- $widget = str_replace('{{pairlistingmarket}}',$pair->listed_market_name,$widget);
+    $symbol = str_replace("_", "", $pair->symbol);
+    $listedMarket = $pair->listed_market_name;
+
+    // Base URL parameters
+    $baseUrl = 'https://www.tradingview-widget.com/embed-widget/advanced-chart/';
+    $queryParams = [
+        'login' => 'user1',
+        'password' => 'dfkjhoijogpoi',
+        'locale' => 'en'
+    ];
+
+    // Common fragment parameters
+    $commonFragment = [
+        "symbol" => "$listedMarket:$symbol",
+        "frameElementId" => "tradingview_7abd4",
+        "interval" => "5",
+        "hide_side_toolbar" => "0",
+        "allow_symbol_change" => "8",
+        "save_image" => "1",
+        "studies" => "[]",
+        "style" => "1",
+        "timezone" => "Etc/UTC",
+        "studies_overrides" => "{}",
+        "hide_volume" => "1",
+        "utm_source" => "swf.centersooq.com",
+        "utm_medium" => "widget_new",
+        "utm_campaign" => "chart",
+        "utm_term" => "$listedMarket:$symbol",
+        "page-uri" => urlencode("swf.centersooq.com/trade?tvwidgetsymbol=$listedMarket%3A$symbol")
+    ];
+
+    // Generate URLs for both themes
+    $themes = [];
+    foreach (['dark', 'light'] as $theme) {
+        $fragment = array_merge($commonFragment, ['theme' => $theme]);
+        $encodedFragment = urlencode(json_encode($fragment));
+        $themes[$theme] = $baseUrl . '?' . http_build_query($queryParams) . '#' . $encodedFragment;
+    }
 @endphp
-<div class="trading-chart  p-0 two">
-    <iframe class="ichart chart-dark" src='https://www.tradingview-widget.com/embed-widget/advanced-chart/?login=user1&password=dfkjhoijogpoi&locale=en#%7B"symbol"%3A"{{$pair->listed_market_name}}%3A{{$symbol}}"%2C"frameElementId"%3A"tradingview_7abd4"%2C"interval"%3A"5"%2C"hide_side_toolbar"%3A"0"%2C"allow_symbol_change"%3A"8"%2C"save_image"%3A"1"%2C"studies"%3A"%5B%5D"%2C"theme"%3A"dark"%2C"style"%3A"1"%2C"timezone"%3A"Etc%2FUTC"%2C"studies_overrides"%3A"%7B%7D"%2C"utm_source"%3A"swf.centersooq.com"%2C"utm_medium"%3A"widget_new"%2C"utm_campaign"%3A"chart"%2C"utm_term"%3A"{{$pair->listed_market_name}}%3A{{$symbol}}"%2C"page-uri"%3A"swf.centersooq.com%2Ftrade%3Ftvwidgetsymbol%3D{{$pair->listed_market_name}}%253A{{$symbol}}"%7D' width="100%" height="550px" frameborder="0" target="_self"></iframe>
-    <iframe class="ichart chart-light" src='https://www.tradingview-widget.com/embed-widget/advanced-chart/?login=user1&password=dfkjhoijogpoi&locale=en#%7B"symbol"%3A"{{$pair->listed_market_name}}%3A{{$symbol}}"%2C"frameElementId"%3A"tradingview_7abd4"%2C"interval"%3A"5"%2C"hide_side_toolbar"%3A"0"%2C"allow_symbol_change"%3A"8"%2C"save_image"%3A"1"%2C"studies"%3A"%5B%5D"%2C"theme"%3A"light"%2C"style"%3A"1"%2C"timezone"%3A"Etc%2FUTC"%2C"studies_overrides"%3A"%7B%7D"%2C"utm_source"%3A"swf.centersooq.com"%2C"utm_medium"%3A"widget_new"%2C"utm_campaign"%3A"chart"%2C"utm_term"%3A"{{$pair->listed_market_name}}%3A{{$symbol}}"%2C"page-uri"%3A"swf.centersooq.com%2Ftrade%3Ftvwidgetsymbol%3D{{$pair->listed_market_name}}%253A{{$symbol}}"%7D' width="100%" height="550px" frameborder="0" target="_self"></iframe>
+
+<div class="trading-chart p-0 two">
+    @foreach ($themes as $themeType => $url)
+        <iframe 
+            class="ichart chart-{{ $themeType }}" 
+            src="{{ $url }}" 
+            width="100%" 
+            height="530"
+            frameborder="0"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allow="autoplay; fullscreen"
+            style="touch-action: manipulation; -webkit-tap-highlight-color: transparent;{{ $loop->first ? '' : 'display: none;' }}"
+            title="Trading Chart {{ $themeType }}"
+        ></iframe>
+    @endforeach
 </div>
+
 @push('script')
 <script>
-    document.querySelector('.tv-header__link') && document.querySelector('.tv-header__link').remove();
+    // Instant theme switcher
+    function handleThemeChange() {
+        const theme = document.documentElement.getAttribute('data-theme') || 'light';
+        document.querySelectorAll('.trading-chart iframe').forEach(iframe => {
+            iframe.style.display = iframe.classList.contains(`chart-${theme}`) ? 'block' : 'none';
+        });
+    }
+
+    // Theme change observer
+    const themeObserver = new MutationObserver(handleThemeChange);
+
+    // Initial setup
+    window.addEventListener('DOMContentLoaded', () => {
+        handleThemeChange();
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
+
+        // Remove TradingView branding
+        const removeBranding = () => {
+            document.querySelector('.tv-header__link')?.remove();
+            document.querySelector('.tv-embed-widget__title')?.remove();
+        };
+        removeBranding();
+        setTimeout(removeBranding, 2000);
+    });
 </script>
 @endpush
+
 @push('style')
-
-    @if( is_mobile() ) 
-        <style>
-            .trading-chart iframe {
-                width: 100%;
-                height: 80vh; /* Default height */
-            }
-        </style>
-    @else
-        <style>
-            .trading-chart iframe {
-                width: 100%;
-                height: 560px; /* Default height */
-            }
-        </style>
-    @endif
-
 <style>
-    [data-theme=light] .chart-dark {
-        display: none;
-    }
-    [data-theme=dark] .chart-light {
-        display: none;
-    }
-
-    [data-theme=dark] .trading-bottom, [data-theme=dark] .trading-chart{
-        background-color: #0f1821 !important;
+    .trading-chart {
+        position: relative;
+        overflow: hidden;
+        min-height: 430px;
+        background-color: transparent;
     }
 
-    @media screen and (min-width: 320px) and (max-height: 568px){
+    .trading-chart iframe {
+        width: 100%;
+        height: 530px;
+        border: 0;
+    }
+
+    @media (max-width: 768px) {
+        .trading-chart {
+            min-height: 58vh;
+        }
+        
         .trading-chart iframe {
-            height: 70vh;
+            height: 58vh !important;
         }
     }
 
-    @media screen and (min-width: 360px) and (max-height: 780px){
+    @media (max-width: 480px) {
         .trading-chart iframe {
-            height: 80vh;
+            height: 53vh !important;
         }
     }
 
-    @media screen and (min-width: 375px) and (max-height: 812px){
-        .trading-chart iframe {
-            height: 75vh;
-        }
-    }
-
-    @media screen and (min-width: 384px) and (max-height: 832px){
-        .trading-chart iframe {
-            height: 80vh;
-        }
-    }
-
-    @media screen and (min-width: 390px) and (max-height: 884px){
-        .trading-chart iframe {
-            height: 77vh;
-        }
-    }
-    
-    @media screen and (min-width: 412px) and (max-height: 916px){
-        .trading-chart iframe {
-            height: 80vh;
-        }
-    }
-
-    @media screen and (min-width: 414px) and (max-height: 896px){
-        .trading-chart iframe {
-            height: 575px;
-        }
-    }
-
-
-    @media screen and (min-width: 428px) and (max-height: 926px){
-        .trading-chart iframe {
-            height: 600px;
-        }
-    }
-
-    @media screen and (min-width: 430px) and (max-height: 932px){
-        .trading-chart iframe {
-            height: 600px;
-        }
-    }
-
-    @media screen and (min-width: 440px) and (max-height: 956px){
-        .trading-chart iframe {
-            height: 600px;
-        }
+    [data-theme="dark"] .trading-chart {
+        background-color: #0f1821;
     }
 </style>
 @endpush
-

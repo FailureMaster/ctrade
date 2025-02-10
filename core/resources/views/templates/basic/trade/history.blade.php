@@ -68,8 +68,8 @@
 </div>
 <div class="trading-table__mobile">
     <div class="summary-container pb-0 sc-history">
-        <h2 class="h-title p-0 mb-0 border-0">@lang('Transactions Logs')</h2>
-        <h2 class="p-0 ch5"></h2>
+        <h2 class="h-title p-0 mb-2 border-0">@lang('History')</h2>
+        
         <div class="portfolio-item">
             <div class="label p-0">@lang('Total Orders')</div>
             <div class="dots"></div>
@@ -284,7 +284,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(customOrderProfit).toFixed(2) || 0}</label>
+                                    <label class="${ order.profit < 0 ? 'negative' : 'text-primary'}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label>
                                 </div>
                             </div>     
                         </td>
@@ -300,9 +300,9 @@
                                 <strong>@lang('Take Profit'):</strong> ${order.take_profit ? parseFloat(order.take_profit).toFixed(decimalCount) : '0'}<br>
                                 <strong>@lang('Volume'):</strong> ${removeTrailingZeros(order.no_of_lot)}<br>
                                 @if (App::getLocale() != 'ar')
-                                <strong>@lang('Profit'):</strong> <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label><br>
+                                <strong>@lang('Profit'):</strong> <label class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label><br>
                                 @else
-                                    <label class="${profitClass}">${removeTrailingZeros(formatWithPrecision(order.profit)) || 0}</label>:<strong>@lang('Profit')</strong><br>
+                                    <label class="${profitClass}">${parseFloat(order.profit).toFixed(decimalCount) || 0}</label>:<strong>@lang('Profit')</strong><br>
                                 @endif
 
                                 @if (App::getLocale() != 'ar')
@@ -430,6 +430,10 @@
                     fetchHistory();
                     loadhistory = 1;
                 }
+            })
+
+            $(document).on('click', '.history-link', function(){
+                fetchHistory();
             })
         });
     </script>

@@ -171,6 +171,7 @@
                         <div class="tab" data-tab="commodities">Commodities</div>
                         <div class="tab" data-tab="stocks">Stocks</div>
                         <div class="tab" data-tab="cryptos">Cryptos</div>
+                        <div class="tab" data-tab="index">Index</div>
                     </div>
 
                     <!-- Tab Content -->
@@ -371,6 +372,67 @@
                             </thead>
                             <tbody>
                                 @foreach( $pairs->where('type', 'Crypto') as $pair )
+                                    @php
+                                            if (isset($pair->market) && isset($pair->market->currency)) {
+                                            $marketCurrency = $pair->market->currency;
+                                            $marketCurrency->name = $pair->market->name;
+                                        } else {
+                                            $marketCurrency = null;
+                                        }
+                                    @endphp
+                                    <tr>
+                                        <td>{{ $pair->symbol }}</td>
+                                        <td>{{ showAmount($pair->percent_charge_for_sell) }}</td>
+                                        <td>{{ showAmount($pair->percent_charge_for_buy) }}</td>
+                                        <td>{{ showAmount($pair->level_percent) }}</td>
+                                        <td>{{$pair->spread}}</td>
+                                        <td>
+                                            <a href="{{ route('admin.coin.pair.edit', $pair->id) }}" class="btn-edit">Edit</a>
+                                        </td>
+                                        <div id="actionMessageModal{{ $pair->id }}" class="modal fade" tabindex="-1" role="dialog">
+                                            <div class="modal-dialog modal-sm" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">
+                                                            <span>{{ $pair->status ? 'Disable' : 'Enable' }} Symbol</span> {{ $pair->symbol }}
+                                                        </h5>
+                                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                            <i class="las la-times"></i>
+                                                        </button>
+                                                    </div>
+                                                    <form
+                                                        action="{{ route('admin.coin.pair.status', $pair->id) }}"
+                                                        method="POST"
+                                                        >
+                                                        @csrf
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn--dark" data-bs-dismiss="modal">@lang('No')</button>
+                                                            <button type="submit" class="btn btn--primary">@lang('Yes')</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="index" class="tab-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                <th>Symbol</th>
+                                <th>Leverage</th>
+                                <th>Lots</th>
+                                <th>Level</th>
+                                <th>Spread</th>
+                                <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach( $pairs->where('type', 'INDEX') as $pair )
                                     @php
                                             if (isset($pair->market) && isset($pair->market->currency)) {
                                             $marketCurrency = $pair->market->currency;

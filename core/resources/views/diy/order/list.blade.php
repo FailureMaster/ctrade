@@ -104,6 +104,7 @@
                                                 <input type="hidden" class="no_of_lot" value="{{ $order->no_of_lot }}">
                                                 <input type="hidden" class="order_side" value="{{ $order->order_side }}">
                                                 <input type="hidden" class="pair_spread" value="{{ $order->pair->spread }}">
+                                                <input type="hidden" class="orderSpread" value="{{ $order->order_spread }}">
                                                 {{ $order->id }}
                                             </div>
                                         </td>
@@ -285,13 +286,19 @@
                             let spread          = $(this).find('.pair_spread').val();
 
                             let lotValue        = $(this).find('.lotValue').val();
+                            let orderSpread     = $(this).find('.orderSpread').val();
+
+                            if( orderSpread != null ){
+                                spread = orderSpread;
+                            }
+
 
                             if (jsonData[type] && jsonData[type][symbol]) {
                                 let current_price = parseFloat(jsonData[type][symbol].replace(/,/g, ''));
                                 
                                 current_price = parseFloat(current_price);
                                 
-                                if (parseInt(order_side) === 2) {
+                                if (parseInt(order_side) === 1) {
                                     current_price = (current_price * spread) + current_price;
                                 }
 

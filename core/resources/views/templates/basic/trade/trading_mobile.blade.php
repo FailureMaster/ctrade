@@ -20,11 +20,13 @@
 
 <div class="tab-inner-wrapper" style="background-color: var(--pane-bg); {{ is_mobile() ? 'margin: 0' : '' }}">
     <div class="tab-content">
+        {{-- Market tab --}}
         <div class="tab-pane fade {{ !$isCategory ? 'active show' : '' }}" id="market-list-sm" role="tabpanel">
             @if (is_mobile())
                 <x-flexible-view :view="$activeTemplate . 'trade.coin_sync_list'" :meta="['pair' => $pair, 'screen' => 'small']" />
             @endif
         </div>
+        {{-- Chart tab--}}
         <div class="tab-pane fade {{ $isCategory ? 'active show' : '' }}" id="chart-sm" role="tabpanel"
             style=" {{ is_mobile() ? '' : '' }}">
             <x-flexible-view :view="$activeTemplate . 'trade.chart'" :meta="['pair' => $pair, 'screen' => 'small']" />
@@ -40,6 +42,7 @@
                 ]" />
             </div>
         </div>
+        {{-- Trade tab --}}
         <div class="tab-pane fade" id="portfolio-sm" role="tabpanel" style=" {{ is_mobile() ? '' : '' }}">
             <div class="position-relative">
                 <x-flexible-view :view="$activeTemplate . 'trade.buy_sell'" :meta="[
@@ -60,6 +63,7 @@
         <div class="tab-pane fade" id="order-book-sm" role="tabpanel">
             <x-flexible-view :view="$activeTemplate . 'trade.my_order'" :meta="['pair' => $pair, 'screen' => 'small']" />
         </div>
+        {{-- closed orders tab --}}
         <div class="tab-pane fade" id="trade-history-sm" role="tabpanel">
             <x-flexible-view :view="$activeTemplate . 'trade.history'" :meta="[
                 'pair' => $pair,
@@ -69,6 +73,7 @@
                 'total_loss' => $total_loss,
             ]" />
         </div>
+        {{-- dashboard tab--}}
         <div class="tab-pane fade" id="wallet-sm" role="tabpanel">
             <x-flexible-view :view="$activeTemplate . 'trade.portfolio'" :meta="[
                 'widget' => $widget,
@@ -77,6 +82,7 @@
                 'withdraws' => $withdraws
             ]" />
         </div>
+        {{-- Menu tab--}}
         <div class="tab-pane fade" id="menu-sm" role="tabpanel">
             <div class="summary-container">
                 <div class="d-flex justify-content-between" id="menuHeaderContainer">
@@ -127,6 +133,27 @@
                             <a class="text-white new--withdraw @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
                                 <i class="fas fa-wallet"></i>
                                 <span>@lang('Withdraw')</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (Auth::check())
+                    @php
+                        $kycStatusClass = "text-danger";
+                        $kycStatus      = "Unverified";
+                        if( auth()->user()->kv === 1 ){
+                            $kycStatus =  "Verified";
+                            $kycStatusClass = "text-success";
+                        } 
+                        if( auth()->user()->kv === 2 ){
+                            $kycStatusClass = "text-warning";
+                            $kycStatus =  "Pending";
+                        } 
+                    @endphp
+                        <li class="menu-item @if (App::getLocale() == 'ar') justify-content-end @endif">
+                            <a class="text-white {{ auth()->user()->kv != 1 ? "new--kyc" : "" }} @if (App::getLocale() == 'ar') d-flex flex-row-reverse @endif">
+                                <i class="fas fa-id-card"></i>
+                                <label class="{{ $kycStatusClass }}">@lang('KYC') {{ __($kycStatus) }}</label>
                             </a>
                         </li>
                     @endif
@@ -229,7 +256,7 @@
                             data-bs-target="#trade-history-sm" role="tab" data-type="m-closed" aria-controls="pills-historytwentyfive"
                             aria-selected="false">
                             <i class="fas fa-history" id="m-closed"></i>
-                            @lang('Closed Orders')
+                            @lang('History')
                         </a>
                     </li>
                     <li class="nav-item" role="presentation" data-status="0">

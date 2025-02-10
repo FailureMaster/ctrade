@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Rules\FileTypeValidate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -71,20 +72,46 @@ class ProfileController extends Controller
         }
 
         $this->validate($request, [
-            'current_password' => 'required',
+            // 'current_password' => 'required',
             'password' => ['required', 'confirmed', $passwordValidation]
         ]);
 
         $user = auth()->user();
-        if (Hash::check($request->current_password, $user->password)) {
+        // if (Hash::check($request->current_password, $user->password)) {
+        //     $password = Hash::make($request->password);
+        //     $user->password = $password;
+        //     $user->save();
+        //     $notify[] = ['success', 'Password changes successfully'];
+        //     return back()->withNotify($notify);
+        // } else {
+        //     $notify[] = ['error', 'The password doesn\'t match!'];
+        //     return back()->withNotify($notify);
+        // }
+        if( $request->has('current_password') ){
+            if (Hash::check($request->current_password, $user->password)) {
+                $password = Hash::make($request->password);
+                $user->password = $password;
+                $notify[] = ['success', 'Password changes successfully'];
+                return back()->withNotify($notify);
+            } else {
+                $notify[] = ['error', 'The password doesn\'t match!'];
+                return back()->withNotify($notify);
+            }
+        }
+        else{
             $password = Hash::make($request->password);
             $user->password = $password;
             $user->save();
-            $notify[] = ['success', 'Password changes successfully'];
-            return back()->withNotify($notify);
-        } else {
-            $notify[] = ['error', 'The password doesn\'t match!'];
-            return back()->withNotify($notify);
+            
+             // Log out the user to force re-login
+            Auth::logout();
+
+            // Regenerate the session to prevent CSRF issues
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            $notify[] = ['success', 'Successfully Changed your password.'];
+            return to_route('user.login')->withNotify($notify);
         }
     }
 
@@ -116,7 +143,8 @@ class ProfileController extends Controller
             $password = Hash::make($request->password);
             $user->password = $password;
             $user->save();
-            return response()->json(['success' => 'success', 'message' => 'Password changes successfully'], 200);
+            return to_route('user.logout');
+            // return response()->json(['success' => 'success', 'message' => 'Password changes successfully'], 200);
         }
     }
 

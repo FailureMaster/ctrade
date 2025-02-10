@@ -122,6 +122,12 @@ $credentials = $general->socialite_credentials;
 @endsection
 @push('style')
 <style>
+
+[data-theme=light] .forget-password,
+[data-theme=light] label {
+    color: #ffffff !important;
+}
+
 input:-webkit-autofill {
     -webkit-text-fill-color: hsl(var(--black)) !important;
 }

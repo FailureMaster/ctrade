@@ -1,160 +1,190 @@
-<div class="trading-right" style="height: 99%; {{ !is_mobile() ? 'margin-top: 10px' : '' }}">
-    <div class="trading-right__top @if (is_mobile()) pb-0 @endif">
-        @if (is_mobile())
-            <div class="summary-container c-summary">
-                <h2 class="border-0 p-0 mb-0 h-title @if(App::getLocale() == 'ar') text-end @endif">@lang('Markets')</h2>
-            </div>
-            <h2 class="p-0 ch5 ch5-history"></h2>
-        @endif
-        <div class="w-100">
-            <form id="search-market" onsubmit="searchMarket(event)">
-                <div class="input--group">
-                    <button class="search-btn" type="submit"><i class="las la-search"></i></button>
-                    <input type="text"
-                        class="form--control style-two pjsInput market-search @if (App::getLocale() == 'ar') text-end @endif"
-                        placeholder="{{ __('Search') }}" name="search" id="searchInput">
-                </div>
-                <div class="coin-search-list-body">
+@extends($activeTemplate . 'layouts.frontend')
 
+@section('content')
+    <div class="mobile-container">
+        <div class="trading-right m-0" style="height: 99%;">
+            <div class="trading-right__top pb-0">
+                <div class="summary-container c-summary pt-0">
+                    <h2 class="border-0 p-0 mb-2 h-title @if(App::getLocale() == 'ar') text-end @endif">@lang('Markets')</h2>
                 </div>
-            </form>
+                <div class="w-100">
+                    <form id="search-market" onsubmit="searchMarket(event)">
+                        <div class="input--group">
+                            <button class="search-btn" type="submit"><i class="las la-search"></i></button>
+                            <input type="text"
+                                class="form--control style-two pjsInput market-search @if (App::getLocale() == 'ar') text-end @endif"
+                                placeholder="{{ __('Search') }}" name="search" id="searchInput">
+                        </div>
+                        <div class="coin-search-list-body">
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <h2 class="p-0 ch5"></h2>
+            <nav id="market-nav" class="pt-0">
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="dropdown-btn" id="nav-favorites-tab" onclick="toggleDropdown('favorites')"
+                        data-bs-toggle="tab" data-bs-target="#nav-favorites" role="tab" aria-controls="nav-favorites"
+                        aria-selected="false">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('Favorites')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+                    </button>
+                    <div class="dropdown-container" id="dropdown-container-favorites" style="display: none;">
+                        <div class="tab-pane fade" id="nav-favorites" role="tabpanel" aria-labelledby="nav-favorites-tab">
+                            <div class="market-favorites-body"></div>
+                        </div>
+                    </div>
+
+                    <button class="dropdown-btn" id="nav-arabic-tab" onclick="toggleDropdown('arabic')" data-bs-toggle="tab"
+                        data-bs-target="#nav-arabic" role="tab" aria-controls="nav-arabic" aria-selected="false">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('GCC Stocks')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+                    </button>
+                    <div class="dropdown-container" id="dropdown-container-arabic" style="display: none;">
+                        <div class="tab-pane fade" id="nav-arabic" role="tabpanel" aria-labelledby="nav-arabic-tab">
+                            <div class="market-arabic-body"></div>
+                        </div>
+                    </div>
+
+                    <button class="dropdown-btn" id="nav-stocks-tab" onclick="toggleDropdown('stocks')" data-bs-toggle="tab"
+                        data-bs-target="#nav-stocks" role="tab" aria-controls="nav-stocks" aria-selected="false">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('Stocks')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+                    </button>
+                    <div class="dropdown-container" id="dropdown-container-stocks" style="display: none;">
+                        <div class="tab-pane fade" id="nav-stocks" role="tabpanel" aria-labelledby="nav-stocks-tab">
+                            <div class="market-stocks-body"></div>
+                        </div>
+                    </div>
+                    <button class="dropdown-btn" id="nav-forex-tab" onclick="toggleDropdown('forex')" data-bs-toggle="tab"
+                        data-bs-target="#nav-forex" role="tab" aria-controls="nav-forex" aria-selected="false">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('Forex')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+
+                    </button>
+                    <div class="dropdown-container" id="dropdown-container-forex" style="display: none;">
+                        <div class="tab-pane fade show active" id="nav-forex" role="tabpanel"
+                            aria-labelledby="nav-forex-tab">
+                            <div class="market-forex-body"></div>
+                        </div>
+                    </div>
+                    <button class="dropdown-btn" id="nav-index-tab" data-bs-toggle="tab" data-bs-target="#nav-index"
+                        onclick="toggleDropdown('index')" role="tab" aria-controls="nav-index" aria-selected="false">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('Index')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+
+                    </button>
+                    <div class="dropdown-container" id="dropdown-container-index" style="display: none;">
+                        <div class="tab-pane fade" id="nav-index" role="tabpanel" aria-labelledby="nav-index-tab">
+                            <div class="market-index-body"></div>
+                        </div>
+                    </div>
+                    <button class="dropdown-btn" id="nav-crypto-tab" data-bs-toggle="tab" data-bs-target="#nav-crypto"
+                        onclick="toggleDropdown('crypto')" role="tab" aria-controls="nav-crypto" aria-selected="true">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label" style="flex: 1">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('Crypto')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+                    </button>
+
+                    <div class="dropdown-container" id="dropdown-container-crypto" style="display: none;">
+                        <div class="tab-pane fade" id="nav-crypto" role="tabpanel" aria-labelledby="nav-crypto-tab">
+                            <div class="market-crypto-body"></div>
+                        </div>
+                    </div>
+
+                    <button class="dropdown-btn" id="nav-commodity-tab" data-bs-toggle="tab" data-bs-target="#nav-commodity"
+                        onclick="toggleDropdown('commodity')" role="tab" aria-controls="nav-commodity"
+                        aria-selected="false">
+                        <div class="d-flex justify-content-between" style="align-items: center">
+                            <div class="coin-label">
+                                <span class="arrow-indicator">&#9654;</span>
+                                <span class="title-text text-uppercase">@lang('Commodity')</span>
+                            </div>
+                            <span class="price-text toggle-col">@lang('Sell')</span>
+                            <span class="daily-change-text toggle-col">@lang('Buy')</span>
+                        </div>
+
+                    </button>
+                    <div class="dropdown-container" id="dropdown-container-commodity" style="display: none;">
+                        <div class="tab-pane fade" id="nav-commodity" role="tabpanel" aria-labelledby="nav-commodity-tab">
+                            <div class="market-commodity-body"></div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div class="market-tab-content tab-content" id="nav-tabContent">
+
+            </div>
         </div>
     </div>
-    <h2 class="p-0 ch5"></h2>
-    <nav id="market-nav" class="@if (is_mobile()) pt-0 @endif">
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="dropdown-btn" id="nav-favorites-tab" onclick="toggleDropdown('favorites')"
-                data-bs-toggle="tab" data-bs-target="#nav-favorites" role="tab" aria-controls="nav-favorites"
-                aria-selected="false">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Favorites')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
-            </button>
-            <div class="dropdown-container" id="dropdown-container-favorites" style="display: none;">
-                <div class="tab-pane fade" id="nav-favorites" role="tabpanel" aria-labelledby="nav-favorites-tab">
-                    <div class="market-favorites-body"></div>
-                </div>
-            </div>
 
-            <button class="dropdown-btn" id="nav-arabic-tab" onclick="toggleDropdown('arabic')" data-bs-toggle="tab"
-                data-bs-target="#nav-arabic" role="tab" aria-controls="nav-arabic" aria-selected="false">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('GCC Stocks')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
+    {{-- Canva --}}
+    <div class="offcanvas offcanvas-bottom custom-offcanvas p-4 rounded-top" tabindex="-1" id="market-canvas" aria-labelledby="offcanvasBottomLabel">
+        <div class="offcanvas-header">
+            <h4 class="mb-0 fs-18 offcanvas-title text-white">
+            </h4>
+            <button type="button" class="text-reset" data-bs-dismiss="offcanvas" aria-label="Close">
+                <i class="fa fa-times-circle fa-lg"></i>
             </button>
-            <div class="dropdown-container" id="dropdown-container-arabic" style="display: none;">
-                <div class="tab-pane fade" id="nav-arabic" role="tabpanel" aria-labelledby="nav-arabic-tab">
-                    <div class="market-arabic-body"></div>
-                </div>
-            </div>
-
-            <button class="dropdown-btn" id="nav-stocks-tab" onclick="toggleDropdown('stocks')" data-bs-toggle="tab"
-                data-bs-target="#nav-stocks" role="tab" aria-controls="nav-stocks" aria-selected="false">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Stocks')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
-            </button>
-            <div class="dropdown-container" id="dropdown-container-stocks" style="display: none;">
-                <div class="tab-pane fade" id="nav-stocks" role="tabpanel" aria-labelledby="nav-stocks-tab">
-                    <div class="market-stocks-body"></div>
-                </div>
-            </div>
-            <button class="dropdown-btn" id="nav-forex-tab" onclick="toggleDropdown('forex')" data-bs-toggle="tab"
-                data-bs-target="#nav-forex" role="tab" aria-controls="nav-forex" aria-selected="false">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Currencies')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
-
-            </button>
-            <div class="dropdown-container" id="dropdown-container-forex" style="display: none;">
-                <div class="tab-pane fade show active" id="nav-forex" role="tabpanel"
-                    aria-labelledby="nav-forex-tab">
-                    <div class="market-forex-body"></div>
-                </div>
-            </div>
-            <button class="dropdown-btn" id="nav-index-tab" data-bs-toggle="tab" data-bs-target="#nav-index"
-                onclick="toggleDropdown('index')" role="tab" aria-controls="nav-index" aria-selected="false">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Index')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
-
-            </button>
-            <div class="dropdown-container" id="dropdown-container-index" style="display: none;">
-                <div class="tab-pane fade" id="nav-index" role="tabpanel" aria-labelledby="nav-index-tab">
-                    <div class="market-index-body"></div>
-                </div>
-            </div>
-            <button class="dropdown-btn" id="nav-crypto-tab" data-bs-toggle="tab" data-bs-target="#nav-crypto"
-                onclick="toggleDropdown('crypto')" role="tab" aria-controls="nav-crypto" aria-selected="true">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label" style="flex: 1">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Crypto')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
-            </button>
-
-            <div class="dropdown-container" id="dropdown-container-crypto" style="display: none;">
-                <div class="tab-pane fade" id="nav-crypto" role="tabpanel" aria-labelledby="nav-crypto-tab">
-                    <div class="market-crypto-body"></div>
-                </div>
-            </div>
-
-            <button class="dropdown-btn" id="nav-commodity-tab" data-bs-toggle="tab" data-bs-target="#nav-commodity"
-                onclick="toggleDropdown('commodity')" role="tab" aria-controls="nav-commodity"
-                aria-selected="false">
-                <div class="d-flex justify-content-between" style="align-items: center">
-                    <div class="coin-label">
-                        <span class="arrow-indicator">&#9654;</span>
-                        <span class="title-text text-uppercase">@lang('Commodity')</span>
-                    </div>
-                    <span class="price-text toggle-col">@lang('SELL')</span>
-                    <span class="daily-change-text toggle-col">@lang('BUY')</span>
-                </div>
-
-            </button>
-            <div class="dropdown-container" id="dropdown-container-commodity" style="display: none;">
-                <div class="tab-pane fade" id="nav-commodity" role="tabpanel" aria-labelledby="nav-commodity-tab">
-                    <div class="market-commodity-body"></div>
-                </div>
-            </div>
         </div>
-    </nav>
-    <div class="market-tab-content tab-content" id="nav-tabContent">
-
+        <div class="offcanvas-body text-center">
+           <p>
+                <a href="#" class="new-order-link text-themed btn border border-0">
+                    @lang('New Order')
+                </a>
+            </p>
+           <p class="my-2">
+                <a href="#" class="link-to-chart text-themed btn border border-0">
+                    @lang('Chart')
+                </a>
+            </p>
+        </div>
     </div>
-</div>
+
+    {{-- Menu --}}
+    @include($activeTemplate . 'partials.mobile.menu')
+@endsection
+
 @push('script')
     <script>
         "use strict";
-
+        
         window.addEventListener('DOMContentLoaded', (event) => {
             $('.market-search').on('input', searchMarket);
 
@@ -410,6 +440,40 @@
 
         }
 
+        $(document).on('click', '.open-symbol', function (e) {
+            e.preventDefault();
+
+            let link = $(this); // jQuery object
+            let url = link.attr('href');
+            let name = link.attr('data-coin_name');
+            let company = link.attr('data-company').replace('/', 'vs');
+            let orderParam = link.attr('data-order_param');
+
+            let parentLink = $(this).parents('.m-item');
+
+            let offcanvas = $('#market-canvas'); // jQuery object
+            let offcanvasElement = document.getElementById("market-canvas"); // Plain JS element
+
+            // Update offcanvas content
+            offcanvas.find('.link-to-chart').attr('href', url);
+            offcanvas.find('.new-order-link').attr('href', orderParam);
+            offcanvas.find('.offcanvas-title').text(name+': '+company);
+
+            // Get the clicked element's position
+            let rect = parentLink[0].getBoundingClientRect();
+            let windowHeight = window.innerHeight;
+            let offcanvasHeight = offcanvas.outerHeight();
+
+            // Set the offcanvas position
+            offcanvas.css({
+                display: 'block'
+            });
+
+            // Show Bootstrap Offcanvas properly
+            let bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            bsOffcanvas.show();
+        });
+
         function generateCoinssHTML(coinsData, className, category, belongsTo, favoriteCoins = []) {
             let html = '';
             for (let coin in coinsData) {
@@ -420,7 +484,10 @@
                 let symbol = encodeURIComponent(coinsData[coin].dataSymbol);
                 let encodedCoin = encodeURIComponent(coin);
                 let param =
-                    `?category=${category ? category : coinsData[coin].category}&symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv=${symbol}%3A${encodedCoin}%3A%3A`;
+                    `chart?category=${category ? category : coinsData[coin].category}&symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv=${symbol}%3A${encodedCoin}%3A%3A`;
+
+                let orderParam =
+                `new_order?category=${category ? category : coinsData[coin].category}&symbolHIFHSRbBIKR1pDOisb7nMDFp6JsuVZv=${symbol}%3A${encodedCoin}%3A%3A`;
 
                 // Encode the parameter using Base64
                 let encodedParam = btoa(param);
@@ -443,6 +510,28 @@
                 buyPrice = parseFloat(buyPrice).toFixed(decCount);
                 sellPrice = parseFloat(sellPrice).toFixed(decCount);
 
+                // Change Buy/Sell Text Color
+                let priceSellElement = $(`.coin-sell-price-${coin}`);
+                let previousSellPrice = parseFloat(priceSellElement.first().text()) || 0;
+
+                let priceBuyElement = $(`.coin-buy-price-${coin}`);
+                let previousBuyPrice = parseFloat(priceBuyElement.first().text()) || 0;
+
+                let sellPriceClass = 'nochange';
+                let buyPriceClass = 'nochange';
+
+                if (parseFloat(sellPrice) < previousSellPrice) {
+                    sellPriceClass = 'num-increase';
+                } else if (parseFloat(sellPrice) > previousSellPrice) {
+                    sellPriceClass = 'num-decrease';
+                }
+
+                if (parseFloat(buyPrice) > previousBuyPrice) {
+                    buyPriceClass = 'num-increase';
+                } else if (parseFloat(buyPrice) < previousBuyPrice) {
+                    buyPriceClass = 'num-decrease';
+                }
+
                 html += `
                     <div class="d-flex market-coin-item my-2 py-2">
                         <div class="m-item">
@@ -450,18 +539,19 @@
                                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
                             </div>
                             <div class="position-relative text-right mx-1">
-                                <a href="${param}" onclick="navigateToPage('${param}')" id="">${coin.slice(0, 6)}</a>
-                                <a href="${param}" class="d-none" id="name-${coin}">${coin.slice(0, 6)}</a>
+                                <a href="${param}" class="open-symbol" data-order_param="${orderParam}" data-company="${coinsData[coin].company}" data-coin_name="${coin}" id="">${coin.slice(0, 6)}</a>
                             </div>
                         </div>
                         <div class="position-relative price-text">
-                            <a href="${param}" class="coin-link" data-param="${param}">${sellPrice}</a>
+                            <a href="${param}" class="coin-link coin-sell-price-${coin} ${sellPriceClass}" data-param="${param}">
+                                ${sellPrice}
+                            </a>
                         </div>
                         <div class="d-flex position-relative text-end daily-change-text">
                             <div class="d-flex justify-content-between w-100">
-                                <span class="d-block">
+                                <a href="#" class="d-block coin-buy-price-${coin} ${buyPriceClass}">
                                     ${buyPrice}
-                                </span>
+                                </a>
                                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
                                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
                                 </div>
@@ -469,32 +559,6 @@
                         </div>
                     </div>
                 `;
-
-                // html += `
-                //     <div class="d-flex market-coin-item my-2 py-2">
-                //         <div class="m-item">
-                //             <div class="coin-icon">
-                //                 <img src="${coinsData[coin].logo_url}" alt="${coin}" style="height: 100%; width: auto; border-radius: 50%;">
-                //             </div>
-                //             <div class="position-relative text-right mx-1">
-                //                 <a href="${param}" onclick="navigateToPage('${param}')" id="name-${coin}">${coin.slice(0, 6)}</a>
-                //             </div>
-                //         </div>
-                //         <div class="position-relative price-text">
-                //             <a href="${param}" class="coin-link" data-param="${param}">${coinsData[coin].price}</a>
-                //         </div>
-                //         <div class="d-flex position-relative text-end daily-change-text">
-                //             <div class="d-flex justify-content-between w-100">
-                //                 <span class="d-block text-secondary ${colorClass}">
-                //                     ${coinsData[coin].percent}
-                //                 </span>
-                //                 <div class="icon-favorite" style="margin-right: 1.2rem; cursor: pointer" data-coin="${coin}" data-category="${category ? category : coinsData[coin].category}" onclick="addToFavorites('${coin}', '${belongsTo ? belongsTo : coinsData[coin].category}', '${coinsData[coin].dataSymbol}')">
-                //                     <i class="${isFavorite ? 'fas' : 'far'} fa-star" aria-hidden="true" style="color: ${isFavorite ? 'yellow' : ''}"></i>
-                //                 </div>
-                //             </div>
-                //         </div>
-                //     </div>
-                // `;
             }
 
             $(className).html(html);
@@ -539,6 +603,7 @@
             });
         }
 
+
         function navigateToPage(param) {
             let decodedParam = atob(param);
             window.location.href = decodedParam;
@@ -555,13 +620,6 @@
             arrowIndicator.classList.toggle('down', !isVisible);
 
             button.classList.toggle('active', !isVisible);
-
-            // if (!isVisible) {
-            //     container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            //     setTimeout(() => {
-            //         window.scrollBy({ top: -150, behavior: 'smooth' });
-            //     }, 300);
-            // }
         }
 
         function hideAllDropdowns() {
@@ -593,133 +651,61 @@
                 $('.coin-search-list-body').css('display', 'block');
             }
 
-            // $.ajax({
-            //     url: "https://tradehousecrm.com/trade/fetch-coin",
-            //     type: "GET",
-            //     dataType: 'json',
-            //     cache: false,
-            //     success: function(resp) {
-
-            //         let api_res = resp;
-
-            //         let categorizedData = {};
-
-            //         $.each(coinDataDb.pairs, function(i, pair) {
-            //             // Find the matching pair in api_res based on symbol
-            //             let matchingPair = api_res[pair.symbol.replace('_', '')];
-
-            //             if (matchingPair) {
-            //                 // If it exists, get the type and create a key if it doesn't exist
-            //                 let type = pair.type;
-
-            //                 if (!categorizedData[type]) {
-            //                     categorizedData[type] = {}; // Initialize the object for this type
-            //                 }
-
-            //                 // Add the pair to the categorized data
-            //                 categorizedData[type][pair.symbol] = {
-            //                     symbol: matchingPair.symbol,
-            //                     price: matchingPair.price,
-            //                     percent: matchingPair.percent,
-            //                     current: matchingPair.current,
-            //                     logo_url: matchingPair.logo_url,
-            //                     logo_url2: matchingPair.logo_url2,
-            //                     company: matchingPair.company,
-            //                     dataSymbol: matchingPair.dataSymbol,
-            //                 };
-            //             }
-            //         });
-
-            //         const filteredData = {};
-
-            //         for (const category in categorizedData) {
-            //             for (const symbol in categorizedData[category]) {
-            //                 if (symbol.toUpperCase().includes(searchInput)) {
-            //                     let symbolData = categorizedData[category][symbol];
-            //                     symbolData['symbol'] = symbol;
-            //                     symbolData['category'] = category;
-
-            //                     filteredData[symbol] = symbolData;
-            //                 }
-            //             }
-            //         }
-
-            //         generateCoinssHTML(filteredData, '.coin-search-list-body', '', '');
-            //     },
-            //     error: function(xhr, status, error) {
-            //         console.error("Error fetching history: ", error);
-            //     }
-            // });
             $.ajax({
-                url: "{{ route('trade.fetch.favorite') }}",
+                url: "https://tradehousecrm.com/trade/fetch-coin",
                 type: "GET",
                 dataType: 'json',
                 cache: false,
-                success: function(response) {
-                    let favorites = response.favorites; 
-                
-                    $.ajax({
-                        url: "https://tradehousecrm.com/trade/fetch-coin",
-                        type: "GET",
-                        dataType: 'json',
-                        cache: false,
-                        success: function(resp) {
+                success: function(resp) {
 
-                            let api_res = resp;
+                    let api_res = resp;
 
-                            let categorizedData = {};
+                    let categorizedData = {};
 
-                            $.each(coinDataDb.pairs, function(i, pair) {
-                                // Find the matching pair in api_res based on symbol
-                                let matchingPair = api_res[pair.symbol.replace('_', '')];
+                    $.each(coinDataDb.pairs, function(i, pair) {
+                        // Find the matching pair in api_res based on symbol
+                        let matchingPair = api_res[pair.symbol.replace('_', '')];
 
-                                if (matchingPair) {
-                                    // If it exists, get the type and create a key if it doesn't exist
-                                    let type = pair.type;
+                        if (matchingPair) {
+                            // If it exists, get the type and create a key if it doesn't exist
+                            let type = pair.type;
 
-                                    if (!categorizedData[type]) {
-                                        categorizedData[type] = {}; // Initialize the object for this type
-                                    }
-
-                                    // Add the pair to the categorized data
-                                    categorizedData[type][pair.symbol] = {
-                                        symbol: matchingPair.symbol,
-                                        price: matchingPair.price,
-                                        percent: matchingPair.percent,
-                                        current: matchingPair.current,
-                                        logo_url: matchingPair.logo_url,
-                                        logo_url2: matchingPair.logo_url2,
-                                        company: matchingPair.company,
-                                        dataSymbol: matchingPair.dataSymbol,
-                                        spread: ( response.symbols[matchingPair.symbol].length ? parseFloat(response.symbols[matchingPair.symbol]) : 0 )
-                                    };
-                                }
-                            });
-
-                            const filteredData = {};
-
-                            for (const category in categorizedData) {
-                                for (const symbol in categorizedData[category]) {
-                                    if (symbol.toUpperCase().includes(searchInput)) {
-                                        let symbolData = categorizedData[category][symbol];
-                                        symbolData['symbol'] = symbol;
-                                        symbolData['category'] = category;
-
-                                        filteredData[symbol] = symbolData;
-                                    }
-                                }
+                            if (!categorizedData[type]) {
+                                categorizedData[type] = {}; // Initialize the object for this type
                             }
 
-                            generateCoinssHTML(filteredData, '.coin-search-list-body', '', '');
-                        },
-                        error: function(xhr, status, error) {
-                            console.error("Error fetching history: ", error);
+                            // Add the pair to the categorized data
+                            categorizedData[type][pair.symbol] = {
+                                symbol: matchingPair.symbol,
+                                price: matchingPair.price,
+                                percent: matchingPair.percent,
+                                current: matchingPair.current,
+                                logo_url: matchingPair.logo_url,
+                                logo_url2: matchingPair.logo_url2,
+                                company: matchingPair.company,
+                                dataSymbol: matchingPair.dataSymbol,
+                            };
                         }
                     });
 
+                    const filteredData = {};
+
+                    for (const category in categorizedData) {
+                        for (const symbol in categorizedData[category]) {
+                            if (symbol.toUpperCase().includes(searchInput)) {
+                                let symbolData = categorizedData[category][symbol];
+                                symbolData['symbol'] = symbol;
+                                symbolData['category'] = category;
+
+                                filteredData[symbol] = symbolData;
+                            }
+                        }
+                    }
+
+                    generateCoinssHTML(filteredData, '.coin-search-list-body', '', '');
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error fetching favorites: ", error);
+                    console.error("Error fetching history: ", error);
                 }
             });
         }
@@ -959,17 +945,36 @@
         .daily-change-text{
             flex:1;
         }
+
+        /* .custom-offcanvas {
+            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 12px 12px 0 0; 
+            height: 70vh; 
+            max-height: 500px; 
+        } */
+
+        .custom-offcanvas {
+            position: absolute; /* Allow dynamic positioning */
+            width: 100%; /* Adjust width as needed */
+            /* max-width: 400px;  */
+            border-radius: 12px 12px 0 0; /* Rounded corners for smooth look */
+            height: auto; /* Adjust dynamically */
+            max-height: 400px; /* Set a limit */
+            /* background: white;  */
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Soft shadow */
+            display: none; /* Initially hidden */
+        }
+
+        [data-theme=light] .nochange {
+            color: black !important;
+        }
+        .num-increase {
+            color: #198754 !important;
+        }
+        .num-decrease {
+            color: #dc3545 !important
+        }
     </style>
-
-    @if(!is_mobile())
-        <style>
-            #market-nav{
-                margin-bottom:0 !important;
-            }
-
-            .trading-right{
-                padding-bottom:0 !important;
-            }
-        </style>
-    @endif
 @endpush
