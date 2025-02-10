@@ -13,7 +13,7 @@
 
             <div class="order-header d-flex align-items-center justify-content-between">
                 <h4 class="new-order-header-title">{{ $pair->symbol }}</h4>
-                <a href="/trade/markets">
+                <a href="{{ url()->previous() }}">
                     <i class="las la-times fa-lg"></i>
                 </a>
             </div>
